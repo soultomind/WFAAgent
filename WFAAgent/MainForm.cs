@@ -14,6 +14,25 @@ namespace WFAAgent
         public MainForm()
         {
             InitializeComponent();
+
+            InitializeTray();
+        }
+
+        private void InitializeTray()
+        {
+            this.WindowState = FormWindowState.Minimized;
+            this.ShowInTaskbar = false;
+            this.Visible = false;
+        }
+
+        private void TrayNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

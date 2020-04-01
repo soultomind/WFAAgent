@@ -29,11 +29,58 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            this.TrayNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.TrayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.TrayContextMenuStrip.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // TrayNotifyIcon
+            // 
+            this.TrayNotifyIcon.ContextMenuStrip = this.TrayContextMenuStrip;
+            this.TrayNotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("TrayNotifyIcon.Icon")));
+            this.TrayNotifyIcon.Text = "WFAAgent";
+            this.TrayNotifyIcon.Visible = true;
+            this.TrayNotifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.TrayNotifyIcon_MouseDoubleClick);
+            // 
+            // TrayContextMenuStrip
+            // 
+            this.TrayContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ExitToolStripMenuItem});
+            this.TrayContextMenuStrip.Name = "TrayContextMenuStrip";
+            this.TrayContextMenuStrip.Size = new System.Drawing.Size(99, 26);
+            // 
+            // ExitToolStripMenuItem
+            // 
+            this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
+            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
+            this.ExitToolStripMenuItem.Text = "종료";
+            this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
+            // 
+            // MainForm
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Text = "Form1";
+            this.ClientSize = new System.Drawing.Size(284, 141);
+            this.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "MainForm";
+            this.Text = "MainForm";
+            this.TrayContextMenuStrip.ResumeLayout(false);
+            this.ResumeLayout(false);
+
         }
 
         #endregion
+
+        private System.Windows.Forms.NotifyIcon TrayNotifyIcon;
+        private System.Windows.Forms.ContextMenuStrip TrayContextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem ExitToolStripMenuItem;
     }
 }
 
