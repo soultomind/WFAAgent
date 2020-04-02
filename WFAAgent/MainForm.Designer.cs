@@ -71,6 +71,8 @@
             this.MinimizeBox = false;
             this.Name = "MainForm";
             this.Text = "MainForm";
+            this.Load += new System.EventHandler(this.MainForm_Load);
+            this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.TrayContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 
