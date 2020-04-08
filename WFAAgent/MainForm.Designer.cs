@@ -33,6 +33,7 @@
             this.TrayNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.TrayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ShowMonitoringDlgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TrayContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -47,16 +48,24 @@
             // TrayContextMenuStrip
             // 
             this.TrayContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ShowMonitoringDlgToolStripMenuItem,
             this.ExitToolStripMenuItem});
             this.TrayContextMenuStrip.Name = "TrayContextMenuStrip";
-            this.TrayContextMenuStrip.Size = new System.Drawing.Size(99, 26);
+            this.TrayContextMenuStrip.Size = new System.Drawing.Size(153, 70);
             // 
             // ExitToolStripMenuItem
             // 
             this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
-            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
+            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.ExitToolStripMenuItem.Text = "종료";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
+            // 
+            // ShowMonitoringDlgToolStripMenuItem
+            // 
+            this.ShowMonitoringDlgToolStripMenuItem.Name = "ShowMonitoringDlgToolStripMenuItem";
+            this.ShowMonitoringDlgToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.ShowMonitoringDlgToolStripMenuItem.Text = "모니터링";
+            this.ShowMonitoringDlgToolStripMenuItem.Click += new System.EventHandler(this.ShowMonitoringDlgToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -83,6 +92,7 @@
         private System.Windows.Forms.NotifyIcon TrayNotifyIcon;
         private System.Windows.Forms.ContextMenuStrip TrayContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem ExitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ShowMonitoringDlgToolStripMenuItem;
     }
 }
 

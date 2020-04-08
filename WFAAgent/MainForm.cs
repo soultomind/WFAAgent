@@ -31,6 +31,7 @@ namespace WFAAgent
         }
 
         public InfoDialog InfoDialog { get; set; }
+        public MonitoringDlg MonitoringDlg { get; set; }
 
         private void TrayNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
@@ -47,6 +48,22 @@ namespace WFAAgent
             {
                 InfoDialog.Show();
             }
+        }
+
+        private void ShowMonitoringDlgToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (MonitoringDlg == null)
+            {
+                MonitoringDlg = new MonitoringDlg();
+                MonitoringDlg.FormClosed += MonitoringDlg_FormClosed;
+            }
+
+            MonitoringDlg.Show();
+        }
+
+        private void MonitoringDlg_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            MonitoringDlg = null;
         }
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)

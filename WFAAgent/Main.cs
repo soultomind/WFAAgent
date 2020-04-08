@@ -28,8 +28,6 @@ namespace WFAAgent
             Application.Run(Form = new MainForm());
         }
 
-        #region Static Method
-
         public static string EntryAssemblyVersion
         {
             get
@@ -77,7 +75,5 @@ namespace WFAAgent
             }
             return false;
         }
-
-        #endregion
     }
 }
