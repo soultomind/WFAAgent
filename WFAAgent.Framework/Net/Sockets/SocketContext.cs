@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WFAAgent.Framework
+namespace WFAAgent.Framework.Net.Sockets
 {
-    public class DefaultSocket
+    public class SocketContext
     {
 
     }

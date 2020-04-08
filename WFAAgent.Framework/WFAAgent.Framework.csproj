@@ -48,7 +48,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DefaultSocket.cs" />
+    <Compile Include="Net\Sockets\ClientSocket.cs" />
+    <Compile Include="Net\Sockets\DefaultSocket.cs" />
+    <Compile Include="Net\Sockets\EventHandler.cs" />
+    <Compile Include="Net\Sockets\ServerSocket.cs" />
+    <Compile Include="Net\Sockets\SocketContext.cs" />
+    <Compile Include="Net\Sockets\SocketEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
