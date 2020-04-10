@@ -70,6 +70,7 @@
     <Compile Include="Dialogs\MonitoringDlg.Designer.cs">
       <DependentUpon>MonitoringDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="ExecuteArgs.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>

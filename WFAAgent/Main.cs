@@ -10,6 +10,7 @@ namespace WFAAgent
         private static string _sEntryAssemblyVersion;
         private static ILog _sLog = LogManager.GetLogger(typeof(Main));
         private static string[] _sArgs;
+        private static ExecuteArgs _sExecuteArgs;
         private static MainForm _sMainForm;
         public Main()
         {
@@ -25,6 +26,13 @@ namespace WFAAgent
         public void Run(string[] args)
         {
             Args = args;
+            
+            Run(ExecuteArgs = ExecuteArgs.Parse(args));
+            
+        }
+
+        private void Run(ExecuteArgs args)
+        {
             Application.Run(Form = new MainForm());
         }
 
@@ -46,6 +54,12 @@ namespace WFAAgent
         public static ILog Log
         {
             get { return _sLog; }
+        }
+
+        public static ExecuteArgs ExecuteArgs
+        {
+            get { return _sExecuteArgs; }
+            set { _sExecuteArgs = value; }
         }
 
         public static string[] Args
