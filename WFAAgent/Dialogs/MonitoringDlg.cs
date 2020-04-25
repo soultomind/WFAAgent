@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace WFAAgent.Dialogs
 {
-    public partial class MonitoringDlg : Form
+    internal partial class MonitoringDlg : Form
     {
         public MonitoringDlg()
         {

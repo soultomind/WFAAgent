@@ -73,7 +73,7 @@ namespace WFAAgent
             get { return _sMainForm; }
             private set { _sMainForm = value; }
         }
-        public static bool OpenForm(string formText)
+        public static bool OpenForm(string text)
         {
             if (Application.OpenForms.Count == 1)
             {
@@ -82,7 +82,7 @@ namespace WFAAgent
 
             foreach (Form openForm in Application.OpenForms)
             {
-                if (!object.ReferenceEquals(Form, openForm) && openForm.Text == formText)
+                if (!object.ReferenceEquals(Form, openForm) && openForm.Text == text)
                 {
                     return true;
                 }

@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace WFAAgent.Dialogs
 {
-    public partial class InfoDialog : Form
+    internal partial class InfoDialog : Form
     {
         public InfoDialog()
         {

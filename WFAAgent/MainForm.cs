@@ -30,8 +30,8 @@ namespace WFAAgent
             Win32Util.RefreshTrayArea();
         }
 
-        public InfoDialog InfoDialog { get; set; }
-        public MonitoringDlg MonitoringDlg { get; set; }
+        internal InfoDialog InfoDialog { get; set; }
+        internal MonitoringDlg MonitoringDlg { get; set; }
 
         private void TrayNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
