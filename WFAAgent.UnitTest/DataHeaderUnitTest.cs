@@ -14,8 +14,13 @@ namespace WFAAgent.UnitTest
         {
             Trace.WriteLine("DataHeaderUnitTest");
 
+            int inputType = 0xFF;
             string inputData = "SoulToMind";
-            DataHeader dataHeader = new DataHeader(0xFF, Encoding.UTF8.GetBytes(inputData), TransmissionData.Text);
+            TransmissionData inputTransmissionData = TransmissionData.Text;
+            DataHeader dataHeader = new DataHeader(
+                inputType, 
+                Encoding.UTF8.GetBytes(inputData), 
+                inputTransmissionData);
 
             byte[] createBuffer = dataHeader.CreateBuffer();
 
@@ -28,6 +33,14 @@ namespace WFAAgent.UnitTest
             int length = BitConverter.ToInt32(headerBuffer2, 0);
             byte[] dataBuffer = new byte[length];
             Array.Copy(createBuffer, headerBuffer1.Length + headerBuffer2.Length, dataBuffer, 0, dataBuffer.Length);
+
+            int outputType = headerBuffer1[0];
+            Trace.WriteLine("OutputType=" + outputType);
+            Assert.AreEqual(inputType, outputType, 0);
+
+            TransmissionData outputTransmissiondata = (TransmissionData)headerBuffer1[1];
+            Trace.WriteLine("OutputTransmissionData=" + outputTransmissiondata);
+            Assert.AreEqual(inputTransmissionData, outputTransmissiondata);
 
             string outputData = Encoding.UTF8.GetString(dataBuffer);
             Trace.WriteLine("OutputData=" + outputData);
