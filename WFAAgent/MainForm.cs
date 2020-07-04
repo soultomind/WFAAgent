@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows.Forms;
 using WFAAgent.Dialogs;
 
@@ -30,7 +31,12 @@ namespace WFAAgent
             Win32Util.RefreshTrayArea();
         }
 
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
         internal InfoDialog InfoDialog { get; set; }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
         internal MonitoringDlg MonitoringDlg { get; set; }
 
         private void TrayNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
