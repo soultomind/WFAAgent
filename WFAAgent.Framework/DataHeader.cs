@@ -23,6 +23,7 @@ namespace WFAAgent.Framework
 
         public DataHeader(int type, byte[] buffer, TransmissionData transmissionData)
         {
+            DataContext.CheckedType(type);
             this.type = type;
             this.buffer = buffer;
             this.transmissionData = transmissionData;

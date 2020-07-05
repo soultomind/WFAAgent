@@ -12,5 +12,13 @@ namespace WFAAgent.Framework
         public const int Min = 0;
 
         public const int UserData = 0x1;
+
+        public static void CheckedType(int value)
+        {
+            if (!(Max >= value && Min <= value))
+            {
+                throw new ArgumentException("Usage value 0 - 255");
+            }
+        }
     }
 }
