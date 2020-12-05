@@ -7,11 +7,16 @@ namespace WFAAgent
 {
     public partial class MainForm : Form
     {
+        private bool isAgentStart;
+        private Exception agentStartException;
+        private IAgentManager agentManager;
         public MainForm()
         {
             InitializeComponent();
 
             InitializeTray();
+
+            agentManager = new AgentManager();
         }
 
         private void InitializeTray()
@@ -23,12 +28,26 @@ namespace WFAAgent
 
         private void MainForm_Load(object sender, EventArgs e)
         {
-
+            try
+            {
+                agentManager.StartServer();
+                isAgentStart = true;
+            }
+            catch (Exception ex)
+            {
+                isAgentStart = false;
+                agentStartException = ex;
+            }
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
             Win32Util.RefreshTrayArea();
+
+            if (!isAgentStart)
+            {
+                // TODO: 에외 출력
+            }
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -37,7 +56,7 @@ namespace WFAAgent
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         [Browsable(false)]
-        internal MonitoringDlg MonitoringDlg { get; set; }
+        internal MonitoringDlg MonitoringDialog { get; set; }
 
         private void TrayNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
@@ -58,18 +77,18 @@ namespace WFAAgent
 
         private void ShowMonitoringDlgToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (MonitoringDlg == null)
+            if (MonitoringDialog == null)
             {
-                MonitoringDlg = new MonitoringDlg();
-                MonitoringDlg.FormClosed += MonitoringDlg_FormClosed;
+                MonitoringDialog = new MonitoringDlg();
+                MonitoringDialog.FormClosed += MonitoringDlg_FormClosed;
             }
 
-            MonitoringDlg.Show();
+            MonitoringDialog.Show();
         }
 
         private void MonitoringDlg_FormClosed(object sender, FormClosedEventArgs e)
         {
-            MonitoringDlg = null;
+            MonitoringDialog = null;
         }
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)

@@ -1,8 +1,8 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Diagnostics;
-using WFAAgent.Framework;
 using System.Text;
+using WFAAgent.Framework;
 
 namespace WFAAgent.UnitTest
 {

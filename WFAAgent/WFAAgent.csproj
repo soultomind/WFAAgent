@@ -71,6 +71,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AgentManager.cs" />
     <Compile Include="Dialogs\InfoDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -115,6 +116,9 @@
     <None Include="app.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
@@ -145,6 +149,9 @@
       <Project>{eeadbd41-b67b-492c-b8df-fb16b6182c96}</Project>
       <Name>WFAAgent.Framework</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="WebSocket\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
