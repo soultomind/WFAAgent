@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace TestClient.Dialogs
+namespace TestClient.UI
 {
     public partial class InfoDialog : Form
     {

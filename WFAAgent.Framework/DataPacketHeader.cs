@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WFAAgent.Framework
 {
-    public class DataHeader
+    public class DataPacketHeader
     {
         private int type;
         private byte[] buffer;
@@ -14,14 +14,14 @@ namespace WFAAgent.Framework
 
         private int dataLength;
         private int dataOffset;
-        
-        public DataHeader(int type, byte[] buffer)
+
+        public DataPacketHeader(int type, byte[] buffer)
             : this(type, buffer, TransmissionData.Text)
         {
-            
+
         }
 
-        public DataHeader(int type, byte[] buffer, TransmissionData transmissionData)
+        public DataPacketHeader(int type, byte[] buffer, TransmissionData transmissionData)
         {
             DataContext.CheckedType(type);
             this.type = type;
@@ -78,11 +78,5 @@ namespace WFAAgent.Framework
         {
             get { return dataLength; }
         }
-    }
-
-    public enum TransmissionData
-    {
-        Text = 0,
-        Binary = 1
     }
 }

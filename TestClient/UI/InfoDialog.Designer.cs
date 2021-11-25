@@ -1,4 +1,4 @@
-﻿namespace TestClient.Dialogs
+﻿namespace TestClient.UI
 {
     partial class InfoDialog
     {

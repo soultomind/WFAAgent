@@ -17,7 +17,7 @@ namespace WFAAgent.UnitTest
             int inputType = 0xFF;
             string inputData = "SoulToMind";
             TransmissionData inputTransmissionData = TransmissionData.Text;
-            DataHeader dataHeader = new DataHeader(
+            DataPacketHeader dataHeader = new DataPacketHeader(
                 inputType, 
                 Encoding.UTF8.GetBytes(inputData), 
                 inputTransmissionData);

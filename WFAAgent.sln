@@ -20,6 +20,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonLibrary", "..\CommonL
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WFAAgent.UnitTest", "WFAAgent.UnitTest\WFAAgent.UnitTest.csproj", "{9F1E971A-C57F-4D73-B3DF-1CA1318F8A3B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{8AA85BC8-F053-401C-84D1-A1752D32B34C}"
+	ProjectSection(SolutionItems) = preProject
+		Test.html = Test.html
+		WFAAgent.js = WFAAgent.js
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

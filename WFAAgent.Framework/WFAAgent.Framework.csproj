@@ -30,16 +30,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="log4net, Version=2.0.8.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
-      <HintPath>..\packages\log4net.2.0.8\lib\net45-full\log4net.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="log4net, Version=2.0.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.13\lib\net45\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -51,13 +52,14 @@
     <Compile Include="DataContext.cs" />
     <Compile Include="DataType.cs" />
     <Compile Include="Net\Sockets\ClientSocket.cs" />
-    <Compile Include="DataHeader.cs" />
+    <Compile Include="DataPacketHeader.cs" />
     <Compile Include="Net\Sockets\DefaultSocket.cs" />
     <Compile Include="Net\Sockets\EventHandler.cs" />
     <Compile Include="Net\Sockets\ServerSocket.cs" />
     <Compile Include="Net\Sockets\SocketContext.cs" />
     <Compile Include="Net\Sockets\SocketEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TransmissionData.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

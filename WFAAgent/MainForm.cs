@@ -18,6 +18,12 @@ namespace WFAAgent
             InitializeTaskbarTray();
 
             agentManager = new AgentManager();
+            agentManager.MessageObjectReceived += AgentManager_MessageObjectReceived; ;
+        }
+
+        private void AgentManager_MessageObjectReceived(object messageObject)
+        {
+            Toolkit.TraceWriteLine(messageObject.ToString());
         }
 
         private void InitializeTaskbarTray()
@@ -96,5 +102,7 @@ namespace WFAAgent
         {
             Application.Exit();
         }
+
+
     }
 }

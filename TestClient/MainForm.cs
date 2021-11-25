@@ -1,7 +1,7 @@
 ﻿using CommonLibrary;
 using System;
 using System.Windows.Forms;
-using TestClient.Dialogs;
+using TestClient.UI;
 
 namespace TestClient
 {

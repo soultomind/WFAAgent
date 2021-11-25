@@ -13,19 +13,26 @@ namespace WFAAgent
     internal class AgentManager : IAgentManager
     {
         private AgentWebSocketServer server;
+        public event MessageObjectReceivedEventHandler MessageObjectReceived;
         public void StartServer()
         {
             if (server == null)
             {
                 server = new AgentWebSocketServer();
+                server.MessageObjectReceived += OnMessageObjectReceived;
             }
             
-            server.Start();
+           server.Start();
         }
 
         public void StopServer()
         {
             server.Stop();
+        }
+
+        internal void OnMessageObjectReceived(object messageObject)
+        {
+            MessageObjectReceived?.Invoke(messageObject);
         }
     }
 }

@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script>
+        var ws = null;
+        function wsConnect() {
+            if (ws == null) {
+                ws = new WebSocket("ws://127.0.0.1:33000/WFAAgent");
+            }
+
+            ws.onmessage = function (e) {
+                alert(JSON.stringify(e));
+            }
+
+            ws.onopen = function () {
+                alert("open");
+            }
+
+            ws.onclose = function () {
+                alert("close");
+            }
+        }
+    </script>
+</head>
+<body>
+    <input type="button" value="연결" onclick="wsConnect()"/>
+</body>
+</html>
