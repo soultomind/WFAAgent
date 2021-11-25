@@ -60,12 +60,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WFAAgent.Common\WFAAgent.Common.csproj">
-      <Project>{2b6cdee3-568b-4ad3-a4cf-cae006498078}</Project>
-      <Name>WFAAgent.Common</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

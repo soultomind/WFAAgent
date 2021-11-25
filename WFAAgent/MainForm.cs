@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CommonLibrary;
+using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using WFAAgent.Dialogs;
@@ -14,12 +15,12 @@ namespace WFAAgent
         {
             InitializeComponent();
 
-            InitializeTray();
+            InitializeTaskbarTray();
 
             agentManager = new AgentManager();
         }
 
-        private void InitializeTray()
+        private void InitializeTaskbarTray()
         {
             this.WindowState = FormWindowState.Minimized;
             this.ShowInTaskbar = false;
@@ -42,7 +43,7 @@ namespace WFAAgent
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
-            Win32Util.RefreshTrayArea();
+            Taskbar.RefreshTrayArea();
 
             if (!isAgentStart)
             {

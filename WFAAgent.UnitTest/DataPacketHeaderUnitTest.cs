@@ -7,12 +7,12 @@ using WFAAgent.Framework;
 namespace WFAAgent.UnitTest
 {
     [TestClass]
-    public class DataHeaderUnitTest
+    public class DataPacketHeaderUnitTest
     {
         [TestMethod]
         public void Run()
         {
-            Trace.WriteLine("DataHeaderUnitTest");
+            Trace.WriteLine(typeof(DataPacketHeaderUnitTest).Name);
 
             int inputType = 0xFF;
             string inputData = "SoulToMind";

@@ -1,14 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using CommonLibrary;
+using System;
 using System.Windows.Forms;
 using TestClient.Dialogs;
-using WFAAgent;
 
 namespace TestClient
 {
@@ -18,10 +11,10 @@ namespace TestClient
         {
             InitializeComponent();
 
-            InitializeTray();
+            InitializeTaskbarTray();
         }
 
-        private void InitializeTray()
+        private void InitializeTaskbarTray()
         {
             this.WindowState = FormWindowState.Minimized;
             this.ShowInTaskbar = false;
@@ -35,7 +28,7 @@ namespace TestClient
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
-            Win32Util.RefreshTrayArea();
+            Taskbar.RefreshTrayArea();
         }
 
         private void TrayNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)

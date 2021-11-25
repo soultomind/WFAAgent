@@ -6,27 +6,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WFAAgent.WebSocket;
 
 namespace WFAAgent
 {
     internal class AgentManager : IAgentManager
     {
-        private WebSocketServer webSocketServer;
+        private AgentWebSocketServer server;
         public void StartServer()
         {
-            if (webSocketServer == null)
+            if (server == null)
             {
-                var serverConfig = new ServerConfig();
-                
-                webSocketServer = new WebSocketServer();
+                server = new AgentWebSocketServer();
             }
             
-            webSocketServer.Start();
+            server.Start();
         }
 
         public void StopServer()
         {
-            webSocketServer.Stop();
+            server.Stop();
         }
     }
 }
