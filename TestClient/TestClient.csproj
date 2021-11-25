@@ -95,6 +95,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\CommonLibrary\CommonLibrary\CommonLibrary.csproj">
+      <Project>{A2902C7D-7EB2-4006-89BE-A98FB431CE09}</Project>
+      <Name>CommonLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\WFAAgent.Framework\WFAAgent.Framework.csproj">
       <Project>{eeadbd41-b67b-492c-b8df-fb16b6182c96}</Project>
       <Name>WFAAgent.Framework</Name>
