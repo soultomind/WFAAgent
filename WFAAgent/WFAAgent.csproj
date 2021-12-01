@@ -84,6 +84,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AgentManager.cs" />
+    <Compile Include="Core\EventProcessor.cs" />
+    <Compile Include="Core\EventProcessorManager.cs" />
+    <Compile Include="Core\IEventProcessor.cs" />
+    <Compile Include="Message\DetailMessageItem.cs" />
+    <Compile Include="Core\ItemQueue.cs" />
+    <Compile Include="Message\MessageItem.cs" />
+    <Compile Include="Core\MessageItemQueueAppendWorker.cs" />
     <Compile Include="MessageObjectReceivedEventHandler.cs" />
     <Compile Include="UI\InfoDialog.cs">
       <SubType>Form</SubType>
@@ -109,6 +116,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebSocket\AgentWebSocketServer.cs" />
+    <Compile Include="WebSocket\WebSocketEvent.cs" />
     <EmbeddedResource Include="UI\InfoDialog.resx">
       <DependentUpon>InfoDialog.cs</DependentUpon>
     </EmbeddedResource>

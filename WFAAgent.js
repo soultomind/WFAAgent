@@ -1,4 +1,3 @@
-
 function WFAAgent(config) {
 
     this._bWsInitialize = false;
@@ -106,8 +105,13 @@ WFAAgent.prototype.wsConnect = function () {
 
         this._bWsConnect = true;
     } catch (e) {
-        error("WebSocket 생성 실패");
+        error("Create failed WebSocket");
         error(e.stack);
     }
 };
 
+WFAAgent.prototype.wsSend = function (message) {
+    if (this._bWsConnect) {
+        this._WebSocket.send(message);
+    }
+}

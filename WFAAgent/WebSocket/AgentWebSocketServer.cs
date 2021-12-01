@@ -1,7 +1,9 @@
-﻿using SuperSocket.SocketBase.Config;
+﻿using Newtonsoft.Json.Linq;
+using SuperSocket.SocketBase.Config;
 using SuperSocket.WebSocket;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +24,11 @@ namespace WFAAgent.WebSocket
         {
 
         }
+
+        private void CallbakMessage(string message)
+        {
+            MessageObjectReceived?.Invoke(message);
+        }
         public void Start()
         {
             if (Server == null)
@@ -34,15 +41,19 @@ namespace WFAAgent.WebSocket
                 ServerConfig.Ip = "127.0.0.1";
                 ServerConfig.Port = 33000;
                 ServerConfig.Mode = SuperSocket.SocketBase.SocketMode.Tcp;
+                ServerConfig.ListenBacklog = 1000;
                 Server = new WebSocketServer();
                 Server.Setup(RootConfig, ServerConfig);
             }
 
             Server.NewSessionConnected += Server_NewSessionConnected;
-            Server.NewMessageReceived += Server_NewMessageReceived;
-            Server.NewDataReceived += Server_NewDataReceived;
+            Server.NewMessageReceived += Server_NewMessageDataReceived;
+            Server.NewDataReceived += Server_NewBinaryDataReceived;
             Server.SessionClosed += Server_SessionClosed;
             Server.Start();
+
+            CallbakMessage("Server Start");
+            CallbakMessage("ServerInfo=" + Server.ToString());
         }
         
         public void Stop()
@@ -57,20 +68,35 @@ namespace WFAAgent.WebSocket
 
         private void Server_NewSessionConnected(WebSocketSession session)
         {
-            MessageObjectReceived?.Invoke("Server_NewSessionConnected=" + session.SessionID);
+            CallbakMessage("Server_NewSessionConnected=" + session.SessionID);
         }
 
-        private void Server_NewMessageReceived(WebSocketSession session, string value)
+        private void Server_NewMessageDataReceived(WebSocketSession session, string message)
         {
-            MessageObjectReceived?.Invoke("Server_NewMessageReceived=" + value);
+            CallbakMessage("Server_NewMessageDataReceived=" + message);
+
+            try
+            {
+                JObject messageObj = JObject.Parse(message);
+                string eventProcessorName = messageObj[WebSocketEvent.EventName].ToObject<string>();
+            }
+            catch (Newtonsoft.Json.JsonException ex)
+            {
+                session.Send("It's unknown data.");
+                return;
+            }
+            catch (Exception ex)
+            {
+                session.Send(ex.Message);
+            }
         }
-        private void Server_NewDataReceived(WebSocketSession session, byte[] value)
+        private void Server_NewBinaryDataReceived(WebSocketSession session, byte[] binaryData)
         {
-            MessageObjectReceived?.Invoke("Server_NewMessageReceived=" + value);
+            CallbakMessage("Server_NewBinaryDataReceived=" + binaryData);
         }
         private void Server_SessionClosed(WebSocketSession session, SuperSocket.SocketBase.CloseReason value)
         {
-            MessageObjectReceived?.Invoke("Server_SessionClosed=" + value);
+            CallbakMessage("Server_SessionClosed=" + value);
         }
 
         #endregion

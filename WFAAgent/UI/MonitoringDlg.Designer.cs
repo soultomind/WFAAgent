@@ -29,22 +29,39 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitoringDlg));
+            this._RichTextBox = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
+            // 
+            // _RichTextBox
+            // 
+            this._RichTextBox.BackColor = System.Drawing.Color.Black;
+            this._RichTextBox.ForeColor = System.Drawing.Color.White;
+            this._RichTextBox.Location = new System.Drawing.Point(12, 12);
+            this._RichTextBox.Name = "_RichTextBox";
+            this._RichTextBox.Size = new System.Drawing.Size(560, 225);
+            this._RichTextBox.TabIndex = 0;
+            this._RichTextBox.Text = "";
             // 
             // MonitoringDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(584, 411);
+            this.Controls.Add(this._RichTextBox);
             this.Font = new System.Drawing.Font("맑은 고딕", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "MonitoringDlg";
             this.Text = "WFAAgent - Monitoring";
+            this.Load += new System.EventHandler(this.MonitoringDlg_Load);
+            this.Shown += new System.EventHandler(this.MonitoringDlg_Shown);
             this.ResumeLayout(false);
 
         }
 
         #endregion
+
+        private System.Windows.Forms.RichTextBox _RichTextBox;
     }
 }

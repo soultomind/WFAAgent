@@ -5,6 +5,11 @@
     <title></title>
     <script type="text/javascript" src="./WFAAgent.js"></script>
     <script>
+        function wsStatus(value) {
+            var innerText = "Connected : " + value;
+            document.getElementById("wsStatus").innerText = innerText;
+        }
+
         var config = {
             wsAutoConnect: true,
             wsSecure : false,
@@ -12,27 +17,44 @@
 
         var agent = new WFAAgent(config);
         agent.setWsOnOpenEventHandler(function (e) {
-            alert("OnOpen");
+            wsStatus("O");
         });
 
         agent.setWsOnErrorEventHandler(function (e) {
-            alert("OnError");
+            
         });
 
         agent.setWsOnMessageEventHandler(function (e) {
-            alert("OnMessage");
+            
         });
 
         agent.setWsOnCloseEventHandler(function (e) {
-            alert("OnClose");
+            wsStatus("X");
         });
 
         function wsConnect() {
             agent.wsConnect();
         }
+
+        function wsSend() {
+            var text = document.getElementById("wsSendText").value;
+            agent.wsSend(text);
+        }
     </script>
 </head>
 <body>
-    <input type="button" value="연결" onclick="wsConnect()"/>
+    <div>
+        <p id="wsStatus">Connected : </p>
+        <input type="button" value="new WebSocket" onclick="wsConnect()" />
+    </div>
+    
+    <div>
+        <div>
+            <textarea id="wsSendText" cols="60" rows="20">{"eventName":"RequestMainHandle"}</textarea>
+        </div>
+        <div>
+            <input type="button" value="WebSocket.Send()" onclick="wsSend()" />
+        </div>
+    </div>
 </body>
 </html>

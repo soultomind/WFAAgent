@@ -2,7 +2,9 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using WFAAgent.Core;
 using WFAAgent.Dialogs;
+using WFAAgent.Message;
 
 namespace WFAAgent
 {
@@ -11,6 +13,8 @@ namespace WFAAgent
         private bool _IsAgentStart;
         private Exception _AgentStartException;
         private IAgentManager _AgentManager;
+
+        private MessageItemQueueAppendWorker<MessageItem> _MessageItemQueueAppendWorker;
         public MainForm()
         {
             InitializeComponent();
@@ -18,7 +22,10 @@ namespace WFAAgent
             InitializeTaskbarTray();
 
             _AgentManager = new AgentManager();
-            _AgentManager.MessageObjectReceived += AgentManager_MessageObjectReceived; ;
+            _AgentManager.MessageObjectReceived += AgentManager_MessageObjectReceived;
+
+            _MessageItemQueueAppendWorker = new MessageItemQueueAppendWorker<MessageItem>();
+            _MessageItemQueueAppendWorker.MessageItemReceived += MessageItemQueueAppendWorker_MessageItemReceived;
         }
 
         private void AgentManager_MessageObjectReceived(object messageObject)
@@ -28,7 +35,31 @@ namespace WFAAgent
 #else
             Toolkit.TraceWriteLine(messageObject.ToString());
 #endif
+            if (messageObject is string)
+            {
+                string message = messageObject.ToString();
+                _MessageItemQueueAppendWorker.Enqueue(new MessageItem() { Message = message });
+            }
+            else 
+            {
+                MessageItem messageItem = messageObject as MessageItem;
+                _MessageItemQueueAppendWorker.Enqueue(messageItem);
+            }
+        }
 
+        private void MessageItemQueueAppendWorker_MessageItemReceived(MessageItem item)
+        {
+            if (MonitoringDialog != null && !MonitoringDialog.IsDisposed)
+            {
+                if (item is DetailMessageItem)
+                {
+
+                }
+                else
+                {
+                    MonitoringDialog.AppendMessageLine(item.Message);
+                }
+            }
         }
 
         private void InitializeTaskbarTray()
@@ -92,10 +123,16 @@ namespace WFAAgent
             if (MonitoringDialog == null)
             {
                 MonitoringDialog = new MonitoringDlg();
+                MonitoringDialog.Shown += MonitoringDialog_Shown;
                 MonitoringDialog.FormClosed += MonitoringDlg_FormClosed;
             }
 
             MonitoringDialog.Show();
+        }
+
+        private void MonitoringDialog_Shown(object sender, EventArgs e)
+        {
+            _MessageItemQueueAppendWorker.Start();
         }
 
         private void MonitoringDlg_FormClosed(object sender, FormClosedEventArgs e)
@@ -105,9 +142,17 @@ namespace WFAAgent
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            if (MonitoringDialog != null && !MonitoringDialog.IsDisposed)
+            {
+                MonitoringDialog.Close();
+            }
+
+            if (_MessageItemQueueAppendWorker.IsStart)
+            {
+                _MessageItemQueueAppendWorker.Stop();
+            }
+
             Application.Exit();
         }
-
-
     }
 }
