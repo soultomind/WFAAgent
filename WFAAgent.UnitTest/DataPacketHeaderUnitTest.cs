@@ -14,13 +14,10 @@ namespace WFAAgent.UnitTest
         {
             Trace.WriteLine(typeof(DataPacketHeaderUnitTest).Name);
 
-            int inputType = 0xFF;
+            int inputType = DataContext.UserData;
             string inputData = "SoulToMind";
             TransmissionData inputTransmissionData = TransmissionData.Text;
-            DataPacketHeader dataHeader = new DataPacketHeader(
-                inputType, 
-                Encoding.UTF8.GetBytes(inputData), 
-                inputTransmissionData);
+            DataPacketHeader dataHeader = new DataPacketHeader(inputType, Encoding.UTF8.GetBytes(inputData), inputTransmissionData);
 
             byte[] createBuffer = dataHeader.CreateBuffer();
 

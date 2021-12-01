@@ -8,22 +8,27 @@ namespace WFAAgent
 {
     public partial class MainForm : Form
     {
-        private bool isAgentStart;
-        private Exception agentStartException;
-        private IAgentManager agentManager;
+        private bool _IsAgentStart;
+        private Exception _AgentStartException;
+        private IAgentManager _AgentManager;
         public MainForm()
         {
             InitializeComponent();
 
             InitializeTaskbarTray();
 
-            agentManager = new AgentManager();
-            agentManager.MessageObjectReceived += AgentManager_MessageObjectReceived; ;
+            _AgentManager = new AgentManager();
+            _AgentManager.MessageObjectReceived += AgentManager_MessageObjectReceived; ;
         }
 
         private void AgentManager_MessageObjectReceived(object messageObject)
         {
+#if DEBUG
+            Toolkit.DebugWriteLine(messageObject.ToString());
+#else
             Toolkit.TraceWriteLine(messageObject.ToString());
+#endif
+
         }
 
         private void InitializeTaskbarTray()
@@ -37,13 +42,13 @@ namespace WFAAgent
         {
             try
             {
-                agentManager.StartServer();
-                isAgentStart = true;
+                _AgentManager.StartServer();
+                _IsAgentStart = true;
             }
             catch (Exception ex)
             {
-                isAgentStart = false;
-                agentStartException = ex;
+                _IsAgentStart = false;
+                _AgentStartException = ex;
             }
         }
 
@@ -51,7 +56,7 @@ namespace WFAAgent
         {
             Taskbar.RefreshTrayArea();
 
-            if (!isAgentStart)
+            if (!_IsAgentStart)
             {
                 // TODO: 에외 출력
             }

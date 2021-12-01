@@ -12,22 +12,22 @@ namespace WFAAgent
 {
     internal class AgentManager : IAgentManager
     {
-        private AgentWebSocketServer server;
+        private AgentWebSocketServer _AgentWebSocketServer;
         public event MessageObjectReceivedEventHandler MessageObjectReceived;
         public void StartServer()
         {
-            if (server == null)
+            if (_AgentWebSocketServer == null)
             {
-                server = new AgentWebSocketServer();
-                server.MessageObjectReceived += OnMessageObjectReceived;
+                _AgentWebSocketServer = new AgentWebSocketServer();
+                _AgentWebSocketServer.MessageObjectReceived += OnMessageObjectReceived;
             }
             
-           server.Start();
+           _AgentWebSocketServer.Start();
         }
 
         public void StopServer()
         {
-            server.Stop();
+            _AgentWebSocketServer.Stop();
         }
 
         internal void OnMessageObjectReceived(object messageObject)

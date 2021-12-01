@@ -10,6 +10,7 @@ namespace WFAAgent
     {
         void StartServer();
         void StopServer();
+
         event MessageObjectReceivedEventHandler MessageObjectReceived;
     }
 }
