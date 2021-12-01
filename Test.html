@@ -1,27 +1,34 @@
 ﻿<!DOCTYPE html>
-
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="utf-8" />
     <title></title>
+    <script type="text/javascript" src="./WFAAgent.js"></script>
     <script>
-        var ws = null;
+        var config = {
+            wsAutoConnect: true,
+            wsSecure : false,
+        };
+
+        var agent = new WFAAgent(config);
+        agent.setWsOnOpenEventHandler(function (e) {
+            alert("OnOpen");
+        });
+
+        agent.setWsOnErrorEventHandler(function (e) {
+            alert("OnError");
+        });
+
+        agent.setWsOnMessageEventHandler(function (e) {
+            alert("OnMessage");
+        });
+
+        agent.setWsOnCloseEventHandler(function (e) {
+            alert("OnClose");
+        });
+
         function wsConnect() {
-            if (ws == null) {
-                ws = new WebSocket("ws://127.0.0.1:33000/WFAAgent");
-            }
-
-            ws.onmessage = function (e) {
-                alert(JSON.stringify(e));
-            }
-
-            ws.onopen = function () {
-                alert("open");
-            }
-
-            ws.onclose = function () {
-                alert("close");
-            }
+            agent.wsConnect();
         }
     </script>
 </head>
