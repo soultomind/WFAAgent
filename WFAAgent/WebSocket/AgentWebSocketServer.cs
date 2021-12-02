@@ -87,7 +87,7 @@ namespace WFAAgent.WebSocket
                 IEventProcessor eventProcessor = null;
                 if (!EventProcessorManager.EventProcessors.ContainsKey(eventName))
                 {
-                    eventProcessor = EventProcessorManager.AddStartsWithByEventNameEventProcessor(eventName);
+                    eventProcessor = EventProcessorManager.AddStartsWithByEventName(eventName);
                     if (eventProcessor is ProcessStartEventProcessor)
                     {
                         ((ProcessStartEventProcessor)eventProcessor).Exited += AgentWebSocketServer_ProcessExited;

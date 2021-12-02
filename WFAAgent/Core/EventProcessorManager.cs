@@ -52,7 +52,7 @@ namespace WFAAgent.Core
             }
         }
 
-        internal IEventProcessor AddStartsWithByEventNameEventProcessor(string eventName)
+        internal IEventProcessor AddStartsWithByEventName(string eventName)
         {
             IEventProcessor eventProcessor = null;
             foreach (Type type in _sTypes)
