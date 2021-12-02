@@ -41,6 +41,14 @@
             wsStatus("X");
         });
 
+        agent.setProcessStartedEventHandler(function (e) {
+            window.console.info(JSON.stringify(e));
+        });
+
+        agent.setProcessExitedEventHandler(function (e) {
+            window.console.info(JSON.stringify(e));
+        });
+
         function wsConnect() {
             agent.wsConnect();
         }
@@ -53,7 +61,7 @@
 </head>
 <body>
     <div>
-        <h3>WFAAgent WebClient <span class="badge bg-secondary">SuperSocket</span></h3>
+        <h3>WFAAgent WebClient<span class="badge bg-secondary">Use SuperSocket</span></h3>
     </div>
     <div>
         <span id="wsStatus" class="badge bg-primary">Connected : </span>
@@ -64,7 +72,7 @@
     
     <div>
         <div>
-            <textarea id="wsSendText" cols="60" rows="20">{"eventName":"ProcessStart","data":{"fileName":"notepad.exe"}}</textarea>
+            <textarea id="wsSendText" cols="60" rows="10">{"eventName":"ProcessStart","data":{"fileName":"notepad.exe"}}</textarea>
         </div>
         <div>
             <button type="button" class="btn btn-primary" onclick="wsSend()">

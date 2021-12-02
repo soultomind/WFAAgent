@@ -11,6 +11,8 @@ function WFAAgent(config) {
     this._evtWsOnErrorEventHandler = null;
     this._evtWsOnMessageEventHandler = null;
     this._evtWsOnCloseEventHandler = null;
+    this._evtProcessStartedEventHandler = null;
+    this._evtProcessExitedEventHandler = null;
     this._WebSocket = null;
     this._bWsConnect = false;
     
@@ -68,6 +70,34 @@ WFAAgent.prototype.setWsOnCloseEventHandler = function (evt) {
     this._evtWsOnCloseEventHandler = evt;
 };
 
+WFAAgent.prototype.setProcessStartedEventHandler = function (evt) {
+    this._evtProcessStartedEventHandler = evt;
+};
+
+WFAAgent.prototype.setProcessExitedEventHandler = function (evt) {
+    this._evtProcessExitedEventHandler = evt;
+};
+
+WFAAgent.prototype.OnClientEventCallbackHandler = function (e) {
+    if (event.data instanceof ArrayBuffer) {
+        // TODO: Binary
+    } else {
+        var data = JSON.parse(e.data);
+        switch (data.eventName) {
+            case "ProcessStarted":
+                if (this._evtProcessStartedEventHandler != null) {
+                    this._evtProcessStartedEventHandler(data);
+                }
+                break;
+            case "ProcessExited":
+                if (this._evtProcessExitedEventHandler != null) {
+                    this._evtProcessExitedEventHandler(data);
+                }
+                break;
+        }
+    }
+};
+
 WFAAgent.prototype.wsConnect = function () {
     try {
         var url = "";
@@ -95,6 +125,8 @@ WFAAgent.prototype.wsConnect = function () {
             if (parent._evtWsOnMessageEventHandler != null) {
                 parent._evtWsOnMessageEventHandler(e);
             }
+
+            parent.OnClientEventCallbackHandler(e);
         }
 
         this._WebSocket.onclose = function (e) {
