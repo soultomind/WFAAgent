@@ -1,9 +1,10 @@
-﻿using CommonLibrary;
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using WFAAgent.Common;
 using WFAAgent.Core;
 using WFAAgent.Dialogs;
+using WFAAgent.Framework.Win32;
 using WFAAgent.Message;
 
 namespace WFAAgent

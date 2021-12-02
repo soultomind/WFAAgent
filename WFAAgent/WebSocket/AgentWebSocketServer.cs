@@ -2,23 +2,21 @@
 using SuperSocket.SocketBase.Config;
 using SuperSocket.WebSocket;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WFAAgent.Core;
+using WFAAgent.Framework.Net.Sockets;
 using WFAAgent.Message;
 
 namespace WFAAgent.WebSocket
 {
     public class AgentWebSocketServer
     {
-        public WebSocketServer Server { get; private set; }
+        public WebSocketServer WSServer { get; private set; }
         public ListenerConfig ListenerConfig { get; private set; }
         public RootConfig RootConfig { get; private set; }
         public ServerConfig ServerConfig { get; private set; }
+
+        public AgentTcpServer TCPServer { get; private set; }
 
         public EventProcessorManager EventProcessorManager { get; private set; }
         public event MessageObjectReceivedEventHandler MessageObjectReceived;
@@ -35,7 +33,7 @@ namespace WFAAgent.WebSocket
         }
         public void Start()
         {
-            if (Server == null)
+            if (WSServer == null)
             {
                 ListenerConfig = new ListenerConfig();
 
@@ -46,25 +44,31 @@ namespace WFAAgent.WebSocket
                 ServerConfig.Port = 33000;
                 ServerConfig.Mode = SuperSocket.SocketBase.SocketMode.Tcp;
                 ServerConfig.ListenBacklog = 1000;
-                Server = new WebSocketServer();
-                Server.Setup(RootConfig, ServerConfig);
+                WSServer = new WebSocketServer();
+                WSServer.Setup(RootConfig, ServerConfig);
             }
 
-            Server.NewSessionConnected += Server_NewSessionConnected;
-            Server.NewMessageReceived += Server_NewMessageDataReceived;
-            Server.NewDataReceived += Server_NewBinaryDataReceived;
-            Server.SessionClosed += Server_SessionClosed;
-            Server.Start();
+            WSServer.NewSessionConnected += Server_NewSessionConnected;
+            WSServer.NewMessageReceived += Server_NewMessageDataReceived;
+            WSServer.NewDataReceived += Server_NewBinaryDataReceived;
+            WSServer.SessionClosed += Server_SessionClosed;
+            WSServer.Start();
 
-            CallbackMessage("Server Start");
-            CallbackMessage("ServerInfo=" + Server.ToString());
+            CallbackMessage("========== Server Start ==========");
+            CallbackMessage("ServerInfo");
+            CallbackMessage(WSServer.ToInfoString());
+            CallbackMessage("========== Server Start ==========");
         }
         
         public void Stop()
         {
-            if (Server != null)
+            if (WSServer != null)
             {
-                Server.Stop();
+                WSServer.NewSessionConnected -= Server_NewSessionConnected;
+                WSServer.NewMessageReceived -= Server_NewMessageDataReceived;
+                WSServer.NewDataReceived -= Server_NewBinaryDataReceived;
+                WSServer.SessionClosed -= Server_SessionClosed;
+                WSServer.Stop();
             }
         }
 
@@ -73,6 +77,7 @@ namespace WFAAgent.WebSocket
         private void Server_NewSessionConnected(WebSocketSession session)
         {
             CallbackMessage("Server_NewSessionConnected=" + session.SessionID);
+            CallbackMessage("Server.SessionCount=" + WSServer.SessionCount);
         }
 
         private void Server_NewMessageDataReceived(WebSocketSession session, string message)
@@ -90,6 +95,7 @@ namespace WFAAgent.WebSocket
                     eventProcessor = EventProcessorManager.AddStartsWithByEventName(eventName);
                     if (eventProcessor is ProcessStartEventProcessor)
                     {
+                        ((ProcessStartEventProcessor)eventProcessor).Started += AgentWebSocketServer_ProcessStarted;
                         ((ProcessStartEventProcessor)eventProcessor).Exited += AgentWebSocketServer_ProcessExited;
                     }
                 }
@@ -97,9 +103,10 @@ namespace WFAAgent.WebSocket
                 {
                     eventProcessor = EventProcessorManager.EventProcessors[eventName];
                 }
-
+                
+                // TODO: ThreadPool 사용필요
                 JObject data = messageObj[WebSocketEventConstant.Data] as JObject;
-                eventProcessor.DoProcess(new EventData() { Data = data });
+                eventProcessor.DoProcess(new EventData() { Data = data, SessionID = session.SessionID });
             }
             catch (Newtonsoft.Json.JsonException ex)
             {
@@ -111,12 +118,70 @@ namespace WFAAgent.WebSocket
             }
         }
 
+        private void AgentWebSocketServer_ProcessStarted(object sender, EventArgs e)
+        {
+            WFAAgent.Core.ProcessStartInfo processStartInfo = sender as WFAAgent.Core.ProcessStartInfo;
+            CallbackMessage("===== AgentWebSocketServer_ProcessStarted =====");
+ 
+            if (TCPServer == null)
+            {
+                TCPServer = new AgentTcpServer();
+            }
+
+            JObject o = processStartInfo.ToStartedJson();
+            string text = o.ToString();
+            CallbackMessage(text);
+
+            WebSocketSession session = WSServer.GetSessionByID(processStartInfo.SessionID);   
+            if (session != null)
+            {
+                CallbackMessage("SessionID=" + processStartInfo.SessionID);
+                // TODO: ProcessStartInfo 데이터 정의
+                if (session.TrySend(text))
+                {
+                    CallbackMessage("전송성공");
+                }
+                else
+                {
+                    CallbackMessage("전송실패");
+                }
+            }
+            else
+            {
+                CallbackMessage("세션을 찾을 수 없습니다.");
+            }
+
+            CallbackMessage("===== AgentWebSocketServer_ProcessStarted =====\n");
+        }
+
         private void AgentWebSocketServer_ProcessExited(object sender, EventArgs e)
         {
-            Process process = sender as Process;
-            CallbackMessage("\n===== AgentWebSocketServer_ProcessExited =====");
-            CallbackMessage("FileName=" + process.StartInfo.FileName);
-            CallbackMessage("ExitTime=" + process.ExitTime);
+            WFAAgent.Core.ProcessStartInfo processStartInfo = sender as WFAAgent.Core.ProcessStartInfo;
+            CallbackMessage("===== AgentWebSocketServer_ProcessExited =====");
+
+            JObject o = processStartInfo.ToExitedJson();
+            string text = o.ToString();
+            CallbackMessage(text);
+
+            WebSocketSession session = WSServer.GetSessionByID(processStartInfo.SessionID);
+            if (session != null)
+            {
+                CallbackMessage("SessionID=" + processStartInfo.SessionID);
+                // TODO: ProcessStartInfo 데이터 정의
+                if (session.TrySend(text))
+                {
+                    CallbackMessage("전송성공");
+                }
+                else
+                {
+                    CallbackMessage("전송실패");
+                }
+            }
+            else
+            {
+                CallbackMessage("세션을 찾을 수 없습니다.");
+            }
+
             CallbackMessage("===== AgentWebSocketServer_ProcessExited =====\n");
         }
 
