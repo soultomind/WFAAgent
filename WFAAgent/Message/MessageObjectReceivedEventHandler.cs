@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WFAAgent
+namespace WFAAgent.Message
 {
     public delegate void MessageObjectReceivedEventHandler(object messageObject);
 }

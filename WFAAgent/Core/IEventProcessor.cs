@@ -8,6 +8,6 @@ namespace WFAAgent.Core
 {
     public interface IEventProcessor
     {
-        void Process();
+        void DoProcess(EventData eventData);
     }
 }

@@ -18,15 +18,5 @@ namespace WFAAgent.Core
         {
             _Messages = new Queue<T>();
         }
-
-        public void Enqueue(T message)
-        {
-            _Messages.Enqueue(message);
-        }
-
-        public T Dequeue()
-        {
-            return _Messages.Dequeue();
-        }
     }
 }

@@ -33,16 +33,21 @@ namespace WFAAgent.Core
         #region ItemQueue
         public void Enqueue(T message)
         {
-            _ItemQueue.Enqueue(message);
+            _ItemQueue.Messages.Enqueue(message);
         }
 
         public T Dequeue()
         {
-            return _ItemQueue.Dequeue();
+            return _ItemQueue.Messages.Dequeue();
+        }
+
+        public void Clear()
+        {
+            _ItemQueue.Messages.Clear();
         }
         #endregion
 
-        #region BackgroundWorker
+        #region Thread
 
         public void Start()
         {
@@ -64,7 +69,7 @@ namespace WFAAgent.Core
                 {
                     while (_ItemQueue.Messages.Count != 0)
                     {
-                        T message = _ItemQueue.Dequeue();
+                        T message = _ItemQueue.Messages.Dequeue();
                         MessageItemReceived?.Invoke(message);
                     }
                 }

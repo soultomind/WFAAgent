@@ -12,10 +12,10 @@ using WFAAgent.Core;
 
 namespace WFAAgent.Dialogs
 {
-    internal partial class MonitoringDlg : Form
+    internal partial class MonitoringDialog : Form
     {
         
-        public MonitoringDlg()
+        public MonitoringDialog()
         {
             InitializeComponent();
         }
@@ -34,7 +34,7 @@ namespace WFAAgent.Dialogs
         {
             if (_RichTextBox.InvokeRequired)
             {
-                _RichTextBox.Invoke(new Action(()=>
+                _RichTextBox.Invoke(new Action(() =>
                 {
                     _RichTextBox.AppendText(message);
                     _RichTextBox.AppendText(Environment.NewLine);

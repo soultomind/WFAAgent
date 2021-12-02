@@ -84,25 +84,27 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AgentManager.cs" />
+    <Compile Include="Core\EventData.cs" />
     <Compile Include="Core\EventProcessor.cs" />
     <Compile Include="Core\EventProcessorManager.cs" />
     <Compile Include="Core\IEventProcessor.cs" />
+    <Compile Include="Core\ProcessStartEventProcessor.cs" />
     <Compile Include="Message\DetailMessageItem.cs" />
     <Compile Include="Core\ItemQueue.cs" />
     <Compile Include="Message\MessageItem.cs" />
     <Compile Include="Core\MessageItemQueueAppendWorker.cs" />
-    <Compile Include="MessageObjectReceivedEventHandler.cs" />
+    <Compile Include="Message\MessageObjectReceivedEventHandler.cs" />
     <Compile Include="UI\InfoDialog.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="UI\InfoDialog.Designer.cs">
       <DependentUpon>InfoDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\MonitoringDlg.cs">
+    <Compile Include="UI\MonitoringDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\MonitoringDlg.Designer.cs">
-      <DependentUpon>MonitoringDlg.cs</DependentUpon>
+    <Compile Include="UI\MonitoringDialog.Designer.cs">
+      <DependentUpon>MonitoringDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="ExecuteArgs.cs" />
     <Compile Include="IAgentManager.cs" />
@@ -116,12 +118,12 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebSocket\AgentWebSocketServer.cs" />
-    <Compile Include="WebSocket\WebSocketEvent.cs" />
+    <Compile Include="WebSocket\WebSocketEventConstant.cs" />
     <EmbeddedResource Include="UI\InfoDialog.resx">
       <DependentUpon>InfoDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\MonitoringDlg.resx">
-      <DependentUpon>MonitoringDlg.cs</DependentUpon>
+    <EmbeddedResource Include="UI\MonitoringDialog.resx">
+      <DependentUpon>MonitoringDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

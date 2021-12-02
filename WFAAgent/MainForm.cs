@@ -26,41 +26,18 @@ namespace WFAAgent
 
             _MessageItemQueueAppendWorker = new MessageItemQueueAppendWorker<MessageItem>();
             _MessageItemQueueAppendWorker.MessageItemReceived += MessageItemQueueAppendWorker_MessageItemReceived;
+
         }
 
-        private void AgentManager_MessageObjectReceived(object messageObject)
-        {
-#if DEBUG
-            Toolkit.DebugWriteLine(messageObject.ToString());
-#else
-            Toolkit.TraceWriteLine(messageObject.ToString());
-#endif
-            if (messageObject is string)
-            {
-                string message = messageObject.ToString();
-                _MessageItemQueueAppendWorker.Enqueue(new MessageItem() { Message = message });
-            }
-            else 
-            {
-                MessageItem messageItem = messageObject as MessageItem;
-                _MessageItemQueueAppendWorker.Enqueue(messageItem);
-            }
-        }
+        #region Properties
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
+        internal InfoDialog InfoDialog { get; set; }
 
-        private void MessageItemQueueAppendWorker_MessageItemReceived(MessageItem item)
-        {
-            if (MonitoringDialog != null && !MonitoringDialog.IsDisposed)
-            {
-                if (item is DetailMessageItem)
-                {
-
-                }
-                else
-                {
-                    MonitoringDialog.AppendMessageLine(item.Message);
-                }
-            }
-        }
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
+        internal MonitoringDialog MonitoringDialog { get; set; }
+        #endregion
 
         private void InitializeTaskbarTray()
         {
@@ -93,13 +70,39 @@ namespace WFAAgent
             }
         }
 
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [Browsable(false)]
-        internal InfoDialog InfoDialog { get; set; }
+        private void AgentManager_MessageObjectReceived(object messageObject)
+        {
+#if DEBUG
+            Toolkit.DebugWriteLine(messageObject.ToString());
+#else
+            Toolkit.TraceWriteLine(messageObject.ToString());
+#endif
+            if (messageObject is string)
+            {
+                string message = messageObject.ToString();
+                _MessageItemQueueAppendWorker.Enqueue(new MessageItem() { Message = message });
+            }
+            else
+            {
+                MessageItem messageItem = messageObject as MessageItem;
+                _MessageItemQueueAppendWorker.Enqueue(messageItem);
+            }
+        }
 
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [Browsable(false)]
-        internal MonitoringDlg MonitoringDialog { get; set; }
+        private void MessageItemQueueAppendWorker_MessageItemReceived(MessageItem item)
+        {
+            if (MonitoringDialog != null && !MonitoringDialog.IsDisposed)
+            {
+                if (item is DetailMessageItem)
+                {
+
+                }
+                else
+                {
+                    MonitoringDialog.AppendMessageLine(item.Message);
+                }
+            }
+        }
 
         private void TrayNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
@@ -122,22 +125,12 @@ namespace WFAAgent
         {
             if (MonitoringDialog == null)
             {
-                MonitoringDialog = new MonitoringDlg();
+                MonitoringDialog = new MonitoringDialog();
                 MonitoringDialog.Shown += MonitoringDialog_Shown;
                 MonitoringDialog.FormClosed += MonitoringDlg_FormClosed;
             }
 
             MonitoringDialog.Show();
-        }
-
-        private void MonitoringDialog_Shown(object sender, EventArgs e)
-        {
-            _MessageItemQueueAppendWorker.Start();
-        }
-
-        private void MonitoringDlg_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            MonitoringDialog = null;
         }
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -154,5 +147,17 @@ namespace WFAAgent
 
             Application.Exit();
         }
+
+        #region MonitoringDialog
+        private void MonitoringDialog_Shown(object sender, EventArgs e)
+        {
+            _MessageItemQueueAppendWorker.Start();
+        }
+
+        private void MonitoringDlg_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            MonitoringDialog = null;
+        }
+        #endregion
     }
 }

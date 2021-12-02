@@ -4,9 +4,12 @@ using SuperSocket.WebSocket;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WFAAgent.Core;
+using WFAAgent.Message;
 
 namespace WFAAgent.WebSocket
 {
@@ -17,15 +20,16 @@ namespace WFAAgent.WebSocket
         public RootConfig RootConfig { get; private set; }
         public ServerConfig ServerConfig { get; private set; }
 
+        public EventProcessorManager EventProcessorManager { get; private set; }
         public event MessageObjectReceivedEventHandler MessageObjectReceived;
 
-
+        
         public AgentWebSocketServer()
         {
-
+            EventProcessorManager = new EventProcessorManager();
         }
 
-        private void CallbakMessage(string message)
+        private void CallbackMessage(string message)
         {
             MessageObjectReceived?.Invoke(message);
         }
@@ -52,8 +56,8 @@ namespace WFAAgent.WebSocket
             Server.SessionClosed += Server_SessionClosed;
             Server.Start();
 
-            CallbakMessage("Server Start");
-            CallbakMessage("ServerInfo=" + Server.ToString());
+            CallbackMessage("Server Start");
+            CallbackMessage("ServerInfo=" + Server.ToString());
         }
         
         public void Stop()
@@ -68,35 +72,61 @@ namespace WFAAgent.WebSocket
 
         private void Server_NewSessionConnected(WebSocketSession session)
         {
-            CallbakMessage("Server_NewSessionConnected=" + session.SessionID);
+            CallbackMessage("Server_NewSessionConnected=" + session.SessionID);
         }
 
         private void Server_NewMessageDataReceived(WebSocketSession session, string message)
         {
-            CallbakMessage("Server_NewMessageDataReceived=" + message);
+            CallbackMessage("Server_NewMessageDataReceived=" + message);
 
             try
             {
                 JObject messageObj = JObject.Parse(message);
-                string eventProcessorName = messageObj[WebSocketEvent.EventName].ToObject<string>();
+                string eventName = messageObj[WebSocketEventConstant.EventName].ToObject<string>();
+
+                IEventProcessor eventProcessor = null;
+                if (!EventProcessorManager.EventProcessors.ContainsKey(eventName))
+                {
+                    eventProcessor = EventProcessorManager.AddStartsWithByEventNameEventProcessor(eventName);
+                    if (eventProcessor is ProcessStartEventProcessor)
+                    {
+                        ((ProcessStartEventProcessor)eventProcessor).Exited += AgentWebSocketServer_ProcessExited;
+                    }
+                }
+                else
+                {
+                    eventProcessor = EventProcessorManager.EventProcessors[eventName];
+                }
+
+                JObject data = messageObj[WebSocketEventConstant.Data] as JObject;
+                eventProcessor.DoProcess(new EventData() { Data = data });
             }
             catch (Newtonsoft.Json.JsonException ex)
             {
-                session.Send("It's unknown data.");
-                return;
+                session.Send("It's unknown data. Cause=" + ex.Message);
             }
             catch (Exception ex)
             {
                 session.Send(ex.Message);
             }
         }
+
+        private void AgentWebSocketServer_ProcessExited(object sender, EventArgs e)
+        {
+            Process process = sender as Process;
+            CallbackMessage("\n===== AgentWebSocketServer_ProcessExited =====");
+            CallbackMessage("FileName=" + process.StartInfo.FileName);
+            CallbackMessage("ExitTime=" + process.ExitTime);
+            CallbackMessage("===== AgentWebSocketServer_ProcessExited =====\n");
+        }
+
         private void Server_NewBinaryDataReceived(WebSocketSession session, byte[] binaryData)
         {
-            CallbakMessage("Server_NewBinaryDataReceived=" + binaryData);
+            CallbackMessage("Server_NewBinaryDataReceived=" + binaryData);
         }
         private void Server_SessionClosed(WebSocketSession session, SuperSocket.SocketBase.CloseReason value)
         {
-            CallbakMessage("Server_SessionClosed=" + value);
+            CallbackMessage("Server_SessionClosed=" + value);
         }
 
         #endregion

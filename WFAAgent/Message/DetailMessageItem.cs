@@ -8,6 +8,9 @@ namespace WFAAgent.Message
 {
     public class DetailMessageItem : MessageItem
     {
-
+        public override string ToString()
+        {
+            return base.ToString();
+        }
     }
 }

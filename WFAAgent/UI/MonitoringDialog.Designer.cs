@@ -1,6 +1,6 @@
 ﻿namespace WFAAgent.Dialogs
 {
-    partial class MonitoringDlg
+    partial class MonitoringDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitoringDlg));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitoringDialog));
             this._RichTextBox = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 

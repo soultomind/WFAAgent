@@ -13,5 +13,10 @@ namespace WFAAgent.Message
         {
             Message = String.Empty;
         }
+
+        public override string ToString()
+        {
+            return Message;
+        }
     }
 }

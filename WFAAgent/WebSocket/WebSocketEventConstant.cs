@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace WFAAgent.WebSocket
 {
-    public class WebSocketEvent
+    public class WebSocketEventConstant
     {
         public const string EventName = "eventName";
+        public const string Data = "data";
     }
 }
