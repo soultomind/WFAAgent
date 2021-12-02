@@ -243,6 +243,6 @@ ModelManifest.xml
 
 #WebContent BootStrap
 WebContent/css
-WebContent/fonts/
+WebContent/fonts
 WebContent/icons
 WebContent/js
