@@ -49,6 +49,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Net\Sockets\AgentTcpClient.cs" />
+    <Compile Include="Net\Sockets\AgentTcpServer.cs" />
     <Compile Include="DataContext.cs" />
     <Compile Include="DataType.cs" />
     <Compile Include="Net\Sockets\ClientSocket.cs" />
@@ -56,7 +58,6 @@
     <Compile Include="Net\Sockets\DefaultSocket.cs" />
     <Compile Include="Net\Sockets\EventHandler.cs" />
     <Compile Include="Net\Sockets\ServerSocket.cs" />
-    <Compile Include="Net\Sockets\SocketContext.cs" />
     <Compile Include="Net\Sockets\SocketEventArgs.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TransmissionData.cs" />

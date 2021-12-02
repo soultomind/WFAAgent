@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WFAAgent.Framework.Net.Sockets
 {
-    public class SocketContext
+    public class AgentTcpServer
     {
 
     }

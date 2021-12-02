@@ -8,8 +8,8 @@ namespace WFAAgent.Framework
 {
     public class DataContext
     {
-        public const int Max = 255;
-        public const int Min = 0;
+        public const int Max = short.MaxValue;
+        public const int Min = short.MinValue;
 
         public const int UserData = 0x1;
 
@@ -17,7 +17,7 @@ namespace WFAAgent.Framework
         {
             if (!(Max >= value && Min <= value))
             {
-                throw new ArgumentException("Usage value 0 - 255");
+                throw new ArgumentException("Usage value " +  Min + "-" + Max);
             }
         }
     }
