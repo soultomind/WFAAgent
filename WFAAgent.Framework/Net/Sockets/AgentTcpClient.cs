@@ -8,6 +8,6 @@ namespace WFAAgent.Framework.Net.Sockets
 {
     public class AgentTcpClient
     {
-
+        public ClientSocket ClientSocket { get; private set; }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WFAAgent.Framework.Net.Sockets;
 
 namespace WFAAgent.Framework
 {
@@ -10,7 +11,7 @@ namespace WFAAgent.Framework
     {
         public static readonly DataType UserData = new DataType(DataContext.UserData);
         private int _Type;
-        private DataType(int type)
+        private DataType(short type)
         {
             DataContext.CheckedType(type);
             this._Type = type;

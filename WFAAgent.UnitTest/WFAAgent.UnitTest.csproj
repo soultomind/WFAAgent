@@ -51,6 +51,7 @@
   </Choose>
   <ItemGroup>
     <Compile Include="DataPacketHeaderUnitTest.cs" />
+    <Compile Include="DataPacketUnitTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

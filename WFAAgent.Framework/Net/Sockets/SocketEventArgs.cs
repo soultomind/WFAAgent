@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WFAAgent.Framework.Net.Sockets
 {
-    public abstract class SocketEventArgs : EventArgs
+    public class SocketEventArgs : EventArgs
     {
         public SocketEventArgs(Socket socket)
         {
@@ -21,15 +21,9 @@ namespace WFAAgent.Framework.Net.Sockets
         }
     }
 
-    public class ServerSocketEventArgs : SocketEventArgs
+    public class ListenEventArgs : SocketEventArgs
     {
-        public ServerSocketEventArgs(Socket socket) : base(socket)
-        {
-        }
-    }
-    public class ServerListenEventArgs : ServerSocketEventArgs
-    {
-        public ServerListenEventArgs(Socket socket) : base(socket)
+        public ListenEventArgs(Socket socket) : base(socket)
         {
 
         }
@@ -40,9 +34,9 @@ namespace WFAAgent.Framework.Net.Sockets
         }
     }
 
-    public class ServerClientAcceptEventArgs : ServerSocketEventArgs
+    public class AcceptClientEventArgs : SocketEventArgs
     {
-        public ServerClientAcceptEventArgs(Socket socket) : base(socket)
+        public AcceptClientEventArgs(Socket socket) : base(socket)
         {
         }
 
@@ -58,21 +52,30 @@ namespace WFAAgent.Framework.Net.Sockets
         }
     }
 
-    public class ServerClientDisconnectEventArgs : ServerSocketEventArgs
+    public class DisconnectEventArgs : SocketEventArgs
     {
-        public ServerClientDisconnectEventArgs(Socket socket) : base(socket)
+        public DisconnectEventArgs(Socket socket, bool isServer) : base(socket)
         {
+            IsServer = isServer;
         }
+
+        public bool IsServer { get; set; }
 
         public Socket ServerSocket
         {
             get { return EventSocket; }
         }
+    }
 
-        public Socket ClientSocket
+    public class AsyncSendSocketEventArgs : SocketEventArgs
+    {
+        public AsyncSendSocketEventArgs(Socket socket)
+            : base(socket)
         {
-            get;
-            set;
+
         }
+
+        public Exception Exception { get; internal set; }
+        public int SendBytes { get; internal set; }
     }
 }
