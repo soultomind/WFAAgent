@@ -10,14 +10,14 @@ namespace WFAAgent.Framework
     public class DataType
     {
         public static readonly DataType UserData = new DataType(DataContext.UserData);
-        private int _Type;
-        private DataType(short type)
+        private ushort _Type;
+        private DataType(ushort type)
         {
             DataContext.CheckedType(type);
             this._Type = type;
         }
 
-        public int Type
+        public ushort Type
         {
             get { return _Type; }
         }

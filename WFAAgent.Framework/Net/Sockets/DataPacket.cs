@@ -9,13 +9,14 @@ namespace WFAAgent.Framework.Net.Sockets
     public class DataPacket
     {
         public const int DataLengthPos = 4;
-        public short Type
+        public const int HeaderLength = 255;
+        public ushort Type
         {
             get { return _Type; }
             internal set { _Type = value; }
         }
-        private short _Type;
-
+        private ushort _Type;
+        
         public TransmissionData TransmissionData
         {
             get { return _TransmissionData; }
@@ -40,7 +41,7 @@ namespace WFAAgent.Framework.Net.Sockets
         {
 
         }
-        public DataPacket(short type)
+        public DataPacket(ushort type)
         {
             DataContext.CheckedType(type);
             this._Type = type;
@@ -64,48 +65,57 @@ namespace WFAAgent.Framework.Net.Sockets
         
         private byte[] CreateData()
         {
-            // 1. 4Byte = 2Byte [ Type(0-32767) ] + 1Byte [ TransmissionData(0-1) + 1Byte [ Length ]]
-            // 2. 4Byte = 4Byte [ DataLength ]
-            // .... Total 48Byte = DataContext.DataPacketHeaderLength
+            // 1. 첫 번째 헤더 4Byte = 2Byte [ Type(0-65535) ] + 1Byte [ TransmissionData(0-1) ] + 1Byte [ 255 ]
+            // 2. 두 번째 헤더 4Byte = 4Byte [ DataLength ]
+            // == HeaderLength End 255 ==
             // 3. Data ..
 
-            // 시작 데이터 타입 + 데이터 전송 형식(Text,Binary) + 해당 패킷 헤더 길이
-            int offset = 0;
+            byte[] newHeaderBuffer = DataContext.NewDataPacketHeaderBuffer();
 
-            byte[] destHeaderBuffer1 = new byte[4];
+            int header1Index = 0;
+            byte[] sourceHeaderBuffer1 = new byte[4];
             
-            // 2Byte
-            byte[] sourceTypeBuffer = BitConverter.GetBytes(_Type);
-            Array.Copy(sourceTypeBuffer, 0, destHeaderBuffer1, 0, sourceTypeBuffer.Length);
-            offset += sourceTypeBuffer.Length;
+            // 2Byte=Type
+            byte[] typeBuffer = BitConverter.GetBytes(_Type);
+            Array.Copy(typeBuffer, 0, sourceHeaderBuffer1, 0, typeBuffer.Length);
+            header1Index += typeBuffer.Length;
 
-            // 1Byte
-            destHeaderBuffer1[offset] = (byte)_TransmissionData;
-            offset++;
+            // 1Byte=TransmissionData
+            sourceHeaderBuffer1[header1Index] = (byte)_TransmissionData;
+            header1Index++;
 
-            // 실제 전송되는 데이터 길이
-            byte[] destHeaderBuffer2 = BitConverter.GetBytes(_DataLength);
+            // 1Byte=HeaderLength [추후 변경이 필요시 3번째 요소에 값 수정]
+            sourceHeaderBuffer1[header1Index] = HeaderLength;
+            header1Index++;
 
-            // 실제 전송되는 데이터 생성 [1. 시작 데이터 타입 + 2. 실제 전송되는 데이터 길이 + 3. 데이터 ]
-            byte[] sourceCreateBuffer = new byte[destHeaderBuffer1.Length + destHeaderBuffer2.Length + _Buffer.Length];
+            // 4Byte=DataLength
+            byte[] sourceHeaderBuffer2 = BitConverter.GetBytes(_DataLength);
 
-            // 1. 시작 데이터 타입 복사
-            Array.Copy(destHeaderBuffer1, 0, sourceCreateBuffer, 0, destHeaderBuffer1.Length);
-            
-            // 2. 실제 전송되는 데이터 길이 복사
-            Array.Copy(destHeaderBuffer2, 0, sourceCreateBuffer, destHeaderBuffer1.Length, destHeaderBuffer2.Length);
 
-            // 3. 실제 데이터 복사
-            Array.Copy(_Buffer, 0, sourceCreateBuffer, destHeaderBuffer1.Length + destHeaderBuffer2.Length, _Buffer.Length);
 
-            return sourceCreateBuffer;
+
+            ///// 1. 타입 + 헤더길이 + 전송타입(Text,Binary)
+            Array.Copy(sourceHeaderBuffer1, 0, newHeaderBuffer, 0, sourceHeaderBuffer1.Length);
+
+            ///// 2. 데이터 길이 복사
+            Array.Copy(sourceHeaderBuffer2, 0, newHeaderBuffer, sourceHeaderBuffer1.Length, sourceHeaderBuffer2.Length);
+
+            // 실제 전송되는 버퍼
+            byte[] dataBuffer = new byte[newHeaderBuffer.Length + _Buffer.Length];
+
+            ///// 3. 헤더 복사
+            Array.Copy(newHeaderBuffer, 0, dataBuffer, 0, newHeaderBuffer.Length);
+            ///// 4. 실제 데이터 복사
+            Array.Copy(_Buffer, 0, dataBuffer, newHeaderBuffer.Length, _Buffer.Length);
+
+            return dataBuffer;
         }
 
         public static DataPacket ToDataPacketHeader(byte[] dataPacketHeader)
         {
             DataPacket packet = new DataPacket();
             // 2Byte
-            packet.Type = BitConverter.ToInt16(dataPacketHeader, 0);
+            packet.Type = (ushort) BitConverter.ToInt16(dataPacketHeader, 0);
             // 1Byte
             packet.TransmissionData = (TransmissionData)dataPacketHeader[2];
 
@@ -114,7 +124,7 @@ namespace WFAAgent.Framework.Net.Sockets
             return packet;
         }
 
-        public static byte[] ToHeaderBytes(short type, byte[] data)
+        public static byte[] ToHeaderBytes(ushort type, byte[] data)
         {
             byte[] destBuffer = DataContext.NewDataPacketHeaderBuffer();
             int offset = 0;
@@ -134,7 +144,7 @@ namespace WFAAgent.Framework.Net.Sockets
             return destBuffer;
         }
 
-        public static byte[] ToHeaderBytes(short type, string data)
+        public static byte[] ToHeaderBytes(ushort type, string data)
         {
             byte[] destBuffer = DataContext.NewDataPacketHeaderBuffer();
             int offset = 0;

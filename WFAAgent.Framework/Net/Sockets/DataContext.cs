@@ -8,14 +8,14 @@ namespace WFAAgent.Framework.Net.Sockets
 {
     public class DataContext
     {
-        public const int Max = short.MaxValue;
-        public const int Min = short.MinValue;
+        public const int Max = ushort.MaxValue;
+        public const int Min = ushort.MinValue;
 
         public const int DataPacketHeaderLength = byte.MaxValue;
 
         public const int UserData = 0x1;
 
-        public static void CheckedType(short value)
+        public static void CheckedType(ushort value)
         {
             if (!(Max >= value && Min <= value))
             {

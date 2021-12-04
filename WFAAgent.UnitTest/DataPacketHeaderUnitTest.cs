@@ -17,7 +17,7 @@ namespace WFAAgent.UnitTest
 
             string inputData = typeof(DataPacketUnitTest).Name;
 
-            short inputType = DataContext.Max;
+            ushort inputType = DataContext.Max;
             TransmissionData inputTransmissionData = TransmissionData.Text;
             int dataLength = Encoding.UTF8.GetBytes(inputData).Length;
 

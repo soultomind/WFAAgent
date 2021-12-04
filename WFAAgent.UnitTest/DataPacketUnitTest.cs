@@ -17,7 +17,7 @@ namespace WFAAgent.UnitTest
 
             string inputData = typeof(DataPacketUnitTest).Name;
 
-            short inputType = DataContext.Max;
+            ushort inputType = DataContext.Max;
             TransmissionData inputTransmissionData = TransmissionData.Text;
             int inputDataLength = Encoding.UTF8.GetBytes(inputData).Length;
 
@@ -38,13 +38,14 @@ namespace WFAAgent.UnitTest
 
             // 4. 실제 데이터 복사
             byte[] destDataBuffer = new byte[outputLength];
-            Array.Copy(sourceCreateBuffer, destHeaderBuffer1.Length + destHeaderBuffer2.Length, destDataBuffer, 0, destDataBuffer.Length);
+            // 추후에 헤더길이
+            Array.Copy(sourceCreateBuffer, 255, destDataBuffer, 0, destDataBuffer.Length);
             /////////////////////////////////////////////////////////////////////////// 
 
 
             /////////////////////////////////////////////////////////////////////////// 
             // 시작 데이터 타입 가져온다 Short 자료형이기 때문에 2바이트 가져오기
-            short outputType = BitConverter.ToInt16(destHeaderBuffer1, 0);
+            ushort outputType = (ushort)BitConverter.ToInt16(destHeaderBuffer1, 0);
             Trace.WriteLine("OutputType=" + outputType);
             Assert.AreEqual(inputType, outputType, 0);
 
