@@ -21,11 +21,11 @@ namespace WFAAgent.UnitTest
             TransmissionData inputTransmissionData = TransmissionData.Text;
             int dataLength = Encoding.UTF8.GetBytes(inputData).Length;
 
-            DataPacket dataPacket = DataPacket.ToDataPacketHeader(DataPacket.ToHeaderBytes(inputType, inputData));
+            Header header = DataPacket.ToHeader(DataPacket.ToHeaderBytes(inputType, inputData));
 
-            Assert.AreEqual(inputType, dataPacket.Type);
-            Assert.AreEqual(inputTransmissionData, dataPacket.TransmissionData);
-            Assert.AreEqual(dataLength, dataPacket.DataLength);
+            Assert.AreEqual(inputType, header.Type);
+            Assert.AreEqual(inputTransmissionData, header.TransmissionData);
+            Assert.AreEqual(dataLength, header.DataLength);
         }
     }
 }

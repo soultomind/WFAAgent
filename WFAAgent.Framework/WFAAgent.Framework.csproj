@@ -53,12 +53,13 @@
     <Compile Include="Net\Sockets\AgentTcpClient.cs" />
     <Compile Include="Net\Sockets\AgentTcpServer.cs" />
     <Compile Include="Net\Sockets\DataContext.cs" />
-    <Compile Include="DataType.cs" />
+    <Compile Include="Net\Sockets\DataType.cs" />
     <Compile Include="Net\Sockets\AsyncSendSocketState.cs" />
     <Compile Include="Net\Sockets\ClientSocket.cs" />
     <Compile Include="Net\Sockets\DataPacket.cs" />
     <Compile Include="Net\Sockets\DefaultSocket.cs" />
     <Compile Include="Net\Sockets\EventHandler.cs" />
+    <Compile Include="Net\Sockets\Header.cs" />
     <Compile Include="Net\Sockets\ServerSocket.cs" />
     <Compile Include="Net\Sockets\SocketEventArgs.cs" />
     <Compile Include="Net\Sockets\SocketEventHandler.cs" />

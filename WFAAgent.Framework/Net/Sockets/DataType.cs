@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WFAAgent.Framework.Net.Sockets;
 
-namespace WFAAgent.Framework
+namespace WFAAgent.Framework.Net.Sockets
 {
     public class DataType
     {

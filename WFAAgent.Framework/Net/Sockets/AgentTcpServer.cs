@@ -22,6 +22,8 @@ namespace WFAAgent.Framework.Net.Sockets
         public void Start()
         {
             ServerSocket = new ServerSocket();
+
+            Listen?.Invoke(this, new ListenEventArgs(ServerSocket.Socket));
         }
 
         public void Stop()

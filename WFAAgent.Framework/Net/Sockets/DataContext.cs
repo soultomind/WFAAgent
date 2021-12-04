@@ -8,12 +8,14 @@ namespace WFAAgent.Framework.Net.Sockets
 {
     public class DataContext
     {
-        public const int Max = ushort.MaxValue;
-        public const int Min = ushort.MinValue;
+        public const ushort Max = ushort.MaxValue - 1;
+        public const ushort Min = ushort.MinValue;
 
-        public const int DataPacketHeaderLength = byte.MaxValue;
+        public const int DefaultDataPacketHeaderLength = byte.MaxValue;
+        public const int FirstHeaderLength = 8;
 
-        public const int UserData = 0x1;
+        public const ushort UserData = 1;
+        public const ushort UnknownData = ushort.MaxValue;
 
         public static void CheckedType(ushort value)
         {
@@ -23,9 +25,14 @@ namespace WFAAgent.Framework.Net.Sockets
             }
         }
 
-        public static byte[] NewDataPacketHeaderBuffer()
+        public static byte[] NewDefaultDataPacketHeaderBuffer()
         {
-            return new byte[DataPacketHeaderLength];
+            return NewDataBuffer(DefaultDataPacketHeaderLength);
+        }
+
+        public static byte[] NewFirstHeaderBuffer()
+        {
+            return NewDataBuffer(FirstHeaderLength);
         }
 
         public static byte[] NewDataBuffer(int size)

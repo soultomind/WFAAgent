@@ -10,27 +10,12 @@ namespace WFAAgent.Framework.Net.Sockets
     {
         public const int DataLengthPos = 4;
         public const int HeaderLength = 255;
-        public ushort Type
+        public Header Header
         {
-            get { return _Type; }
-            internal set { _Type = value; }
+            get { return _Header; }
+            internal set { _Header = value; }
         }
-        private ushort _Type;
-        
-        public TransmissionData TransmissionData
-        {
-            get { return _TransmissionData; }
-            internal set { _TransmissionData = value; }
-        }
-        private TransmissionData _TransmissionData;
-
-        public int DataLength
-        {
-            get { return _DataLength; }
-            internal set { _DataLength = value; }
-        }
-        private int _DataLength;
-
+        private Header _Header = new Header();
         public byte[] Buffer
         {
             get { return _Buffer; }
@@ -44,22 +29,22 @@ namespace WFAAgent.Framework.Net.Sockets
         public DataPacket(ushort type)
         {
             DataContext.CheckedType(type);
-            this._Type = type;
+            this.Header.Type = type;
         }
 
         public byte[] CreateData(string data)
         {
-            _TransmissionData = TransmissionData.Text;
+            this.Header.TransmissionData = TransmissionData.Text;
             _Buffer = Encoding.UTF8.GetBytes(data);
-            _DataLength = _Buffer.Length;
+            this.Header.DataLength = _Buffer.Length;
             return CreateData();
         }
 
         public byte[] CreateData(byte[] data)
         {
-            _TransmissionData = TransmissionData.Binary;
+            this.Header.TransmissionData = TransmissionData.Binary;
             _Buffer = data;
-            _DataLength = _Buffer.Length;
+            this.Header.DataLength = _Buffer.Length;
             return CreateData();
         }
         
@@ -70,18 +55,18 @@ namespace WFAAgent.Framework.Net.Sockets
             // == HeaderLength End 255 ==
             // 3. Data ..
 
-            byte[] newHeaderBuffer = DataContext.NewDataPacketHeaderBuffer();
+            byte[] newHeaderBuffer = DataContext.NewDefaultDataPacketHeaderBuffer();
 
             int header1Index = 0;
             byte[] sourceHeaderBuffer1 = new byte[4];
             
             // 2Byte=Type
-            byte[] typeBuffer = BitConverter.GetBytes(_Type);
+            byte[] typeBuffer = BitConverter.GetBytes(Header.Type);
             Array.Copy(typeBuffer, 0, sourceHeaderBuffer1, 0, typeBuffer.Length);
             header1Index += typeBuffer.Length;
 
             // 1Byte=TransmissionData
-            sourceHeaderBuffer1[header1Index] = (byte)_TransmissionData;
+            sourceHeaderBuffer1[header1Index] = (byte)Header.TransmissionData;
             header1Index++;
 
             // 1Byte=HeaderLength [추후 변경이 필요시 3번째 요소에 값 수정]
@@ -89,7 +74,7 @@ namespace WFAAgent.Framework.Net.Sockets
             header1Index++;
 
             // 4Byte=DataLength
-            byte[] sourceHeaderBuffer2 = BitConverter.GetBytes(_DataLength);
+            byte[] sourceHeaderBuffer2 = BitConverter.GetBytes(Header.DataLength);
 
 
 
@@ -111,22 +96,22 @@ namespace WFAAgent.Framework.Net.Sockets
             return dataBuffer;
         }
 
-        public static DataPacket ToDataPacketHeader(byte[] dataPacketHeader)
+        public static Header ToHeader(byte[] dataPacketHeader)
         {
-            DataPacket packet = new DataPacket();
+            Header header = new Header();
             // 2Byte
-            packet.Type = (ushort) BitConverter.ToInt16(dataPacketHeader, 0);
+            header.Type = (ushort) BitConverter.ToInt16(dataPacketHeader, 0);
             // 1Byte
-            packet.TransmissionData = (TransmissionData)dataPacketHeader[2];
+            header.TransmissionData = (TransmissionData)dataPacketHeader[2];
 
             // 1Byte 후에
-            packet.DataLength = BitConverter.ToInt32(dataPacketHeader, DataPacket.DataLengthPos);
-            return packet;
+            header.DataLength = BitConverter.ToInt32(dataPacketHeader, DataPacket.DataLengthPos);
+            return header;
         }
 
         public static byte[] ToHeaderBytes(ushort type, byte[] data)
         {
-            byte[] destBuffer = DataContext.NewDataPacketHeaderBuffer();
+            byte[] destBuffer = DataContext.NewDefaultDataPacketHeaderBuffer();
             int offset = 0;
 
             byte[] sourceTypeBuffer = BitConverter.GetBytes(type);
@@ -146,7 +131,7 @@ namespace WFAAgent.Framework.Net.Sockets
 
         public static byte[] ToHeaderBytes(ushort type, string data)
         {
-            byte[] destBuffer = DataContext.NewDataPacketHeaderBuffer();
+            byte[] destBuffer = DataContext.NewDefaultDataPacketHeaderBuffer();
             int offset = 0;
             
             byte[] sourceTypeBuffer = BitConverter.GetBytes(type);

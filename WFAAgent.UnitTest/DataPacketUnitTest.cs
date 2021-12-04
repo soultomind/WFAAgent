@@ -38,7 +38,7 @@ namespace WFAAgent.UnitTest
 
             // 4. 실제 데이터 복사
             byte[] destDataBuffer = new byte[outputLength];
-            // 추후에 헤더길이
+            // 추후에 헤더길이 유동적으로 처리 (최대 255)
             Array.Copy(sourceCreateBuffer, 255, destDataBuffer, 0, destDataBuffer.Length);
             /////////////////////////////////////////////////////////////////////////// 
 
@@ -55,7 +55,7 @@ namespace WFAAgent.UnitTest
             Assert.AreEqual(inputTransmissionData, outputTransmissiondata);
 
             Trace.WriteLine("outputLength=" + outputLength);
-            Assert.AreEqual(dataHeader.DataLength, outputLength);
+            Assert.AreEqual(dataHeader.Header.DataLength, outputLength);
 
             string outputData = Encoding.UTF8.GetString(destDataBuffer);
             Trace.WriteLine("OutputData=" + outputData);

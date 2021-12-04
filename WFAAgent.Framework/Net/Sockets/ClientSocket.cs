@@ -99,7 +99,8 @@ namespace WFAAgent.Framework.Net.Sockets
 
         private void Receive()
         {
-            byte[] dataPacketHeaderBuffer = DataContext.NewDataPacketHeaderBuffer();
+            // 추후에 8바이트 먼져 읽은 후 해당 헤더에서 실제 헤더 길이 구해서 더 읽어야 함
+            byte[] dataPacketHeaderBuffer = DataContext.NewDefaultDataPacketHeaderBuffer();
             while (true)
             {
                 Array.Clear(dataPacketHeaderBuffer, 0, dataPacketHeaderBuffer.Length);
@@ -111,9 +112,9 @@ namespace WFAAgent.Framework.Net.Sockets
                 else
                 {
                     // TODO: 패킷을 읽어서 데이터 길이를 구한다음에 해당 길이만큼 읽어야함
-                    DataPacket dataPacket = DataPacket.ToDataPacketHeader(dataPacketHeaderBuffer);
+                    Header header = DataPacket.ToHeader(dataPacketHeaderBuffer);
 
-                    byte[] data = new byte[dataPacket.DataLength];
+                    byte[] data = new byte[header.DataLength];
                     int offset = 0;
 
                     
