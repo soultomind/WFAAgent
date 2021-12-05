@@ -2,52 +2,55 @@
 using SuperSocket.SocketBase.Config;
 using SuperSocket.WebSocket;
 using System;
-using System.Diagnostics;
 using WFAAgent.Core;
-using WFAAgent.Framework.Net.Sockets;
 using WFAAgent.Message;
 
 namespace WFAAgent.WebSocket
 {
-    public class AgentWebSocketServer
+    public class AgentWebSocketServer : IDefaultSocketServer
     {
         public WebSocketServer WSServer { get; private set; }
         public ListenerConfig ListenerConfig { get; private set; }
         public RootConfig RootConfig { get; private set; }
         public ServerConfig ServerConfig { get; private set; }
 
-        public AgentTcpServer TCPServer { get; private set; }
+        public IAgentManager AgentManager { get; set; }
 
-        public EventProcessorManager EventProcessorManager { get; private set; }
         public event MessageObjectReceivedEventHandler MessageObjectReceived;
 
         
         public AgentWebSocketServer()
         {
-            EventProcessorManager = new EventProcessorManager();
+            Setup();
         }
 
         private void CallbackMessage(string message)
         {
             MessageObjectReceived?.Invoke(message);
         }
+
+        public void Setup()
+        {
+            WSServer = new WebSocketServer();
+
+            ListenerConfig = new ListenerConfig();
+            RootConfig = new RootConfig();
+            ServerConfig = new ServerConfig();
+
+            ServerConfig.Name = "WFAAgent";
+            ServerConfig.Ip = "127.0.0.1";
+            ServerConfig.Port = 33000;
+            ServerConfig.Mode = SuperSocket.SocketBase.SocketMode.Tcp;
+            ServerConfig.ListenBacklog = 1000;
+
+            WSServer.Setup(RootConfig, ServerConfig);
+        }
         public void Start()
         {
             if (WSServer == null)
             {
-                ListenerConfig = new ListenerConfig();
-
-                RootConfig = new RootConfig();
-                ServerConfig = new ServerConfig();
-                ServerConfig.Name = "WFAAgent";
-                ServerConfig.Ip = "127.0.0.1";
-                ServerConfig.Port = 33000;
-                ServerConfig.Mode = SuperSocket.SocketBase.SocketMode.Tcp;
-                ServerConfig.ListenBacklog = 1000;
-                WSServer = new WebSocketServer();
-                WSServer.Setup(RootConfig, ServerConfig);
+                Setup();
             }
-
             WSServer.NewSessionConnected += Server_NewSessionConnected;
             WSServer.NewMessageReceived += Server_NewMessageDataReceived;
             WSServer.NewDataReceived += Server_NewBinaryDataReceived;
@@ -62,14 +65,13 @@ namespace WFAAgent.WebSocket
         
         public void Stop()
         {
-            if (WSServer != null)
-            {
-                WSServer.NewSessionConnected -= Server_NewSessionConnected;
-                WSServer.NewMessageReceived -= Server_NewMessageDataReceived;
-                WSServer.NewDataReceived -= Server_NewBinaryDataReceived;
-                WSServer.SessionClosed -= Server_SessionClosed;
-                WSServer.Stop();
-            }
+            WSServer.NewSessionConnected -= Server_NewSessionConnected;
+            WSServer.NewMessageReceived -= Server_NewMessageDataReceived;
+            WSServer.NewDataReceived -= Server_NewBinaryDataReceived;
+            WSServer.SessionClosed -= Server_SessionClosed;
+            WSServer.Stop();
+
+            WSServer = null;
         }
 
         #region Server Event
@@ -86,27 +88,9 @@ namespace WFAAgent.WebSocket
 
             try
             {
-                JObject messageObj = JObject.Parse(message);
-                string eventName = messageObj[WebSocketEventConstant.EventName].ToObject<string>();
-
-                IEventProcessor eventProcessor = null;
-                if (!EventProcessorManager.EventProcessors.ContainsKey(eventName))
-                {
-                    eventProcessor = EventProcessorManager.AddStartsWithByEventName(eventName);
-                    if (eventProcessor is ProcessStartEventProcessor)
-                    {
-                        ((ProcessStartEventProcessor)eventProcessor).Started += AgentWebSocketServer_ProcessStarted;
-                        ((ProcessStartEventProcessor)eventProcessor).Exited += AgentWebSocketServer_ProcessExited;
-                    }
-                }
-                else
-                {
-                    eventProcessor = EventProcessorManager.EventProcessors[eventName];
-                }
-                
-                // TODO: ThreadPool 사용필요
-                JObject data = messageObj[WebSocketEventConstant.Data] as JObject;
-                eventProcessor.DoProcess(new EventData() { Data = data, SessionID = session.SessionID });
+                JObject data = JObject.Parse(message);
+                data.Add(WebSocketEventConstant.SessionID, session.SessionID);
+                AgentManager.OnRequestClientDataReceived(data);
             }
             catch (Newtonsoft.Json.JsonException ex)
             {
@@ -118,21 +102,24 @@ namespace WFAAgent.WebSocket
             }
         }
 
-        private void AgentWebSocketServer_ProcessStarted(object sender, EventArgs e)
+        private void Server_NewBinaryDataReceived(WebSocketSession session, byte[] binaryData)
         {
-            WFAAgent.Core.ProcessStartInfo processStartInfo = sender as WFAAgent.Core.ProcessStartInfo;
-            CallbackMessage("===== AgentWebSocketServer_ProcessStarted =====");
- 
-            if (TCPServer == null)
-            {
-                TCPServer = new AgentTcpServer();
-            }
+            CallbackMessage("Server_NewBinaryDataReceived=" + binaryData);
+        }
+        private void Server_SessionClosed(WebSocketSession session, SuperSocket.SocketBase.CloseReason value)
+        {
+            CallbackMessage("Server_SessionClosed=" + value);
+        }
 
+        #endregion
+
+        public void OnProcessStarted(ProcessStartInfo processStartInfo)
+        {
             JObject o = processStartInfo.ToStartedJson();
             string text = o.ToString();
             CallbackMessage(text);
 
-            WebSocketSession session = WSServer.GetSessionByID(processStartInfo.SessionID);   
+            WebSocketSession session = WSServer.GetSessionByID(processStartInfo.SessionID);
             if (session != null)
             {
                 CallbackMessage("SessionID=" + processStartInfo.SessionID);
@@ -150,15 +137,10 @@ namespace WFAAgent.WebSocket
             {
                 CallbackMessage("세션을 찾을 수 없습니다.");
             }
-
-            CallbackMessage("===== AgentWebSocketServer_ProcessStarted =====\n");
         }
 
-        private void AgentWebSocketServer_ProcessExited(object sender, EventArgs e)
+        public void OnProcessExited(ProcessStartInfo processStartInfo)
         {
-            WFAAgent.Core.ProcessStartInfo processStartInfo = sender as WFAAgent.Core.ProcessStartInfo;
-            CallbackMessage("===== AgentWebSocketServer_ProcessExited =====");
-
             JObject o = processStartInfo.ToExitedJson();
             string text = o.ToString();
             CallbackMessage(text);
@@ -181,19 +163,6 @@ namespace WFAAgent.WebSocket
             {
                 CallbackMessage("세션을 찾을 수 없습니다.");
             }
-
-            CallbackMessage("===== AgentWebSocketServer_ProcessExited =====\n");
         }
-
-        private void Server_NewBinaryDataReceived(WebSocketSession session, byte[] binaryData)
-        {
-            CallbackMessage("Server_NewBinaryDataReceived=" + binaryData);
-        }
-        private void Server_SessionClosed(WebSocketSession session, SuperSocket.SocketBase.CloseReason value)
-        {
-            CallbackMessage("Server_SessionClosed=" + value);
-        }
-
-        #endregion
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,9 +10,11 @@ namespace WFAAgent
 {
     public interface IAgentManager
     {
+        event MessageObjectReceivedEventHandler MessageObjectReceived;
+
         void StartServer();
         void StopServer();
 
-        event MessageObjectReceivedEventHandler MessageObjectReceived;
+        void OnRequestClientDataReceived(JObject data);
     }
 }

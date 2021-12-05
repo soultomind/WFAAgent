@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WFAAgent.Framework
+namespace WFAAgent
 {
-    public enum TransmissionData
+    public enum ServerSocketType
     {
-        Text = 0,
-        Binary = 1
+        Tcp, WebSocket
     }
 }

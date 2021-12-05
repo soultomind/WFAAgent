@@ -86,6 +86,9 @@
     <Compile Include="AgentManager.cs" />
     <Compile Include="Common\Toolkit.cs" />
     <Compile Include="Core\LogLevel.cs" />
+    <Compile Include="IDefaultSocketServer.cs" />
+    <Compile Include="ServerSocketType.cs" />
+    <Compile Include="Tcp\AgentTcpSocketServer.cs" />
     <Compile Include="WebSocket\EventData.cs" />
     <Compile Include="Core\EventProcessor.cs" />
     <Compile Include="Core\EventProcessorManager.cs" />

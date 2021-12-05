@@ -10,5 +10,6 @@ namespace WFAAgent.WebSocket
     {
         public const string EventName = "eventName";
         public const string Data = "data";
+        public const string SessionID = "sessionId";
     }
 }

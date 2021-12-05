@@ -1,9 +1,12 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WFAAgent.Framework.Application;
+using WFAAgent.Framework.Utilities;
 using WFAAgent.WebSocket;
 
 namespace WFAAgent.Core
@@ -13,8 +16,10 @@ namespace WFAAgent.Core
     public class ProcessStartEventProcessor : EventProcessor
     {
         public readonly string DataFileName = "fileName";
+        public readonly string DataUseCallbackData = "useCallbackData";
 
         public bool IsMultiProcess { get; set; }
+        public int AgentTcpServerPort { get; set; }
         public List<ProcessStartInfo> ProcessList { get; set; }
         public ProcessStartInfo ProcessStartInfo { get; private set; }
 
@@ -33,13 +38,32 @@ namespace WFAAgent.Core
                 if (ProcessStartInfo == null)
                 {
                     string fileName = String.Empty;
+                    bool useCallbackData = false;
                     try
                     {
                         fileName = eventData.Data[DataFileName].ToObject<string>();
+                        if (eventData.Data.ContainsKey(DataUseCallbackData))
+                        {
+                            useCallbackData = eventData.Data[DataUseCallbackData].ToObject<bool>();
+                        }
                         
-                        // TODO: Arguments 정보에 SessionID 정보 보내야함
-                        // 서버로 다시 데이터를 전달받을때 세션정보 수신
-                        Process process = Process.Start(fileName);
+                        
+                        Process process = null;
+                        if (useCallbackData)
+                        {
+                            string sessionID = eventData.SessionID;
+                            int agentTcpServerPort = AgentTcpServerPort;
+
+                            JObject argObj = new JObject();
+                            argObj.Add(Context.ArgSessionID, sessionID);
+                            argObj.Add(Context.ArgAgentTcpServerPort, agentTcpServerPort);
+                            string arguments = ConvertUtility.Base64Encode(argObj.ToString());
+                            process = Process.Start(fileName, arguments);
+                        }
+                        else
+                        {
+                            process = Process.Start(fileName);
+                        }
 
                         ProcessStartInfo = new ProcessStartInfo() {
                             FileName = fileName,

@@ -10,13 +10,6 @@
         function wsStatus(value) {
             var innerText = "Connected : " + value;
             document.getElementById("wsStatus").innerText = innerText;
-            if (value === "O") {
-                document.getElementById("wsStatus").class = "badge";
-                document.getElementById("wsStatus").class += "bg-success";
-            } else {
-                document.getElementById("wsStatus").class = "badge";
-                document.getElementById("wsStatus").class += "bg-danger";
-            }
         }
 
         var config = {
