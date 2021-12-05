@@ -1,3 +1,7 @@
+function WFAAgentProcess() {
+
+};
+
 function WFAAgent(config) {
 
     this._bWsInitialize = false;
@@ -147,3 +151,11 @@ WFAAgent.prototype.wsSend = function (message) {
         this._WebSocket.send(message);
     }
 }
+
+WFAAgent.prototype.wsExecute = function (fileName, args) {
+    if (this._bWsConnect) {
+        // 실행시 아규먼트 추가 여부 필요
+        // 문서프로그램 같은 경우 예) Notepad.exe Test.exe 
+        // 형식으로 보내기 때문임
+    }
+};
