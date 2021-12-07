@@ -8,6 +8,6 @@ namespace WFAAgent
 {
     public enum ServerSocketType
     {
-        Tcp, WebSocket
+        Tcp, Web
     }
 }

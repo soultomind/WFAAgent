@@ -18,5 +18,12 @@ namespace WFAAgent.Framework.Application
             o.AgentTcpServerPort = argObj[Context.ArgAgentTcpServerPort].ToObject<int>();
             return o;
         }
+
+        public override string ToString()
+        {
+            return new StringBuilder()
+                .AppendFormat("SessionID={0}, AgentTcpServerPort={1}", SessionID, AgentTcpServerPort)
+                .ToString();
+        }
     }
 }

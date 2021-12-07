@@ -26,7 +26,7 @@ namespace WFAAgent
         public event MessageObjectReceivedEventHandler MessageObjectReceived;
 
         public AgentManager()
-            : this(ServerSocketType.WebSocket)
+            : this(ServerSocketType.Web)
         {
 
         }
@@ -68,7 +68,7 @@ namespace WFAAgent
         {
             switch (ServerSocketType)
             {
-                case ServerSocketType.WebSocket:
+                case ServerSocketType.Web:
                     SocketServer = new AgentWebSocketServer();
                     break;
                 case ServerSocketType.Tcp:
@@ -79,11 +79,37 @@ namespace WFAAgent
             SocketServer.AgentManager = this;
             SocketServer.MessageObjectReceived += OnMessageObjectReceived;
             SocketServer.Start();
+
+            if (TcpServer == null)
+            {
+                TcpServer = new AgentTcpServer();
+                TcpServer.Listen += new ListenEventHandler(TcpServer_Listen);
+                TcpServer.AcceptClient += new AcceptClientEventHandler(TcpServer_AcceptClient);
+                TcpServer.Start();
+            }
+            
         }
 
         public void StopServer()
         {
             SocketServer.Stop();
+            SocketServer.MessageObjectReceived -= OnMessageObjectReceived;
+            SocketServer = null;
+
+            TcpServer.Stop();
+            TcpServer.Listen -= new ListenEventHandler(TcpServer_Listen);
+            TcpServer.AcceptClient -= new AcceptClientEventHandler(TcpServer_AcceptClient);
+            TcpServer = null;
+        }
+
+        private void TcpServer_Listen(object sender, ListenEventArgs e)
+        {
+            
+        }
+
+        private void TcpServer_AcceptClient(object sender, AcceptClientEventArgs e)
+        {
+            
         }
 
         public void OnRequestClientDataReceived(JObject messageObj)
@@ -98,6 +124,7 @@ namespace WFAAgent
                 {
                     ((ProcessStartEventProcessor)eventProcessor).Started += AgentWebSocketServer_ProcessStarted;
                     ((ProcessStartEventProcessor)eventProcessor).Exited += AgentWebSocketServer_ProcessExited;
+                    ((ProcessStartEventProcessor)eventProcessor).AgentTcpServerPort = TcpServer.Port;
                 }
             }
             else
@@ -109,7 +136,7 @@ namespace WFAAgent
             JObject data = messageObj[WebSocketEventConstant.Data] as JObject;
 
             EventData eventData = new EventData() { Data = data };
-            if (ServerSocketType == ServerSocketType.WebSocket)
+            if (ServerSocketType == ServerSocketType.Web)
             {
                 string sessionId = messageObj[WebSocketEventConstant.SessionID].ToObject<string>();
                 eventData.SessionID = sessionId;

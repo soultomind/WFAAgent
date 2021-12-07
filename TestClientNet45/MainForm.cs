@@ -1,12 +1,18 @@
-﻿using CommonLibrary;
+﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Text;
 using System.Windows.Forms;
 using TestClient.UI;
+using WFAAgent.Common;
+using WFAAgent.Framework.Application;
+using WFAAgent.Framework.Win32;
 
 namespace TestClient
 {
     public partial class MainForm : Form
     {
+        public ProcessStartArguments ProcessStartArguments { get; internal set; }
+        private Exception ArgException { get; set; }
         public MainForm()
         {
             InitializeComponent();
@@ -23,12 +29,35 @@ namespace TestClient
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            if (Main.Args != null && Main.Args.Length > 0)
+            {
+                try
+                {
+                    string arg0 = Main.Args[0];
+                    Toolkit.TraceWriteLine("Arg0=" + arg0);
+                    byte[] bArg0 = Convert.FromBase64String(arg0);
+                    arg0 = Encoding.UTF8.GetString(bArg0);
+                    Toolkit.TraceWriteLine("Base64Decode=" + arg0);
 
+                    JObject data = JObject.Parse(arg0);
+                    ProcessStartArguments = ProcessStartArguments.Parse(data);
+                    MessageBox.Show(ProcessStartArguments.ToString());
+                }
+                catch (Exception ex)
+                {
+                    ArgException = ex;
+                }
+            }
         }
 
         private void MainForm_Shown(object sender, EventArgs e)
         {
             Taskbar.RefreshTrayArea();
+
+            if (ArgException != null)
+            {
+                MessageBox.Show(this, ArgException.Message);
+            }
         }
 
         private void TrayNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)

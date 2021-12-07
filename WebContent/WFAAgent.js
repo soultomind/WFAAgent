@@ -148,24 +148,17 @@ WFAAgent.prototype.wsSend = function (message) {
     }
 }
 
-/*
-WFAAgent.prototype.wsExecute = function (fileName, data) {
+WFAAgent.prototype.wsExecute = function (fileName) {
     if (this._bWsConnect) {
-        // 실행시 아규먼트 추가 여부 필요
-        // 문서프로그램 같은 경우 예) Notepad.exe Test.exe 
-        // 형식으로 보내기 때문임
-
         var sendData = {
-            eventName = "ProcessStart"
+            eventName : "ProcessStart"
         };
-        if (arguments.length == 1) {
-            sendData.data = {
-                fileName = fileName
-            };
-        } else {
-            sendData.data = data;
-            sendData.data.fileName = fileName;
+
+        sendData.data = {
+            fileName: fileName,
+            useCallbackData : true
         }
+
+        this.wsSend(JSON.stringify(sendData));
     }
-};
-*/
+}

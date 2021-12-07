@@ -46,9 +46,9 @@
             agent.wsConnect();
         }
 
-        function wsSend() {
-            var text = document.getElementById("wsSendText").value;
-            agent.wsSend(text);
+        function wsExecute() {
+            var text = document.getElementById("wsExecuteFileName").value;
+            agent.wsExecute(text);
         }
     </script>
 </head>
@@ -65,10 +65,11 @@
     
     <div>
         <div>
-            <textarea id="wsSendText" cols="60" rows="10">{"eventName":"ProcessStart","data":{"fileName":"notepad.exe"}}</textarea>
+            <!--<textarea id="wsSendText" cols="60" rows="10">{"eventName":"ProcessStart","data":{"fileName":"C:\\Workspace\\DotNet\\GitProject\\WFAAgent\\TestClientNet45\\bin\\Debug\\TestClientNet45.exe", "useCallbackData":true}}</textarea>-->
+            <textarea id="wsExecuteFileName" cols="60" rows="10">C:\\Workspace\\DotNet\\GitProject\\WFAAgent\\TestClientNet45\\bin\\Debug\\TestClientNet45.exe</textarea>
         </div>
         <div>
-            <button type="button" class="btn btn-primary" onclick="wsSend()">
+            <button type="button" class="btn btn-primary" onclick="wsExecute()">
                 데이터 전송
             </button>
         </div>
