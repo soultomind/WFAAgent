@@ -1,8 +1,11 @@
 ﻿using Newtonsoft.Json.Linq;
+using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Config;
 using SuperSocket.WebSocket;
 using System;
+using System.Collections.Generic;
 using WFAAgent.Core;
+using WFAAgent.Framework.Net.Sockets;
 using WFAAgent.Message;
 
 namespace WFAAgent.WebSocket
@@ -89,8 +92,12 @@ namespace WFAAgent.WebSocket
             try
             {
                 JObject data = JObject.Parse(message);
-                data.Add(WebSocketEventConstant.SessionID, session.SessionID);
+                data.Add(EventConstant.SessionID, session.SessionID);
                 AgentManager.OnRequestClientDataReceived(data);
+            }
+            catch (AgentTcpServerException ex)
+            {
+                session.Send(ex.Message);
             }
             catch (Newtonsoft.Json.JsonException ex)
             {
@@ -163,6 +170,21 @@ namespace WFAAgent.WebSocket
             {
                 CallbackMessage("세션을 찾을 수 없습니다.");
             }
+        }
+
+        public void BroadCastTcpServerEvent(string data)
+        {
+            // BroadCast 지만 실질적으로는 처음 wsExecue 를 호출한 세션만 해당함
+            IEnumerator<WebSocketSession> sessions = WSServer.GetAllSessions().GetEnumerator();
+            while (sessions.MoveNext())
+            {
+                sessions.Current.Send(data);
+            }
+        }
+
+        public void SendTcpServerEvent(string data)
+        {
+
         }
     }
 }

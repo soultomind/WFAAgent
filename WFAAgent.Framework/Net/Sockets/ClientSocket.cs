@@ -7,24 +7,13 @@ namespace WFAAgent.Framework.Net.Sockets
 {
     public class ClientSocket : DefaultSocket
     {
-        public string IPString
-        {
-            get { return _IPString; }
-            set { _IPString = value; }
-        }
-        private string _IPString = "127.0.0.1";
-        public int Port
-        {
-            get { return _Port; }
-            set { _Port = value; }
-        }
-        private int _Port = 0;
         public event DisconnectedEventHandler Disconnected;
         public event AsyncSendCompletedEventHandler AsyncSendCompleted;
         private Thread _Thread;
 
         private static object DisconnectLock = new object();
-        public ClientSocket()
+        public ClientSocket(string ipString, int port)
+            : base(ipString, port)
         {
             
         }
@@ -35,31 +24,13 @@ namespace WFAAgent.Framework.Net.Sockets
             get { return Socket != null && Socket.Connected; }
         }
 
-        public bool Connect(int port)
-        {
-            return Connect(IPString, port);
-        }
-
-        public bool Connect(string ipString, int port)
+        public bool Connect()
         {
             try
             {
-                // TODO: IPString, 정규식 체크 필요
-                if (!IsValidIPString(ipString))
-                {
-                    throw new ArgumentException("This is an invalid ipString.");
-                }
-                IPString = ipString;
-                if (!IsValidPort(port))
-                {
-                    throw new ArgumentException("Usage port range is 1024-49151");
-                }
-                Port = port;
-
-                Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                IPAddress ipAddress = IPAddress.Parse(IPString);
-                IPEndPoint remoteEP = new IPEndPoint(ipAddress, Port);
-                Socket.Connect(remoteEP);
+                Initialize();
+                                
+                Socket.Connect(IPEndPoint);
 
                 _Thread = new Thread(Receive);
                 _Thread.Start();
@@ -116,7 +87,6 @@ namespace WFAAgent.Framework.Net.Sockets
 
                     byte[] data = new byte[header.DataLength];
                     int offset = 0;
-
                     
                 }
             }

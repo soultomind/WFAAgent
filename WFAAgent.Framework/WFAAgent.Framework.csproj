@@ -55,6 +55,7 @@
     <Compile Include="Extension.cs" />
     <Compile Include="Net\Sockets\AgentTcpClient.cs" />
     <Compile Include="Net\Sockets\AgentTcpServer.cs" />
+    <Compile Include="Net\Sockets\AgentTcpSocketException.cs" />
     <Compile Include="Net\Sockets\DataContext.cs" />
     <Compile Include="Net\Sockets\DataType.cs" />
     <Compile Include="Net\Sockets\AsyncSendSocketState.cs" />
@@ -68,6 +69,7 @@
     <Compile Include="Net\Sockets\SocketEventHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Net\Sockets\TransmissionData.cs" />
+    <Compile Include="ServerSocketType.cs" />
     <Compile Include="Utilities\ConvertUtility.cs" />
     <Compile Include="Win32\POINT.cs" />
     <Compile Include="Win32\RECT.cs" />

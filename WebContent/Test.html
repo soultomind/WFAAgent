@@ -27,7 +27,7 @@
         });
 
         agent.setWsOnMessageEventHandler(function (e) {
-            
+            //window.console.info(JSON.stringify(e.data));
         });
 
         agent.setWsOnCloseEventHandler(function (e) {
@@ -39,6 +39,10 @@
         });
 
         agent.setProcessExitedEventHandler(function (e) {
+            window.console.info(JSON.stringify(e));
+        });
+
+        agent.setTcpServerListenEventHandler(function (e) {
             window.console.info(JSON.stringify(e));
         });
 

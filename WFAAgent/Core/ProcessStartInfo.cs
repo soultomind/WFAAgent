@@ -16,8 +16,7 @@ namespace WFAAgent.Core
         private readonly string PropFileName = "FileName";
         private readonly string PropStartTime = "StartTime";
         private readonly string PropExitTime = "ExitTime";
-        private readonly string PropProcessStarted = "ProcessStarted";
-        private readonly string PropProcessExited = "ProcessExited";
+        
         public string FileName { get; set; }
         public Process Process { get; set; }
         public string SessionID { get; set; }
@@ -51,7 +50,7 @@ namespace WFAAgent.Core
         {
             JObject o = ToCommonJson();
             o.Add(PropStartTime, Process.StartTime.ToString());
-            o.Add(WebSocketEventConstant.EventName, PropProcessStarted);
+            o.Add(EventConstant.EventName, EventConstant.ProcessStartedEvent);
             return o;
         }
 
@@ -59,7 +58,7 @@ namespace WFAAgent.Core
         {
             JObject o = ToCommonJson();
             o.Add(PropExitTime, Process.ExitTime.ToString());
-            o.Add(WebSocketEventConstant.EventName, PropProcessExited);
+            o.Add(EventConstant.EventName, EventConstant.ProcessExitedEvent);
             return o;
         }
     }

@@ -1,3 +1,25 @@
+HashMap = function () {
+    this._map = new Array();
+};
+
+HashMap.prototype = {
+    put: function (key, value) {
+        this._map[key] = value;
+    },
+    get: function (key) {
+        return this._map[key];
+    },
+    clear: function () {
+        this._map = new Array();
+    },
+    keys: function () {
+        var array = new Array();
+        for (item in this._map) {
+            array.push(item);
+        }
+        return array;
+    }
+};
 function WFAAgent(config) {
 
     this._bWsInitialize = false;
@@ -13,6 +35,7 @@ function WFAAgent(config) {
     this._evtWsOnCloseEventHandler = null;
     this._evtProcessStartedEventHandler = null;
     this._evtProcessExitedEventHandler = null;
+    this._evtTcpServerListenEventHandler = null;
     this._WebSocket = null;
     this._bWsConnect = false;
 
@@ -78,22 +101,41 @@ WFAAgent.prototype.setProcessExitedEventHandler = function (evt) {
     this._evtProcessExitedEventHandler = evt;
 };
 
+WFAAgent.prototype.setTcpServerListenEventHandler = function (evt) {
+    this._evtTcpServerListenEventHandler = evt;
+}
+
 WFAAgent.prototype.OnClientEventCallbackHandler = function (e) {
     if (event.data instanceof ArrayBuffer) {
         // TODO: Binary
     } else {
-        var data = JSON.parse(e.data);
-        switch (data.eventName) {
-            case "ProcessStarted":
-                if (this._evtProcessStartedEventHandler != null) {
-                    this._evtProcessStartedEventHandler(data);
-                }
-                break;
-            case "ProcessExited":
-                if (this._evtProcessExitedEventHandler != null) {
-                    this._evtProcessExitedEventHandler(data);
-                }
-                break;
+        try {
+            var data = JSON.parse(e.data);
+            switch (data.eventName) {
+                case "Exception":
+
+                    break;
+                case "ProcessStarted":
+                    if (this._evtProcessStartedEventHandler != null) {
+                        this.wsAddProcessStartedInfo(data);
+                        this._evtProcessStartedEventHandler(data);
+                    }
+                    break;
+                case "ProcessExited":
+                    if (this._evtProcessExitedEventHandler != null) {
+                        this.wsRemoveProcessStartedInfo(data);
+                        this._evtProcessExitedEventHandler(data);
+                    }
+                    break;
+                case "TcpServerListenEvent":
+                    if (this._evtTcpServerListenEventHandler != null) {
+                        this._evtTcpServerListenEventHandler(data);
+                    }
+                    break;
+            }
+        } catch (e) {
+            window.console.error(e.stack);
+            window.console.error(e.data);
         }
     }
 };
@@ -162,3 +204,11 @@ WFAAgent.prototype.wsExecute = function (fileName) {
         this.wsSend(JSON.stringify(sendData));
     }
 }
+
+WFAAgent.prototype.wsAddProcessStartedInfo = function (data) {
+
+};
+
+WFAAgent.prototype.wsRemoveProcessStartedInfo = function (data) {
+
+};
