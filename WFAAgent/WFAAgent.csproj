@@ -93,7 +93,7 @@
     <Compile Include="Core\EventProcessorManager.cs" />
     <Compile Include="Core\IEventProcessor.cs" />
     <Compile Include="Core\ProcessStartEventProcessor.cs" />
-    <Compile Include="Core\ProcessStartInfo.cs" />
+    <Compile Include="Core\ProcessInfo.cs" />
     <Compile Include="Message\DetailMessageItem.cs" />
     <Compile Include="Core\ItemQueue.cs" />
     <Compile Include="Message\MessageItem.cs" />

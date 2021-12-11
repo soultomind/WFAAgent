@@ -32,8 +32,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.TrayNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.TrayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.ExecuteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.종료ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this._ToolStripMenuItemExecuteMainWnd = new System.Windows.Forms.ToolStripMenuItem();
+            this._ToolStripMenuItemAppExit = new System.Windows.Forms.ToolStripMenuItem();
             this.TrayContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,24 +48,24 @@
             // TrayContextMenuStrip
             // 
             this.TrayContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ExecuteToolStripMenuItem,
-            this.종료ToolStripMenuItem});
+            this._ToolStripMenuItemExecuteMainWnd,
+            this._ToolStripMenuItemAppExit});
             this.TrayContextMenuStrip.Name = "ContextMenuStrip";
             this.TrayContextMenuStrip.Size = new System.Drawing.Size(99, 48);
             // 
-            // ExecuteToolStripMenuItem
+            // _ToolStripMenuItemExecuteMainWnd
             // 
-            this.ExecuteToolStripMenuItem.Name = "ExecuteToolStripMenuItem";
-            this.ExecuteToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
-            this.ExecuteToolStripMenuItem.Text = "실행";
-            this.ExecuteToolStripMenuItem.Click += new System.EventHandler(this.ExecuteToolStripMenuItem_Click);
+            this._ToolStripMenuItemExecuteMainWnd.Name = "_ToolStripMenuItemExecuteMainWnd";
+            this._ToolStripMenuItemExecuteMainWnd.Size = new System.Drawing.Size(98, 22);
+            this._ToolStripMenuItemExecuteMainWnd.Text = "실행";
+            this._ToolStripMenuItemExecuteMainWnd.Click += new System.EventHandler(this.ToolStripMenuItemExecuteMainWnd_Click);
             // 
-            // 종료ToolStripMenuItem
+            // _ToolStripMenuItemAppExit
             // 
-            this.종료ToolStripMenuItem.Name = "종료ToolStripMenuItem";
-            this.종료ToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
-            this.종료ToolStripMenuItem.Text = "종료";
-            this.종료ToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
+            this._ToolStripMenuItemAppExit.Name = "_ToolStripMenuItemAppExit";
+            this._ToolStripMenuItemAppExit.Size = new System.Drawing.Size(98, 22);
+            this._ToolStripMenuItemAppExit.Text = "종료";
+            this._ToolStripMenuItemAppExit.Click += new System.EventHandler(this.ToolStripMenuItemAppExit_Click);
             // 
             // MainForm
             // 
@@ -89,8 +89,8 @@
 
         private System.Windows.Forms.NotifyIcon TrayNotifyIcon;
         private System.Windows.Forms.ContextMenuStrip TrayContextMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem ExecuteToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 종료ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem _ToolStripMenuItemExecuteMainWnd;
+        private System.Windows.Forms.ToolStripMenuItem _ToolStripMenuItemAppExit;
     }
 }
 

@@ -14,9 +14,11 @@ namespace WFAAgent.Framework.Net.Sockets
         public const int DefaultDataPacketHeaderLength = byte.MaxValue;
         public const int FirstHeaderLength = 8;
 
-        public const ushort UserData = 1;
+        public const ushort AcceptClient = 1;
+        public const ushort UserData = 255;
         public const ushort UnknownData = ushort.MaxValue;
 
+        public const int TempReceiveBufferSize = 8192;
         public static void CheckedType(ushort value)
         {
             if (!(Max >= value && Min <= value))
@@ -38,6 +40,11 @@ namespace WFAAgent.Framework.Net.Sockets
         public static byte[] NewDataBuffer(int size)
         {
             return new byte[size];
+        }
+
+        public static byte[] NewTempReceiveBuffer()
+        {
+            return NewDataBuffer(TempReceiveBufferSize);
         }
     }
 }

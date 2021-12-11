@@ -120,17 +120,17 @@ namespace WFAAgent.WebSocket
 
         #endregion
 
-        public void OnProcessStarted(ProcessStartInfo processStartInfo)
+        public void OnProcessStarted(ProcessInfo processInfo)
         {
-            JObject o = processStartInfo.ToStartedJson();
+            JObject o = processInfo.ToStartedJson();
             string text = o.ToString();
             CallbackMessage(text);
 
-            WebSocketSession session = WSServer.GetSessionByID(processStartInfo.SessionID);
+            WebSocketSession session = WSServer.GetSessionByID(processInfo.SessionID);
             if (session != null)
             {
-                CallbackMessage("SessionID=" + processStartInfo.SessionID);
-                // TODO: ProcessStartInfo 데이터 정의
+                CallbackMessage("SessionID=" + processInfo.SessionID);
+                // TODO: processInfo 데이터 정의
                 if (session.TrySend(text))
                 {
                     CallbackMessage("전송성공");
@@ -146,17 +146,17 @@ namespace WFAAgent.WebSocket
             }
         }
 
-        public void OnProcessExited(ProcessStartInfo processStartInfo)
+        public void OnProcessExited(ProcessInfo processInfo)
         {
-            JObject o = processStartInfo.ToExitedJson();
+            JObject o = processInfo.ToExitedJson();
             string text = o.ToString();
             CallbackMessage(text);
 
-            WebSocketSession session = WSServer.GetSessionByID(processStartInfo.SessionID);
+            WebSocketSession session = WSServer.GetSessionByID(processInfo.SessionID);
             if (session != null)
             {
-                CallbackMessage("SessionID=" + processStartInfo.SessionID);
-                // TODO: ProcessStartInfo 데이터 정의
+                CallbackMessage("SessionID=" + processInfo.SessionID);
+                // TODO: processInfo 데이터 정의
                 if (session.TrySend(text))
                 {
                     CallbackMessage("전송성공");

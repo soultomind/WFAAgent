@@ -8,6 +8,9 @@ namespace WFAAgent.Framework.Net.Sockets
 {
     public class DataPacket
     {
+        public static DataPacket AcceptClient = new DataPacket(DataContext.AcceptClient);
+        public static DataPacket UserData = new DataPacket(DataContext.UserData);
+
         public const int DataLengthPos = 4;
         public const int HeaderLength = 255;
         public Header Header

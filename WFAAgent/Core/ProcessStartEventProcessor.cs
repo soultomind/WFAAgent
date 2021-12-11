@@ -20,8 +20,8 @@ namespace WFAAgent.Core
 
         public bool IsMultiProcess { get; set; }
         public int AgentTcpServerPort { get; set; }
-        public List<ProcessStartInfo> ProcessList { get; set; }
-        public ProcessStartInfo ProcessStartInfo { get; private set; }
+        public List<ProcessInfo> ProcessList { get; set; }
+        public ProcessInfo ProcessStartInfo { get; private set; }
 
 
         public event StartedEventHandler Started;
@@ -55,8 +55,8 @@ namespace WFAAgent.Core
                             int agentTcpServerPort = AgentTcpServerPort;
 
                             JObject argObj = new JObject();
-                            argObj.Add(Context.ArgSessionID, sessionID);
-                            argObj.Add(Context.ArgAgentTcpServerPort, agentTcpServerPort);
+                            argObj.Add(Constant.ArgAppID, sessionID);
+                            argObj.Add(Constant.ArgAgentTcpServerPort, agentTcpServerPort);
                             string arguments = ConvertUtility.Base64Encode(argObj.ToString());
                             process = Process.Start(fileName, arguments);
                         }
@@ -65,7 +65,7 @@ namespace WFAAgent.Core
                             process = Process.Start(fileName);
                         }
 
-                        ProcessStartInfo = new ProcessStartInfo() {
+                        ProcessStartInfo = new ProcessInfo() {
                             FileName = fileName,
                             Process = process,
                             SessionID = eventData.SessionID
@@ -94,7 +94,7 @@ namespace WFAAgent.Core
             if (IsMultiProcess)
             {
                 int id = (sender as Process).Id;
-                foreach (ProcessStartInfo item in ProcessList)
+                foreach (ProcessInfo item in ProcessList)
                 {
                     if (item.Process.Id == id)
                     {

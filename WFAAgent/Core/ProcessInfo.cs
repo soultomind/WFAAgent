@@ -9,7 +9,7 @@ using WFAAgent.WebSocket;
 
 namespace WFAAgent.Core
 {
-    public class ProcessStartInfo
+    public class ProcessInfo
     {
         private readonly string PropProcessId = "ProcessId";
         private readonly string PropProcessName = "ProcessName";
@@ -21,7 +21,7 @@ namespace WFAAgent.Core
         public Process Process { get; set; }
         public string SessionID { get; set; }
 
-        public ProcessStartInfo()
+        public ProcessInfo()
         {
             Process = null;
             SessionID = String.Empty;

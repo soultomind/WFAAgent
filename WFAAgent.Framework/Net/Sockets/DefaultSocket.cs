@@ -80,7 +80,7 @@ namespace WFAAgent.Framework.Net.Sockets
             return false;
         }
 
-        protected void Initialize()
+        public void Initialize()
         {
             _IPAddress = System.Net.IPAddress.Parse(IPString);
             _IPEndPoint = new IPEndPoint(_IPAddress, Port);

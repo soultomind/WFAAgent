@@ -15,8 +15,10 @@ namespace WFAAgent
         void Start();
         void Stop();
 
-        void OnProcessStarted(ProcessStartInfo processStartInfo);
-        void OnProcessExited(ProcessStartInfo processStartInfo);
+        void OnProcessStarted(ProcessInfo processInfo);
+        void OnProcessExited(ProcessInfo processInfo);
+
+
         
     }
 }

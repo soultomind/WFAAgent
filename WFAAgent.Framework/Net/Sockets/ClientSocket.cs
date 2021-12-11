@@ -7,8 +7,11 @@ namespace WFAAgent.Framework.Net.Sockets
 {
     public class ClientSocket : DefaultSocket
     {
+        public event ConnectedEventhandler Connected;
         public event DisconnectedEventHandler Disconnected;
+        public event DataReceivedEventhandler ServerDataReceived;
         public event AsyncSendCompletedEventHandler AsyncSendCompleted;
+
         private Thread _Thread;
 
         private static object DisconnectLock = new object();
@@ -31,6 +34,7 @@ namespace WFAAgent.Framework.Net.Sockets
                 Initialize();
                                 
                 Socket.Connect(IPEndPoint);
+                Connected?.Invoke(this, new ConnectedEventArgs(Socket));
 
                 _Thread = new Thread(Receive);
                 _Thread.Start();
@@ -52,10 +56,7 @@ namespace WFAAgent.Framework.Net.Sockets
                     try
                     {
                         Socket.Disconnect(false);
-                        if (Disconnected != null)
-                        {
-                            Disconnected(this, new DisconnectEventArgs(Socket, false));
-                        }                        
+                        Disconnected?.Invoke(this, new DisconnectEventArgs(Socket, false));
 
                         Socket.Close();
                         Socket = null;
@@ -71,23 +72,61 @@ namespace WFAAgent.Framework.Net.Sockets
         private void Receive()
         {
             // 추후에 8바이트 먼져 읽은 후 해당 헤더에서 실제 헤더 길이 구해서 더 읽어야 함
+            int receiveBytes = 0;
             byte[] dataPacketHeaderBuffer = DataContext.NewDefaultDataPacketHeaderBuffer();
             while (true)
             {
                 Array.Clear(dataPacketHeaderBuffer, 0, dataPacketHeaderBuffer.Length);
-                int receiveBytes = Socket.Receive(dataPacketHeaderBuffer, dataPacketHeaderBuffer.Length, SocketFlags.None);
+                receiveBytes = Socket.Receive(dataPacketHeaderBuffer, dataPacketHeaderBuffer.Length, SocketFlags.None);
                 if (receiveBytes == 0)
                 {
                     // TOOO: 연결 해제 작업
                 }
                 else
                 {
-                    // TODO: 패킷을 읽어서 데이터 길이를 구한다음에 해당 길이만큼 읽어야함
+                    bool isReceive = true;
+                    Exception exception = null;
                     Header header = DataPacket.ToHeader(dataPacketHeaderBuffer);
 
-                    byte[] data = new byte[header.DataLength];
+                    int size = header.DataLength;
+                    byte[] dataBuffer = new byte[size];
                     int offset = 0;
-                    
+
+                    try
+                    {
+                        while (offset < size)
+                        {
+                            receiveBytes = Socket.Receive(dataBuffer, offset, size - offset, SocketFlags.None);
+                            if (receiveBytes == 0)
+                            {
+                                // TODO: 2. 데이터 읽는중 클라이언트 소켓 해제
+                                isReceive = false;
+                                break;
+                            }
+                            else
+                            {
+                                offset += receiveBytes;
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        exception = ex;
+                    }
+
+
+                    if (isReceive)
+                    {
+                        DataReceivedEventArgs e = new DataReceivedEventArgs();
+                        e.SetData(header, dataBuffer);
+                        ServerDataReceived?.Invoke(this, e);
+                    }
+                    else
+                    {
+                        DataReceivedEventArgs e = new DataReceivedEventArgs();
+                        e.Exception = exception;
+                        ServerDataReceived?.Invoke(this, e);
+                    }
                 }
             }
         }
@@ -103,21 +142,14 @@ namespace WFAAgent.Framework.Net.Sockets
             byte[] sendData = packet.CreateData(data);
             return Socket.Send(sendData, 0, sendData.Length, SocketFlags.None);
         }
-        public bool Send(DataPacket packet, string data)
+        public int Send(DataPacket packet, string data)
         {
             if (CanUseSocket)
             {
                 try
                 {
                     int sendBytes = Socket_Send(packet, data);
-                    if (sendBytes > 0)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return sendBytes;
                 }
                 catch (Exception ex)
                 {
@@ -125,24 +157,17 @@ namespace WFAAgent.Framework.Net.Sockets
                     throw;
                 }
             }
-            return false;
+            return -1;
         }
 
-        public bool Send(DataPacket packet, byte[] data)
+        public int Send(DataPacket packet, byte[] data)
         {
             if (CanUseSocket)
             {
                 int sendBytes = Socket_Send(packet, data);
-                if (sendBytes > 0)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return sendBytes;
             }
-            return false;
+            return -1;
         }
         #endregion
 

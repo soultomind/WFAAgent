@@ -50,8 +50,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Application\Constant.cs" />
     <Compile Include="Application\Context.cs" />
     <Compile Include="Application\ProcessStartArguments.cs" />
+    <Compile Include="Application\CallbackDataProcess.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="Net\Sockets\AgentTcpClient.cs" />
     <Compile Include="Net\Sockets\AgentTcpServer.cs" />

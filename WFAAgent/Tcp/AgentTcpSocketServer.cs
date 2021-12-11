@@ -24,12 +24,12 @@ namespace WFAAgent.Tcp
             
         }
 
-        public void OnProcessStarted(ProcessStartInfo processStartInfo)
+        public void OnProcessStarted(ProcessInfo processInfo)
         {
 
         }
 
-        public void OnProcessExited(ProcessStartInfo processStartInfo)
+        public void OnProcessExited(ProcessInfo processInfo)
         {
 
         }

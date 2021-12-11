@@ -11,7 +11,9 @@ namespace WFAAgent.Framework.Net.Sockets
         public ServerSocket ServerSocket { get; private set; }
 
         public event ListenEventHandler Listen;
+
         public event AcceptClientEventHandler AcceptClient;
+        public event DataReceivedEventhandler DataReceived;
 
         public AgentTcpServer()
             : this("127.0.0.1")
@@ -33,22 +35,46 @@ namespace WFAAgent.Framework.Net.Sockets
             get { return ServerSocket.Port; }
         }
 
+        private void ServerSocket_AcceptClient(object sender, AcceptClientEventArgs e)
+        {
+            AcceptClient?.Invoke(sender, e);
+        }
+        private void ServerSocket_ClientDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            DataReceived?.Invoke(sender, e);
+        }
+
+        private void ServerSocket_DisconnectedClient(object sender, DisconnectEventArgs e)
+        {
+            
+        }
+
         public void Start()
         {
-            ServerSocket.Bind();
-            ServerSocket.Listen();
-
-            Listen?.Invoke(this, new ListenEventArgs(ServerSocket.Socket));
+            ServerSocket.Initialize();
+            if (ServerSocket.Bind())
+            {
+                ServerSocket.AcceptClient += ServerSocket_AcceptClient;
+                ServerSocket.ClientDataReceived += ServerSocket_ClientDataReceived;
+                ServerSocket.DisconnectedClient += ServerSocket_DisconnectedClient;
+                ServerSocket.Listen();
+                Listen?.Invoke(this, new ListenEventArgs(ServerSocket.Socket));
+                ServerSocket.Start();
+            }
         }
 
         public void Start(int backlog)
         {
-            ServerSocket.Bind();
-            ServerSocket.Listen(backlog);
-
-            Listen?.Invoke(this, new ListenEventArgs(ServerSocket.Socket));
-
-            ServerSocket.Start();
+            ServerSocket.Initialize();
+            if (ServerSocket.Bind())
+            {
+                ServerSocket.AcceptClient += ServerSocket_AcceptClient;
+                ServerSocket.ClientDataReceived += ServerSocket_ClientDataReceived;
+                ServerSocket.DisconnectedClient += ServerSocket_DisconnectedClient;
+                ServerSocket.Listen(backlog);
+                Listen?.Invoke(this, new ListenEventArgs(ServerSocket.Socket));
+                ServerSocket.Start();
+            }
         }
 
         public void Stop()

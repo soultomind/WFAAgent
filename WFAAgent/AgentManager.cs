@@ -19,13 +19,13 @@ namespace WFAAgent
 {
     internal class AgentManager : IAgentManager
     {
-        public ServerSocketType ServerSocketType { get; internal set; }
+        public event MessageObjectReceivedEventHandler MessageObjectReceived;
+
+        public ServerSocketType ServerSocketType { get; private set; }
+        public IDefaultSocketServer SocketServer { get; private set; }
         public EventProcessorManager EventProcessorManager { get; private set; }
 
-        public IDefaultSocketServer SocketServer { get; private set; }
         public AgentTcpServer TcpServer { get; private set; }
-
-        public event MessageObjectReceivedEventHandler MessageObjectReceived;
 
         public AgentManager()
             : this(ServerSocketType.Web)
@@ -39,28 +39,6 @@ namespace WFAAgent
             EventProcessorManager = new EventProcessorManager();
         }
 
-        #region Process Event
-        private void AgentWebSocketServer_ProcessStarted(object sender, EventArgs e)
-        {
-            WFAAgent.Core.ProcessStartInfo processStartInfo = sender as WFAAgent.Core.ProcessStartInfo;
-            OnMessageObjectReceived("===== AgentWebSocketServer_ProcessStarted =====");
-
-            SocketServer.OnProcessStarted(processStartInfo);
-
-            OnMessageObjectReceived("===== AgentWebSocketServer_ProcessStarted =====\n");
-        }
-
-        private void AgentWebSocketServer_ProcessExited(object sender, EventArgs e)
-        {
-            WFAAgent.Core.ProcessStartInfo processStartInfo = sender as WFAAgent.Core.ProcessStartInfo;
-            OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====");
-
-            SocketServer.OnProcessExited(processStartInfo);
-
-            OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====\n");
-        }
-
-        #endregion
         internal void OnMessageObjectReceived(object messageObject)
         {
             MessageObjectReceived?.Invoke(messageObject);
@@ -92,28 +70,6 @@ namespace WFAAgent
             StopTcpServer();
         }
 
-        private void StartTcpServer()
-        {
-            if (TcpServer == null)
-            {
-                TcpServer = new AgentTcpServer();
-                TcpServer.Listen += new ListenEventHandler(TcpServer_Listen);
-                TcpServer.AcceptClient += new AcceptClientEventHandler(TcpServer_AcceptClient);
-                TcpServer.Start();
-            }
-        }
-
-        private void StopTcpServer()
-        {
-            if (TcpServer != null)
-            {
-                TcpServer.Listen -= new ListenEventHandler(TcpServer_Listen);
-                TcpServer.AcceptClient -= new AcceptClientEventHandler(TcpServer_AcceptClient);
-                TcpServer.Stop();
-                TcpServer = null;
-            }
-        }
-
         private void TcpServer_Listen(object sender, ListenEventArgs e)
         {
             if (ServerSocketType == ServerSocketType.Web)
@@ -143,6 +99,75 @@ namespace WFAAgent
             }
         }
 
+        private void TcpServer_DataReceived(object sender, DataReceivedEventArgs e)
+        {
+            if (e.Exception == null)
+            {
+                OnMessageObjectReceived("============ TcpServer_DataReceived");
+                OnMessageObjectReceived(e.ToString());
+                if (ServerSocketType == ServerSocketType.Web)
+                {
+                    // TODO: 해당 데이터 JSON Serialize 로 객체를 만들어서 처리하자
+                    switch (e.Header.Type)
+                    {
+                        case DataContext.AcceptClient:
+                            
+                            break;
+                        case DataContext.UserData:
+                            break;
+                    }
+                }
+                OnMessageObjectReceived("TcpServer_DataReceived ============");
+            }
+        }
+
+        private void StartTcpServer()
+        {
+            if (TcpServer == null)
+            {
+                TcpServer = new AgentTcpServer();
+                TcpServer.Listen += new ListenEventHandler(TcpServer_Listen);
+                TcpServer.AcceptClient += new AcceptClientEventHandler(TcpServer_AcceptClient);
+                TcpServer.DataReceived += new WFAAgent.Framework.Net.Sockets.DataReceivedEventhandler(TcpServer_DataReceived);
+                TcpServer.Start();
+            }
+        }
+
+        private void StopTcpServer()
+        {
+            if (TcpServer != null)
+            {
+                TcpServer.Listen -= new ListenEventHandler(TcpServer_Listen);
+                TcpServer.AcceptClient -= new AcceptClientEventHandler(TcpServer_AcceptClient);
+                TcpServer.DataReceived -= new WFAAgent.Framework.Net.Sockets.DataReceivedEventhandler(TcpServer_DataReceived);
+                TcpServer.Stop();
+                TcpServer = null;
+            }
+        }
+
+        #region Process Event
+        private void AgentWebSocketServer_ProcessStarted(object sender, EventArgs e)
+        {
+            WFAAgent.Core.ProcessInfo processStartInfo = sender as WFAAgent.Core.ProcessInfo;
+            OnMessageObjectReceived("===== AgentWebSocketServer_ProcessStarted =====");
+
+            SocketServer.OnProcessStarted(processStartInfo);
+
+            OnMessageObjectReceived("===== AgentWebSocketServer_ProcessStarted =====\n");
+        }
+
+        private void AgentWebSocketServer_ProcessExited(object sender, EventArgs e)
+        {
+            WFAAgent.Core.ProcessInfo processStartInfo = sender as WFAAgent.Core.ProcessInfo;
+            OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====");
+
+            SocketServer.OnProcessExited(processStartInfo);
+
+            OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====\n");
+        }
+
+        #endregion
+        
         public void OnRequestClientDataReceived(JObject messageObj)
         {
             string eventName = messageObj[EventConstant.EventName].ToObject<string>();
@@ -150,6 +175,7 @@ namespace WFAAgent
             IEventProcessor eventProcessor = null;
             if (!EventProcessorManager.EventProcessors.ContainsKey(eventName))
             {
+                // 최초의 프로세스 실행 요청일 경우 TCPServer를 시작한다.
                 try
                 {
                     StartTcpServer();

@@ -3,6 +3,7 @@ using System;
 using System.Text;
 using System.Windows.Forms;
 using TestClient.UI;
+using TestClientNet45;
 using WFAAgent.Common;
 using WFAAgent.Framework.Application;
 using WFAAgent.Framework.Win32;
@@ -13,6 +14,8 @@ namespace TestClient
     {
         public ProcessStartArguments ProcessStartArguments { get; internal set; }
         private Exception ArgException { get; set; }
+
+        private MainWnd _MainWnd;
         public MainForm()
         {
             InitializeComponent();
@@ -78,12 +81,27 @@ namespace TestClient
         }
 
         public InfoDialog InfoDialog { get; set; }
-        private void ExecuteToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ToolStripMenuItemExecuteMainWnd_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("실행");
+            //MessageBox.Show("실행");
+            if (_MainWnd == null)
+            {
+                _ToolStripMenuItemExecuteMainWnd.Enabled = false;
+                _MainWnd = new MainWnd();
+                _MainWnd.TcpClient.ProcessStartArguments = ProcessStartArguments;
+                _MainWnd.Text = Application.ProductName + " MainWnd AgentTcpServerPort=" + ProcessStartArguments.AgentTcpServerPort;
+                _MainWnd.FormClosed += _MainWnd_FormClosed;
+                _MainWnd.Show();
+            }
         }
 
-        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+        private void _MainWnd_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            _MainWnd = null;
+            _ToolStripMenuItemExecuteMainWnd.Enabled = true;
+        }
+
+        private void ToolStripMenuItemAppExit_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }

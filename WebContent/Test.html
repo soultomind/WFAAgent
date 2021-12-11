@@ -23,7 +23,7 @@
         });
 
         agent.setWsOnErrorEventHandler(function (e) {
-            
+            window.console.error(JSON.stringify(e));
         });
 
         agent.setWsOnMessageEventHandler(function (e) {

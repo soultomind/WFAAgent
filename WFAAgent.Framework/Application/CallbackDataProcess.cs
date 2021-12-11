@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace WFAAgent.Framework.Application
 {
-    public class Context
+    class CallbackDataProcess
     {
-        
     }
 }
