@@ -21,7 +21,7 @@ namespace WFAAgent.Core
         public bool IsMultiProcess { get; set; }
         public int AgentTcpServerPort { get; set; }
         public List<ProcessInfo> ProcessList { get; set; }
-        public ProcessInfo ProcessStartInfo { get; private set; }
+        public ProcessInfo ProcessInfo { get; private set; }
 
 
         public event StartedEventHandler Started;
@@ -35,7 +35,7 @@ namespace WFAAgent.Core
             }
             else
             {
-                if (ProcessStartInfo == null)
+                if (ProcessInfo == null)
                 {
                     string fileName = String.Empty;
                     bool useCallbackData = false;
@@ -55,8 +55,8 @@ namespace WFAAgent.Core
                             int agentTcpServerPort = AgentTcpServerPort;
 
                             JObject argObj = new JObject();
-                            argObj.Add(Constant.ArgAppID, sessionID);
-                            argObj.Add(Constant.ArgAgentTcpServerPort, agentTcpServerPort);
+                            argObj.Add(Constant.AppID, sessionID);
+                            argObj.Add(Constant.AgentTcpServerPort, agentTcpServerPort);
                             string arguments = ConvertUtility.Base64Encode(argObj.ToString());
                             process = Process.Start(fileName, arguments);
                         }
@@ -65,17 +65,17 @@ namespace WFAAgent.Core
                             process = Process.Start(fileName);
                         }
 
-                        ProcessStartInfo = new ProcessInfo() {
+                        ProcessInfo = new ProcessInfo() {
                             FileName = fileName,
                             Process = process,
                             SessionID = eventData.SessionID
                         };
 
                         // Exited Event Enabled
-                        ProcessStartInfo.Process.EnableRaisingEvents = true;
-                        ProcessStartInfo.Process.Exited += Process_Exited;
+                        ProcessInfo.Process.EnableRaisingEvents = true;
+                        ProcessInfo.Process.Exited += Process_Exited;
 
-                        Started?.Invoke(ProcessStartInfo, EventArgs.Empty);
+                        Started?.Invoke(ProcessInfo, EventArgs.Empty);
                     }
                     catch (Exception ex)
                     {
@@ -108,8 +108,8 @@ namespace WFAAgent.Core
             }
             else
             {
-                Exited?.Invoke(ProcessStartInfo, e);
-                ProcessStartInfo.Close();
+                Exited?.Invoke(ProcessInfo, e);
+                ProcessInfo.Close();
             }
         }
     }

@@ -11,11 +11,11 @@ namespace WFAAgent.Core
 {
     public class ProcessInfo
     {
-        private readonly string PropProcessId = "ProcessId";
-        private readonly string PropProcessName = "ProcessName";
-        private readonly string PropFileName = "FileName";
-        private readonly string PropStartTime = "StartTime";
-        private readonly string PropExitTime = "ExitTime";
+        private readonly string PropProcessId = "processId";
+        private readonly string PropProcessName = "processName";
+        private readonly string PropFileName = "fileName";
+        private readonly string PropStartTime = "startTime";
+        private readonly string PropExitTime = "exitTime";
         
         public string FileName { get; set; }
         public Process Process { get; set; }

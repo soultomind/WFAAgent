@@ -186,5 +186,21 @@ namespace WFAAgent.WebSocket
         {
 
         }
+
+        public void OnDataReceived(ushort type, string data)
+        {
+            switch (type)
+            {
+                case DataContext.AcceptClient:
+                    break;
+                case DataContext.UserData:
+                    break;
+            }
+        }
+
+        public void OnDataReceived(ushort type, byte[] data)
+        {
+            
+        }
     }
 }

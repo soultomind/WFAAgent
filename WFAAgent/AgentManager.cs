@@ -58,13 +58,33 @@ namespace WFAAgent
 
             SocketServer.AgentManager = this;
             SocketServer.MessageObjectReceived += OnMessageObjectReceived;
-            SocketServer.Start();
+
+            try
+            {
+                SocketServer.Start();
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            
+            try
+            {
+                StartTcpServer();
+            }
+            catch (Exception ex)
+            {
+                throw new AgentTcpServerException(ex.Message, ex);
+            }
         }
 
         public void StopServer()
         {
             SocketServer.Stop();
             SocketServer.MessageObjectReceived -= OnMessageObjectReceived;
+            SocketServer.AgentManager = null;
+
             SocketServer = null;
 
             StopTcpServer();
@@ -72,6 +92,7 @@ namespace WFAAgent
 
         private void TcpServer_Listen(object sender, ListenEventArgs e)
         {
+            OnMessageObjectReceived("============ TcpServer_Listen");
             if (ServerSocketType == ServerSocketType.Web)
             {
                 string data = new JObject()
@@ -83,20 +104,24 @@ namespace WFAAgent
 
                 ((AgentWebSocketServer)SocketServer).BroadCastTcpServerEvent(data);
             }
+            OnMessageObjectReceived("TcpServer_Listen ============");
         }
 
         private void TcpServer_AcceptClient(object sender, AcceptClientEventArgs e)
         {
+            OnMessageObjectReceived("============ TcpServer_AcceptClient");
             if (ServerSocketType == ServerSocketType.Web)
             {
                 string data = new JObject()
                     .AddString(EventConstant.EventName, EventConstant.TcpServerAcceptClientEvent)
-                    .AddInt(EventConstant.SocketHandle, (int)e.ServerSocket.Handle)
+                    .AddInt(EventConstant.SocketHandle, (int)e.ClientSocket.Handle)
+                    .AddInt(EventConstant.Port, ((IPEndPoint)e.ClientSocket.RemoteEndPoint).Port)
+                    .AddString(EventConstant.IPAddress, ((IPEndPoint)e.ClientSocket.RemoteEndPoint).Address.ToString())
                     .ToString();
 
-                // TODO: 실행을 요청한 세션에 데이터 보내야 함
-                // ((AgentWebSocketServer)SocketServer).BroadCastTcpServerEvent(data);
+                ((AgentWebSocketServer)SocketServer).BroadCastTcpServerEvent(data);
             }
+            OnMessageObjectReceived("TcpServer_AcceptClient ============");
         }
 
         private void TcpServer_DataReceived(object sender, DataReceivedEventArgs e)
@@ -105,17 +130,22 @@ namespace WFAAgent
             {
                 OnMessageObjectReceived("============ TcpServer_DataReceived");
                 OnMessageObjectReceived(e.ToString());
-                if (ServerSocketType == ServerSocketType.Web)
+                if (e.Exception == null)
                 {
-                    // TODO: 해당 데이터 JSON Serialize 로 객체를 만들어서 처리하자
-                    switch (e.Header.Type)
+                    switch (e.Header.TransmissionData)
                     {
-                        case DataContext.AcceptClient:
-                            
+                        case TransmissionData.Text:
+                            SocketServer.OnDataReceived(e.Header.Type, e.Data);
                             break;
-                        case DataContext.UserData:
+                        case TransmissionData.Binary:
+                            SocketServer.OnDataReceived(e.Header.Type, e.RawData);
                             break;
                     }
+                }
+                else
+                {
+                    OnMessageObjectReceived("Error Message=" + e.Exception.Message);
+                    OnMessageObjectReceived(e.Exception.StackTrace);
                 }
                 OnMessageObjectReceived("TcpServer_DataReceived ============");
             }
@@ -148,20 +178,18 @@ namespace WFAAgent
         #region Process Event
         private void AgentWebSocketServer_ProcessStarted(object sender, EventArgs e)
         {
-            WFAAgent.Core.ProcessInfo processStartInfo = sender as WFAAgent.Core.ProcessInfo;
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessStarted =====");
 
-            SocketServer.OnProcessStarted(processStartInfo);
+            SocketServer.OnProcessStarted(sender as ProcessInfo);
 
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessStarted =====\n");
         }
 
         private void AgentWebSocketServer_ProcessExited(object sender, EventArgs e)
         {
-            WFAAgent.Core.ProcessInfo processStartInfo = sender as WFAAgent.Core.ProcessInfo;
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====");
 
-            SocketServer.OnProcessExited(processStartInfo);
+            SocketServer.OnProcessExited(sender as ProcessInfo);
 
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====\n");
         }
@@ -175,17 +203,6 @@ namespace WFAAgent
             IEventProcessor eventProcessor = null;
             if (!EventProcessorManager.EventProcessors.ContainsKey(eventName))
             {
-                // 최초의 프로세스 실행 요청일 경우 TCPServer를 시작한다.
-                try
-                {
-                    StartTcpServer();
-                }
-                catch (Exception ex)
-                {
-                    throw new AgentTcpServerException(ex.Message, ex);
-                }
-                
-
                 eventProcessor = EventProcessorManager.AddStartsWithByEventName(eventName);
                 if (eventProcessor is ProcessStartEventProcessor)
                 {
@@ -199,15 +216,22 @@ namespace WFAAgent
                 eventProcessor = EventProcessorManager.EventProcessors[eventName];
             }
 
-            // TODO: ThreadPool 사용필요
+            
             JObject data = messageObj[EventConstant.Data] as JObject;
 
             EventData eventData = new EventData() { Data = data };
-            if (ServerSocketType == ServerSocketType.Web)
+            switch (ServerSocketType)
             {
-                string sessionId = messageObj[EventConstant.SessionID].ToObject<string>();
-                eventData.SessionID = sessionId;
+                case ServerSocketType.Web:
+                    string sessionId = messageObj[EventConstant.SessionID].ToObject<string>();
+                    eventData.SessionID = sessionId;
+                    break;
+                case ServerSocketType.Tcp:
+                    eventData.SessionID = Guid.NewGuid().ToString();
+                    break;
             }
+
+            // TODO: ThreadPool 사용필요
             eventProcessor.DoProcess(eventData);
         }
     }

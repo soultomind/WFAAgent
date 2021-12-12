@@ -23,8 +23,8 @@ namespace WFAAgent.Framework.Application
         public static ProcessStartArguments Parse(JObject argObj)
         {
             ProcessStartArguments o = new ProcessStartArguments();
-            o.AppId = argObj[Constant.ArgAppID].ToObject<string>();
-            o.AgentTcpServerPort = argObj[Constant.ArgAgentTcpServerPort].ToObject<int>();
+            o.AppId = argObj[Constant.AppID].ToObject<string>();
+            o.AgentTcpServerPort = argObj[Constant.AgentTcpServerPort].ToObject<int>();
             return o;
         }
 

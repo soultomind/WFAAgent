@@ -57,7 +57,7 @@ namespace WFAAgent.Framework.Net.Sockets
                 {
                     string data = new JObject()
                         .AddInt(Constant.ProcessId, Process.GetCurrentProcess().Id)
-                        .AddString(Constant.ArgAppID, ProcessStartArguments.AppId)
+                        .AddString(Constant.AppID, ProcessStartArguments.AppId)
                         .ToString();
                     int sendBytes = Send(DataPacket.AcceptClient, data);
                     _IsAcceptClientForSendServer = true;

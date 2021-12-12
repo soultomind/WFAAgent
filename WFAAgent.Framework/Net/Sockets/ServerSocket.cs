@@ -83,6 +83,7 @@ namespace WFAAgent.Framework.Net.Sockets
             Socket socket = asyncResult.AsyncState as Socket;
 
             Socket clientSocket = socket.EndAccept(asyncResult);
+            AcceptClient?.Invoke(this, new AcceptClientEventArgs(socket) { ClientSocket = clientSocket });
             _ClientSockets[clientSocket.Handle] = clientSocket;
 
             // Accept 완료후 클라이언트에서 처음으로 전달되는 데이터에 AppId를 받은후에
