@@ -23,7 +23,7 @@
         });
 
         agent.setWsOnErrorEventHandler(function (e) {
-            window.console.error(JSON.stringify(e));
+            window.console.error("setWsOnErrorEventHandler=" + JSON.stringify(e));
         });
 
         agent.setWsOnMessageEventHandler(function (e) {
@@ -46,13 +46,20 @@
             window.console.info(JSON.stringify(e));
         });
 
+        agent.setTcpServerAcceptClientEventHandler(function (e) {
+            window.console.info(JSON.stringify(e));
+        });
+
         function wsConnect() {
             agent.wsConnect();
         }
 
         function wsExecute() {
-            var text = document.getElementById("wsExecuteFileName").value;
-            agent.wsExecute(text);
+            var fileName = document.getElementById("wsExecuteFileName").value;
+            var data = {
+                useCallbackData: true
+            };
+            agent.wsExecute(fileName, data);
         }
     </script>
 </head>

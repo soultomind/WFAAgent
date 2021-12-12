@@ -33,9 +33,13 @@ function WFAAgent(config) {
     this._evtWsOnErrorEventHandler = null;
     this._evtWsOnMessageEventHandler = null;
     this._evtWsOnCloseEventHandler = null;
+
     this._evtProcessStartedEventHandler = null;
     this._evtProcessExitedEventHandler = null;
+
     this._evtTcpServerListenEventHandler = null;
+    this._evtTcpServerAcceptClientEventHandler = null;
+
     this._WebSocket = null;
     this._bWsConnect = false;
 
@@ -105,6 +109,10 @@ WFAAgent.prototype.setTcpServerListenEventHandler = function (evt) {
     this._evtTcpServerListenEventHandler = evt;
 }
 
+WFAAgent.prototype.setTcpServerAcceptClientEventHandler = function (evt) {
+    this._evtTcpServerAcceptClientEventHandler = evt;
+};
+
 WFAAgent.prototype.OnClientEventCallbackHandler = function (e) {
     if (event.data instanceof ArrayBuffer) {
         // TODO: Binary
@@ -130,6 +138,11 @@ WFAAgent.prototype.OnClientEventCallbackHandler = function (e) {
                 case "TcpServerListenEvent":
                     if (this._evtTcpServerListenEventHandler != null) {
                         this._evtTcpServerListenEventHandler(data);
+                    }
+                    break;
+                case "TcpServerAcceptClientEvent":
+                    if (this._evtTcpServerAcceptClientEventHandler != null) {
+                        this._evtTcpServerAcceptClientEventHandler(data);
                     }
                     break;
             }
@@ -190,15 +203,24 @@ WFAAgent.prototype.wsSend = function (message) {
     }
 }
 
-WFAAgent.prototype.wsExecute = function (fileName) {
+WFAAgent.prototype.wsExecute = function (fileName, data) {
     if (this._bWsConnect) {
         var sendData = {
-            eventName : "ProcessStart"
+            eventName: "ProcessStart",
+            data: {
+                fileName : fileName
+            }
         };
 
-        sendData.data = {
-            fileName: fileName,
-            useCallbackData : true
+        if (typeof data !== "undefined") {
+            for (var prop in data) {
+                sendData.data[prop] = data[prop];
+            }
+
+        } else {
+            sendData.data = {
+                useCallbackData: false
+            }
         }
 
         this.wsSend(JSON.stringify(sendData));
