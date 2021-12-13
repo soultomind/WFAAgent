@@ -1,4 +1,4 @@
-HashMap = function () {
+ÔªøHashMap = function () {
     this._map = new Array();
 };
 
@@ -242,7 +242,7 @@ WFAAgent.prototype.OnDataReceived = function (data) {
     window.console.info("OnDataReceived=" + JSON.stringify(data));
     switch (data.type) {
         case "AcceptClient":
-            // ≥ª∫Œ ∑Œ¡˜
+            // ÎÇ¥Î∂Ä Î°úÏßÅ
             break;
     }
 };
