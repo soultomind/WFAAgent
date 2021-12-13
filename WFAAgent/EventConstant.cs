@@ -15,13 +15,14 @@ namespace WFAAgent
         public const string ProcessStartedEvent = "ProcessStarted";
         public const string ProcessExitedEvent = "ProcessExited";
 
-        public const string TcpServerListenEvent = "TcpServerListenEvent";
+        public const string TcpServerListenEvent = "TcpServerListen";
         public const string SocketHandle = "socketHandle";
         public const string Port = "port";
         public const string IPAddress = "ipAddress";
 
-        public const string TcpServerAcceptClientEvent = "TcpServerAcceptClientEvent";
+        public const string TcpServerAcceptClientEvent = "TcpServerAcceptClient";
 
+        public const string DataReceivedEvent = "DataReceived";
 
         public const string Data = "data";
         public const string SessionID = "sessionId";

@@ -9,38 +9,37 @@ using WFAAgent.Message;
 
 namespace WFAAgent.Tcp
 {
-    public class AgentTcpSocketServer : IDefaultSocketServer
+    public class AgentTcpSocketServer : DefaultSocketServer
     {
-        public IAgentManager AgentManager { get; set; }
+        public override IAgentManager AgentManager { get; set; }
 
-        public event MessageObjectReceivedEventHandler MessageObjectReceived;
+        public override event MessageObjectReceivedEventHandler MessageObjectReceived;
 
-        public void Start()
+        public override void Start()
         {
             
         }
 
-        public void Stop()
+        public override void Stop()
         {
             
         }
 
-        public void OnProcessStarted(ProcessInfo processInfo)
+        public override void OnProcessStarted(ProcessInfo processInfo)
         {
 
         }
 
-        public void OnProcessExited(ProcessInfo processInfo)
+        public override void OnProcessExited(ProcessInfo processInfo)
         {
 
         }
 
-        public void OnDataReceived(ushort type, string data)
+        public override void OnAcceptClientDataReceived(ushort type, string data)
         {
-            
-        }
 
-        public void OnDataReceived(ushort type, byte[] data)
+        }
+        public override void OnUserDataReceived(ushort type, string data)
         {
 
         }

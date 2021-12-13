@@ -39,7 +39,7 @@ function WFAAgent(config) {
 
     this._evtTcpServerListenEventHandler = null;
     this._evtTcpServerAcceptClientEventHandler = null;
-
+    
     this._WebSocket = null;
     this._bWsConnect = false;
 
@@ -135,15 +135,18 @@ WFAAgent.prototype.OnClientEventCallbackHandler = function (e) {
                         this._evtProcessExitedEventHandler(data);
                     }
                     break;
-                case "TcpServerListenEvent":
+                case "TcpServerListen":
                     if (this._evtTcpServerListenEventHandler != null) {
                         this._evtTcpServerListenEventHandler(data);
                     }
                     break;
-                case "TcpServerAcceptClientEvent":
+                case "TcpServerAcceptClient":
                     if (this._evtTcpServerAcceptClientEventHandler != null) {
                         this._evtTcpServerAcceptClientEventHandler(data);
                     }
+                    break;
+                case "DataReceived":
+                    this.OnDataReceived(data);
                     break;
             }
         } catch (e) {
@@ -233,4 +236,13 @@ WFAAgent.prototype.wsAddProcessStartedInfo = function (data) {
 
 WFAAgent.prototype.wsRemoveProcessStartedInfo = function (data) {
 
+};
+
+WFAAgent.prototype.OnDataReceived = function (data) {
+    window.console.info("OnDataReceived=" + JSON.stringify(data));
+    switch (data.type) {
+        case "AcceptClient":
+            // 내부 로직
+            break;
+    }
 };

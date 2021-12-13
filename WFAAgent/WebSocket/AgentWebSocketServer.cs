@@ -1,27 +1,41 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 using SuperSocket.SocketBase;
 using SuperSocket.SocketBase.Config;
 using SuperSocket.WebSocket;
 using System;
 using System.Collections.Generic;
 using WFAAgent.Core;
+using WFAAgent.Framework.Net;
 using WFAAgent.Framework.Net.Sockets;
 using WFAAgent.Message;
 
 namespace WFAAgent.WebSocket
 {
-    public class AgentWebSocketServer : IDefaultSocketServer
+    public class AgentWebSocketServer : DefaultSocketServer
     {
         public WebSocketServer WSServer { get; private set; }
         public ListenerConfig ListenerConfig { get; private set; }
         public RootConfig RootConfig { get; private set; }
         public ServerConfig ServerConfig { get; private set; }
 
-        public IAgentManager AgentManager { get; set; }
+        public override IAgentManager AgentManager { get; set; }
 
-        public event MessageObjectReceivedEventHandler MessageObjectReceived;
+        public override event MessageObjectReceivedEventHandler MessageObjectReceived
+        {
+            add
+            {
+                _MessageObjectReceived += value;
+            }
+            remove
+            {
+                _MessageObjectReceived -= value;
+            }
+        }
+        private event MessageObjectReceivedEventHandler _MessageObjectReceived;
 
-        
+
         public AgentWebSocketServer()
         {
             Setup();
@@ -29,7 +43,7 @@ namespace WFAAgent.WebSocket
 
         private void CallbackMessage(string message)
         {
-            MessageObjectReceived?.Invoke(message);
+            _MessageObjectReceived?.Invoke(message);
         }
 
         public void Setup()
@@ -48,7 +62,7 @@ namespace WFAAgent.WebSocket
 
             WSServer.Setup(RootConfig, ServerConfig);
         }
-        public void Start()
+        public override void Start()
         {
             if (WSServer == null)
             {
@@ -66,7 +80,7 @@ namespace WFAAgent.WebSocket
             CallbackMessage("========== Server Start ==========");
         }
         
-        public void Stop()
+        public override void Stop()
         {
             WSServer.NewSessionConnected -= Server_NewSessionConnected;
             WSServer.NewMessageReceived -= Server_NewMessageDataReceived;
@@ -120,7 +134,7 @@ namespace WFAAgent.WebSocket
 
         #endregion
 
-        public void OnProcessStarted(ProcessInfo processInfo)
+        public override void OnProcessStarted(ProcessInfo processInfo)
         {
             JObject o = processInfo.ToStartedJson();
             string text = o.ToString();
@@ -146,7 +160,7 @@ namespace WFAAgent.WebSocket
             }
         }
 
-        public void OnProcessExited(ProcessInfo processInfo)
+        public override void OnProcessExited(ProcessInfo processInfo)
         {
             JObject o = processInfo.ToExitedJson();
             string text = o.ToString();
@@ -168,7 +182,7 @@ namespace WFAAgent.WebSocket
             }
             else
             {
-                CallbackMessage("세션을 찾을 수 없습니다.");
+                CallbackMessage(processInfo.SessionId + " 세션을 찾을 수 없습니다.");
             }
         }
 
@@ -187,20 +201,45 @@ namespace WFAAgent.WebSocket
 
         }
 
-        public void OnDataReceived(ushort type, string data)
+        public override void OnAcceptClientDataReceived(ushort type, string data)
         {
-            switch (type)
-            {
-                case DataContext.AcceptClient:
-                    break;
-                case DataContext.UserData:
-                    break;
-            }
-        }
+            // { "processId": 57476, "appId": "53ebdc3a-3007-4244-8a40-f8559c9dae61" }
+            CallbackMessage("============ OnAcceptClientDataReceived");
+            CallbackMessage(data);
 
-        public void OnDataReceived(ushort type, byte[] data)
+            AcceptClient value = JsonConvert.DeserializeObject<AcceptClient>(data);
+            WebSocketSession session = WSServer.GetSessionByID(value.AppId);
+            if (session != null)
+            {
+                DefaultContractResolver contractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                };
+
+                data = JsonConvert.SerializeObject(value, new JsonSerializerSettings()
+                {
+                    ContractResolver = contractResolver,
+                    Formatting = Formatting.Indented
+                });
+
+                if (session.TrySend(data))
+                {
+                    CallbackMessage("전송성공");
+                }
+                else
+                {
+                    CallbackMessage("전송실패");
+                }
+            }
+            else
+            {
+                CallbackMessage(value.AppId + " 세션을 찾을 수 없습니다.");
+            }
+            CallbackMessage("OnAcceptClientDataReceived ============");
+        }
+        public override void OnUserDataReceived(ushort type, string data)
         {
-            
+
         }
     }
 }

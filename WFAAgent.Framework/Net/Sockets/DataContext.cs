@@ -15,7 +15,7 @@ namespace WFAAgent.Framework.Net.Sockets
         public const int FirstHeaderLength = 8;
 
         public const ushort AcceptClient = 1;
-        public const ushort UserData = 255;
+        public const ushort User = 255;
         public const ushort UnknownData = ushort.MaxValue;
 
         public const int TempReceiveBufferSize = 8192;

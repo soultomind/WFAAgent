@@ -129,24 +129,22 @@ namespace WFAAgent
             {
                 OnMessageObjectReceived("============ TcpServer_DataReceived");
                 OnMessageObjectReceived(e.ToString());
-                if (e.Exception == null)
+                switch (e.Header.TransmissionData)
                 {
-                    switch (e.Header.TransmissionData)
-                    {
-                        case TransmissionData.Text:
-                            SocketServer.OnDataReceived(e.Header.Type, e.Data);
-                            break;
-                        case TransmissionData.Binary:
-                            SocketServer.OnDataReceived(e.Header.Type, e.RawData);
-                            break;
-                    }
-                }
-                else
-                {
-                    OnMessageObjectReceived("Error Message=" + e.Exception.Message);
-                    OnMessageObjectReceived(e.Exception.StackTrace);
+                    case TransmissionData.Text:
+                        SocketServer.OnDataReceived(e.Header.Type, e.Data);
+                        break;
+                    case TransmissionData.Binary:
+                        SocketServer.OnDataReceived(e.Header.Type, e.RawData);
+                        break;
                 }
                 OnMessageObjectReceived("TcpServer_DataReceived ============");
+            }
+            else
+            {
+                OnMessageObjectReceived("TcpServer_DataReceived Error");
+                OnMessageObjectReceived("Cause=" + e.Exception.Message);
+                OnMessageObjectReceived(e.Exception.StackTrace);
             }
         }
 

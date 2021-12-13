@@ -27,14 +27,25 @@ namespace WFAAgent
 
         }
 
-        public void OnDataReceived(ushort type, string data)
+        public virtual void OnDataReceived(ushort type, string data)
+        {
+            switch (type)
+            {
+                case DataContext.AcceptClient:
+                    OnAcceptClientDataReceived(type, data);
+                    break;
+                case DataContext.User:
+                    OnUserDataReceived(type, data);
+                    break;
+            }
+        }
+
+        public virtual void OnDataReceived(ushort type, byte[] data)
         {
             
         }
 
-        public void OnDataReceived(ushort type, byte[] data)
-        {
-            
-        }
+        public abstract void OnAcceptClientDataReceived(ushort type, string data);
+        public abstract void OnUserDataReceived(ushort type, string data);
     }
 }
