@@ -51,7 +51,7 @@ namespace WFAAgent.Core
                         Process process = null;
                         if (useCallbackData)
                         {
-                            string sessionID = eventData.SessionID;
+                            string sessionID = eventData.SessionId;
                             int agentTcpServerPort = AgentTcpServerPort;
 
                             JObject argObj = new JObject();
@@ -68,7 +68,7 @@ namespace WFAAgent.Core
                         ProcessInfo = new ProcessInfo() {
                             FileName = fileName,
                             Process = process,
-                            SessionID = eventData.SessionID
+                            SessionId = eventData.SessionId
                         };
 
                         // Exited Event Enabled

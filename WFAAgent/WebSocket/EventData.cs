@@ -10,12 +10,12 @@ namespace WFAAgent.WebSocket
     public class EventData
     {
         public JObject Data { get; set; }
-        public string SessionID
+        public string SessionId
         {
-            get { return _SessionID; }
-            set { _SessionID = value; }
+            get { return _SessionId; }
+            set { _SessionId = value; }
         }
-        private string _SessionID { get; set; }
+        private string _SessionId;
 
         public EventData()
         {

@@ -62,11 +62,10 @@ namespace WFAAgent
             try
             {
                 SocketServer.Start();
-
             }
             catch (Exception ex)
             {
-
+                throw new DefaultServerSocketException(ex.Message, ex);
             }
             
             try
@@ -224,10 +223,10 @@ namespace WFAAgent
             {
                 case ServerSocketType.Web:
                     string sessionId = messageObj[EventConstant.SessionID].ToObject<string>();
-                    eventData.SessionID = sessionId;
+                    eventData.SessionId = sessionId;
                     break;
                 case ServerSocketType.Tcp:
-                    eventData.SessionID = Guid.NewGuid().ToString();
+                    eventData.SessionId = Guid.NewGuid().ToString();
                     break;
             }
 

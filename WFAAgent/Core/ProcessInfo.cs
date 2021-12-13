@@ -19,12 +19,12 @@ namespace WFAAgent.Core
         
         public string FileName { get; set; }
         public Process Process { get; set; }
-        public string SessionID { get; set; }
+        public string SessionId { get; set; }
 
         public ProcessInfo()
         {
             Process = null;
-            SessionID = String.Empty;
+            SessionId = String.Empty;
         }
 
         public void Close()
@@ -34,13 +34,12 @@ namespace WFAAgent.Core
                 Process.Close();
                 Process = null;
 
-                SessionID = null;
+                SessionId = null;
             }
         }
 
-        private JObject ToCommonJson()
+        private JObject ToCommonJson(JObject o)
         {
-            JObject o = new JObject();
             o.Add(PropFileName, FileName);
             o.Add(PropProcessName, Process.ProcessName);
             o.Add(PropProcessId, Process.Id);
@@ -48,17 +47,19 @@ namespace WFAAgent.Core
         }
         public JObject ToStartedJson()
         {
-            JObject o = ToCommonJson();
-            o.Add(PropStartTime, Process.StartTime.ToString());
+            JObject o = new JObject();
             o.Add(EventConstant.EventName, EventConstant.ProcessStartedEvent);
+            o = ToCommonJson(o);
+            o.Add(PropStartTime, Process.StartTime.ToString());
             return o;
         }
 
         public JObject ToExitedJson()
         {
-            JObject o = ToCommonJson();
-            o.Add(PropExitTime, Process.ExitTime.ToString());
+            JObject o = new JObject();
             o.Add(EventConstant.EventName, EventConstant.ProcessExitedEvent);
+            o = ToCommonJson(o);
+            o.Add(PropExitTime, Process.ExitTime.ToString());
             return o;
         }
     }

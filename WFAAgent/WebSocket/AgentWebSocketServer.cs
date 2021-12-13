@@ -126,10 +126,10 @@ namespace WFAAgent.WebSocket
             string text = o.ToString();
             CallbackMessage(text);
 
-            WebSocketSession session = WSServer.GetSessionByID(processInfo.SessionID);
+            WebSocketSession session = WSServer.GetSessionByID(processInfo.SessionId);
             if (session != null)
             {
-                CallbackMessage("SessionID=" + processInfo.SessionID);
+                CallbackMessage("SessionID=" + processInfo.SessionId);
                 // TODO: processInfo 데이터 정의
                 if (session.TrySend(text))
                 {
@@ -152,10 +152,10 @@ namespace WFAAgent.WebSocket
             string text = o.ToString();
             CallbackMessage(text);
 
-            WebSocketSession session = WSServer.GetSessionByID(processInfo.SessionID);
+            WebSocketSession session = WSServer.GetSessionByID(processInfo.SessionId);
             if (session != null)
             {
-                CallbackMessage("SessionID=" + processInfo.SessionID);
+                CallbackMessage("SessionID=" + processInfo.SessionId);
                 // TODO: processInfo 데이터 정의
                 if (session.TrySend(text))
                 {
