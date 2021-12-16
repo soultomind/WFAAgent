@@ -84,38 +84,12 @@ namespace WFAAgent.Framework.Net.Sockets
                 }
                 else
                 {
-                    bool isReceive = true;
                     Exception exception = null;
                     Header header = DataPacket.ToHeader(dataPacketHeaderBuffer);
 
-                    int size = header.DataLength;
-                    byte[] dataBuffer = new byte[size];
-                    int offset = 0;
-
-                    try
-                    {
-                        while (offset < size)
-                        {
-                            receiveBytes = Socket.Receive(dataBuffer, offset, size - offset, SocketFlags.None);
-                            if (receiveBytes == 0)
-                            {
-                                // TODO: 2. 데이터 읽는중 클라이언트 소켓 해제
-                                isReceive = false;
-                                break;
-                            }
-                            else
-                            {
-                                offset += receiveBytes;
-                            }
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        exception = ex;
-                    }
-
-
-                    if (isReceive)
+                    byte[] dataBuffer = null;
+                    SocketDataReceiver receiver = new SocketDataReceiver(Socket);
+                    if (receiver.TryRead(header, out dataBuffer, out exception))
                     {
                         DataReceivedEventArgs e = new DataReceivedEventArgs();
                         e.SetData(header, dataBuffer);
@@ -232,7 +206,13 @@ namespace WFAAgent.Framework.Net.Sockets
                 Error(ex);
             }
 
-            AsyncSendCompleted?.Invoke(this, new AsyncSendSocketEventArgs(state.Socket) { Exception = state.Exception, SendBytes = state.SendBytes });
+            AsyncSendCompleted?.Invoke(
+                this, 
+                new AsyncSendSocketEventArgs(state.Socket) {
+                    Exception = state.Exception,
+                    SendBytes = state.SendBytes
+                }
+            );
         }
         #endregion
     }

@@ -62,8 +62,17 @@ namespace WFAAgent.Framework.Net.Sockets
                     int sendBytes = Send(DataPacket.AcceptClient, data);
                     _IsAcceptClientForSendServer = true;
                 }
+                return true;
             }
             return false;
+        }
+
+        public void Disconnect()
+        {
+            if (ClientSocket.CanUseSocket)
+            {
+                ClientSocket.Disconnect();
+            }
         }
 
         public int Send(DataPacket dataPacket, string data)

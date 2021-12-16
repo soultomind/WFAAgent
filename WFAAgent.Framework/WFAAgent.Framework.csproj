@@ -69,6 +69,7 @@
     <Compile Include="Net\Sockets\EventHandler.cs" />
     <Compile Include="Net\Sockets\Header.cs" />
     <Compile Include="Net\Sockets\ServerSocket.cs" />
+    <Compile Include="Net\Sockets\SocketDataReceiver.cs" />
     <Compile Include="Net\Sockets\SocketEventArgs.cs" />
     <Compile Include="Net\Sockets\SocketEventHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
