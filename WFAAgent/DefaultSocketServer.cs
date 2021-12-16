@@ -22,13 +22,11 @@ namespace WFAAgent
         public abstract void OnProcessStarted(ProcessInfo processInfo);
         
 
-        public void OnDataReceived(DataReceivedEventArgs e)
-        {
-
-        }
-
         public virtual void OnDataReceived(ushort type, string data)
         {
+            // 추후에 해당 부분을 동적으로 처리할 수 있는 방법
+            // SPRING Annotation 비슷한?
+            // @Controller 선언시 등록되는..
             switch (type)
             {
                 case DataContext.AcceptClient:

@@ -103,6 +103,11 @@ namespace TestClient
 
         private void ToolStripMenuItemAppExit_Click(object sender, EventArgs e)
         {
+            if (_MainWnd != null)
+            {
+                _MainWnd.Close();
+            }
+
             Application.Exit();
         }
     }

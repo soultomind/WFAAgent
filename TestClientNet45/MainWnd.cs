@@ -35,6 +35,11 @@ namespace TestClientNet45
 
         }
 
+        private void MainWnd_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            TcpClient.Disconnect();
+        }
+
         private void TcpClient_Connected(object sender, ConnectedEventArgs e)
         {
             RichTextBoxReceiveDataAgentTcpServer_AppendText("========= TcpClient_Connected ");

@@ -108,6 +108,7 @@
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "MainWnd";
             this.Text = "MainWnd";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.MainWnd_FormClosed);
             this.Load += new System.EventHandler(this.MainWnd_Load);
             this.Shown += new System.EventHandler(this.MainWnd_Shown);
             this.ResumeLayout(false);

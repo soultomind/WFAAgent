@@ -244,5 +244,10 @@ WFAAgent.prototype.OnDataReceived = function (data) {
         case "AcceptClient":
             // 내부 로직
             break;
+
+
+
+        case "User":
+            break;
     }
 };
