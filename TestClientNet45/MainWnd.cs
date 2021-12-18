@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -7,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WFAAgent.Framework.Application;
 using WFAAgent.Framework.Net.Sockets;
 
 namespace TestClientNet45
@@ -14,7 +16,7 @@ namespace TestClientNet45
     public partial class MainWnd : Form
     {
         internal AgentTcpClient TcpClient { get; set; }
-        
+        internal ProcessStartArguments ProcessStartArguments;
         public MainWnd()
         {
             InitializeComponent();
@@ -80,15 +82,16 @@ namespace TestClientNet45
 
         private void _ButtonSendDataAgentTcpServer_Click(object sender, EventArgs e)
         {
-            TcpClient.Send(DataPacket.AcceptClient, _RichTextBoxSendDataAgentTcpServer.Text);
+            string data = new JObject()
+                .AddString(Constant.AppID, ProcessStartArguments.AppId)
+                .AddString(Constant.AppData, _RichTextBoxSendDataAgentTcpServer.Text)
+                .ToString();
+            TcpClient.Send(DataPacket.UserData, data);
         }
 
         private void _ButtonConnectAgentTcpServer_Click(object sender, EventArgs e)
         {
-            if (TcpClient.Connect())
-            {
-
-            }
+            TcpClient.Connect(ProcessStartArguments);
         }
     }
 }

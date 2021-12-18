@@ -32,7 +32,7 @@ namespace WFAAgent
                 case DataContext.AcceptClient:
                     OnAcceptClientDataReceived(type, data);
                     break;
-                case DataContext.User:
+                case DataContext.UserData:
                     OnUserDataReceived(type, data);
                     break;
             }

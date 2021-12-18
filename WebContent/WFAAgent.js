@@ -27,7 +27,8 @@ function WFAAgent(config) {
     this._bWsAutoConnect = false;
     this._bWsSecure = false;
     this._strIpAddress = "127.0.0.1";
-    this._strPort = "33000";
+    this._strWsPort = "33000";
+    this._strWssPort = "33001";
     this._strBehavior = "WFAAgent";
     this._evtWsOnOpenEventHandler = null;
     this._evtWsOnErrorEventHandler = null;
@@ -39,7 +40,8 @@ function WFAAgent(config) {
 
     this._evtTcpServerListenEventHandler = null;
     this._evtTcpServerAcceptClientEventHandler = null;
-    
+    this._evtClientUserDataReceivedEventHandler = null;
+
     this._WebSocket = null;
     this._bWsConnect = false;
 
@@ -62,7 +64,11 @@ WFAAgent.prototype.wsInitialize = function (config) {
         }
 
         if (config.hasOwnProperty("wsPort")) {
-            this._strPort = config.wsPort;
+            this._strWsPort = config.wsPort;
+        }
+
+        if (config.hasOwnProperty("wssPort")) {
+            this._strWssPort = config.wssPort;
         }
 
         if (config.hasOwnProperty("wsBehavior")) {
@@ -113,6 +119,10 @@ WFAAgent.prototype.setTcpServerAcceptClientEventHandler = function (evt) {
     this._evtTcpServerAcceptClientEventHandler = evt;
 };
 
+WFAAgent.prototype.setClientUserDataReceivedEventHandler = function (evt) {
+    this._evtClientUserDataReceivedEventHandler = evt;
+}
+
 WFAAgent.prototype.OnClientEventCallbackHandler = function (e) {
     if (event.data instanceof ArrayBuffer) {
         // TODO: Binary
@@ -160,9 +170,9 @@ WFAAgent.prototype.wsConnect = function () {
     try {
         var url = "";
         if (this._bWsSecure) {
-            url = "wss://" + this._strIpAddress + ":" + this._strPort + "/" + this._strBehavior;
+            url = "wss://" + this._strIpAddress + ":" + this._strWssPort + "/" + this._strBehavior;
         } else {
-            url = "ws://" + this._strIpAddress + ":" + this._strPort + "/" + this._strBehavior;
+            url = "ws://" + this._strIpAddress + ":" + this._strWsPort + "/" + this._strBehavior;
         }
 
         this._WebSocket = new WebSocket(url);
@@ -240,14 +250,16 @@ WFAAgent.prototype.wsRemoveProcessStartedInfo = function (data) {
 
 WFAAgent.prototype.OnDataReceived = function (data) {
     window.console.info("OnDataReceived=" + JSON.stringify(data));
+
     switch (data.type) {
         case "AcceptClient":
             // 내부 로직
             break;
 
-
-
-        case "User":
+        case "UserData":
+            if (this._evtClientUserDataReceivedEventHandler != null) {
+                this._evtClientUserDataReceivedEventHandler(data.appData);
+            }
             break;
     }
 };

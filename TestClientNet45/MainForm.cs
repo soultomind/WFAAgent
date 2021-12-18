@@ -88,7 +88,7 @@ namespace TestClient
             {
                 _ToolStripMenuItemExecuteMainWnd.Enabled = false;
                 _MainWnd = new MainWnd();
-                _MainWnd.TcpClient.ProcessStartArguments = ProcessStartArguments;
+                _MainWnd.ProcessStartArguments = ProcessStartArguments;
                 _MainWnd.Text = Application.ProductName + " MainWnd AgentTcpServerPort=" + ProcessStartArguments.AgentTcpServerPort;
                 _MainWnd.FormClosed += _MainWnd_FormClosed;
                 _MainWnd.Show();

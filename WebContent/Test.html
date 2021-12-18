@@ -14,7 +14,12 @@
 
         var config = {
             wsAutoConnect: true,
-            wsSecure : false,
+            wsSecure: false,
+
+            wsPort: 33000,
+            // wssPort: 33001,
+
+
         };
 
         var agent = new WFAAgent(config);
@@ -48,6 +53,10 @@
 
         agent.setTcpServerAcceptClientEventHandler(function (e) {
             window.console.info(JSON.stringify(e));
+        });
+
+        agent.setClientUserDataReceivedEventHandler(function (data) {
+            window.console.info(data);
         });
 
         function wsConnect() {

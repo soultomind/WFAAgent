@@ -22,6 +22,7 @@ namespace WFAAgent.Framework.Net.Sockets
         }
 
 
+        // 정성태님 글 보고 개선 필요
         public bool CanUseSocket
         {
             get { return Socket != null && Socket.Connected; }

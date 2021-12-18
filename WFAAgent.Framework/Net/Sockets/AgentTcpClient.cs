@@ -53,6 +53,11 @@ namespace WFAAgent.Framework.Net.Sockets
         {
             if (ClientSocket.Connect())
             {
+                if (ProcessStartArguments == null)
+                {
+                    throw new InvalidOperationException(nameof(ProcessStartArguments));
+                }
+
                 if (!_IsAcceptClientForSendServer)
                 {
                     string data = new JObject()
@@ -65,6 +70,12 @@ namespace WFAAgent.Framework.Net.Sockets
                 return true;
             }
             return false;
+        }
+
+        public bool Connect(ProcessStartArguments processStartArguments)
+        {
+            ProcessStartArguments = processStartArguments;
+            return Connect();
         }
 
         public void Disconnect()

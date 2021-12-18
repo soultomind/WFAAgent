@@ -11,5 +11,6 @@ namespace WFAAgent.Framework.Application
         public const string ProcessId = "processId";
         public const string AppID = "appId";
         public const string AgentTcpServerPort = "agentTcpServerPort";
+        public const string AppData = "appData";
     }
 }

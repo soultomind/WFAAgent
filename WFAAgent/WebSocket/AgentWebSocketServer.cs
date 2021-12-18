@@ -239,7 +239,38 @@ namespace WFAAgent.WebSocket
         }
         public override void OnUserDataReceived(ushort type, string data)
         {
+            CallbackMessage("============ OnAcceptClientDataReceived");
+            CallbackMessage(data);
 
+            UserData value = JsonConvert.DeserializeObject<UserData>(data);
+            WebSocketSession session = WSServer.GetSessionByID(value.AppId);
+            if (session != null)
+            {
+                DefaultContractResolver contractResolver = new DefaultContractResolver
+                {
+                    NamingStrategy = new CamelCaseNamingStrategy()
+                };
+
+                data = JsonConvert.SerializeObject(value, new JsonSerializerSettings()
+                {
+                    ContractResolver = contractResolver,
+                    Formatting = Formatting.Indented
+                });
+
+                if (session.TrySend(data))
+                {
+                    CallbackMessage("전송성공");
+                }
+                else
+                {
+                    CallbackMessage("전송실패");
+                }
+            }
+            else
+            {
+                CallbackMessage(value.AppId + " 세션을 찾을 수 없습니다.");
+            }
+            CallbackMessage("============ OnAcceptClientDataReceived");
         }
     }
 }

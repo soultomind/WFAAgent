@@ -72,6 +72,7 @@
     <Compile Include="Net\Sockets\SocketDataReceiver.cs" />
     <Compile Include="Net\Sockets\SocketEventArgs.cs" />
     <Compile Include="Net\Sockets\SocketEventHandler.cs" />
+    <Compile Include="Net\UserData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Net\Sockets\TransmissionData.cs" />
     <Compile Include="ServerSocketType.cs" />
