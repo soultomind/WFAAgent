@@ -16,7 +16,7 @@ namespace TestClientNet45
     public partial class MainWnd : Form
     {
         internal AgentTcpClient TcpClient { get; set; }
-        internal ProcessStartArguments ProcessStartArguments;
+        internal CallbackDataProcess CallbackDataProcess;
         public MainWnd()
         {
             InitializeComponent();
@@ -82,16 +82,13 @@ namespace TestClientNet45
 
         private void _ButtonSendDataAgentTcpServer_Click(object sender, EventArgs e)
         {
-            string data = new JObject()
-                .AddString(Constant.AppID, ProcessStartArguments.AppId)
-                .AddString(Constant.AppData, _RichTextBoxSendDataAgentTcpServer.Text)
-                .ToString();
-            TcpClient.Send(DataPacket.UserData, data);
+            JObject data = CallbackDataProcess.ToUserDataJson(_RichTextBoxSendDataAgentTcpServer.Text);
+            TcpClient.Send(DataPacket.UserData, data.ToString());
         }
 
         private void _ButtonConnectAgentTcpServer_Click(object sender, EventArgs e)
         {
-            TcpClient.Connect(ProcessStartArguments);
+            TcpClient.Connect(CallbackDataProcess);
         }
     }
 }

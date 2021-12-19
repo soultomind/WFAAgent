@@ -203,7 +203,6 @@ namespace WFAAgent.WebSocket
 
         public override void OnAcceptClientDataReceived(ushort type, string data)
         {
-            // { "processId": 57476, "appId": "53ebdc3a-3007-4244-8a40-f8559c9dae61" }
             CallbackMessage("============ OnAcceptClientDataReceived");
             CallbackMessage(data);
 
@@ -211,17 +210,7 @@ namespace WFAAgent.WebSocket
             WebSocketSession session = WSServer.GetSessionByID(value.AppId);
             if (session != null)
             {
-                DefaultContractResolver contractResolver = new DefaultContractResolver
-                {
-                    NamingStrategy = new CamelCaseNamingStrategy()
-                };
-
-                data = JsonConvert.SerializeObject(value, new JsonSerializerSettings()
-                {
-                    ContractResolver = contractResolver,
-                    Formatting = Formatting.Indented
-                });
-
+                data = DefaultData.ToStringSerializeObject(value);
                 if (session.TrySend(data))
                 {
                     CallbackMessage("전송성공");
@@ -239,24 +228,14 @@ namespace WFAAgent.WebSocket
         }
         public override void OnUserDataReceived(ushort type, string data)
         {
-            CallbackMessage("============ OnAcceptClientDataReceived");
+            CallbackMessage("============ OnUserDataReceived");
             CallbackMessage(data);
 
             UserData value = JsonConvert.DeserializeObject<UserData>(data);
             WebSocketSession session = WSServer.GetSessionByID(value.AppId);
             if (session != null)
             {
-                DefaultContractResolver contractResolver = new DefaultContractResolver
-                {
-                    NamingStrategy = new CamelCaseNamingStrategy()
-                };
-
-                data = JsonConvert.SerializeObject(value, new JsonSerializerSettings()
-                {
-                    ContractResolver = contractResolver,
-                    Formatting = Formatting.Indented
-                });
-
+                data = DefaultData.ToStringSerializeObject(value);
                 if (session.TrySend(data))
                 {
                     CallbackMessage("전송성공");
@@ -270,7 +249,9 @@ namespace WFAAgent.WebSocket
             {
                 CallbackMessage(value.AppId + " 세션을 찾을 수 없습니다.");
             }
-            CallbackMessage("============ OnAcceptClientDataReceived");
+            CallbackMessage("============ OnUserDataReceived");
         }
+
+        
     }
 }

@@ -11,7 +11,7 @@ namespace WFAAgent.Framework.Net.Sockets
 {
     public class AgentTcpClient
     {
-        public ProcessStartArguments ProcessStartArguments { get; set; }
+        public CallbackDataProcess CallbackDataProcess { get; set; }
         public ClientSocket ClientSocket { get; private set; }
 
         private bool _IsAcceptClientForSendServer;
@@ -53,17 +53,14 @@ namespace WFAAgent.Framework.Net.Sockets
         {
             if (ClientSocket.Connect())
             {
-                if (ProcessStartArguments == null)
+                if (CallbackDataProcess == null)
                 {
-                    throw new InvalidOperationException(nameof(ProcessStartArguments));
+                    throw new InvalidOperationException(nameof(CallbackDataProcess));
                 }
 
                 if (!_IsAcceptClientForSendServer)
                 {
-                    string data = new JObject()
-                        .AddInt(Constant.ProcessId, Process.GetCurrentProcess().Id)
-                        .AddString(Constant.AppID, ProcessStartArguments.AppId)
-                        .ToString();
+                    string data = CallbackDataProcess.ToJson().ToString();
                     int sendBytes = Send(DataPacket.AcceptClient, data);
                     _IsAcceptClientForSendServer = true;
                 }
@@ -72,9 +69,9 @@ namespace WFAAgent.Framework.Net.Sockets
             return false;
         }
 
-        public bool Connect(ProcessStartArguments processStartArguments)
+        public bool Connect(CallbackDataProcess callbackDataProcess)
         {
-            ProcessStartArguments = processStartArguments;
+            this.CallbackDataProcess = callbackDataProcess;
             return Connect();
         }
 

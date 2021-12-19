@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Diagnostics;
 using System.Text;
 using System.Windows.Forms;
 using TestClient.UI;
@@ -12,7 +13,7 @@ namespace TestClient
 {
     public partial class MainForm : Form
     {
-        public ProcessStartArguments ProcessStartArguments { get; internal set; }
+        public CallbackDataProcess CallbackDataProcess { get; internal set; }
         private Exception ArgException { get; set; }
 
         private MainWnd _MainWnd;
@@ -41,10 +42,14 @@ namespace TestClient
                     byte[] bArg0 = Convert.FromBase64String(arg0);
                     arg0 = Encoding.UTF8.GetString(bArg0);
                     Toolkit.TraceWriteLine("Base64Decode=" + arg0);
-
                     JObject data = JObject.Parse(arg0);
-                    ProcessStartArguments = ProcessStartArguments.Parse(data);
-                    MessageBox.Show(ProcessStartArguments.ToString());
+                    CallbackDataProcess = CallbackDataProcess.Parse(data, Process.GetCurrentProcess());
+#if DEBUG
+                    MessageBox.Show(CallbackDataProcess.ToString());
+                    Toolkit.TraceWriteLine("CallbackDataProcess=" + CallbackDataProcess.ToString());
+#else
+                    Toolkit.TraceWriteLine("CallbackDataProcess=" + CallbackDataProcess.ToString());
+#endif
                 }
                 catch (Exception ex)
                 {
@@ -88,8 +93,8 @@ namespace TestClient
             {
                 _ToolStripMenuItemExecuteMainWnd.Enabled = false;
                 _MainWnd = new MainWnd();
-                _MainWnd.ProcessStartArguments = ProcessStartArguments;
-                _MainWnd.Text = Application.ProductName + " MainWnd AgentTcpServerPort=" + ProcessStartArguments.AgentTcpServerPort;
+                _MainWnd.CallbackDataProcess = CallbackDataProcess;
+                _MainWnd.Text = Application.ProductName + " MainWnd AgentTcpServerPort=" + CallbackDataProcess.AgentTcpServerPort;
                 _MainWnd.FormClosed += _MainWnd_FormClosed;
                 _MainWnd.Show();
             }
