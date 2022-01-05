@@ -32,8 +32,8 @@ namespace WFAAgent
                 case DataContext.AcceptClient:
                     OnAcceptClientDataReceived(type, data);
                     break;
-                case DataContext.UserData:
-                    OnUserDataReceived(type, data);
+                case DataContext.AgentData:
+                    OnAgentDataReceived(type, data);
                     break;
             }
         }
@@ -44,6 +44,6 @@ namespace WFAAgent
         }
 
         public abstract void OnAcceptClientDataReceived(ushort type, string data);
-        public abstract void OnUserDataReceived(ushort type, string data);
+        public abstract void OnAgentDataReceived(ushort type, string data);
     }
 }

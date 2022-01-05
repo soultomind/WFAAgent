@@ -8,6 +8,7 @@ namespace WFAAgent.Framework.Application
 {
     public class Constant
     {
+        public const string DataTypeString = "dataType";
         public const string ProcessId = "processId";
         public const string AppID = "appId";
         public const string AgentTcpServerPort = "agentTcpServerPort";

@@ -13,7 +13,7 @@ namespace WFAAgent.Framework.Net.Sockets
             get { return _Type; }
             internal set { _Type = value; }
         }
-        private ushort _Type = DataContext.UserData;
+        private ushort _Type = DataContext.AgentData;
 
         public TransmissionData TransmissionData
         {

@@ -39,7 +39,7 @@ namespace WFAAgent.Tcp
         {
 
         }
-        public override void OnUserDataReceived(ushort type, string data)
+        public override void OnAgentDataReceived(ushort type, string data)
         {
 
         }

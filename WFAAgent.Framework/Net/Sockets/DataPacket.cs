@@ -9,10 +9,10 @@ namespace WFAAgent.Framework.Net.Sockets
     public class DataPacket
     {
         public static DataPacket AcceptClient = new DataPacket(DataContext.AcceptClient);
-        public static DataPacket UserData = new DataPacket(DataContext.UserData);
+        public static DataPacket AgentData = new DataPacket(DataContext.AgentData);
         public static DataPacket[] Packets = new DataPacket[]
         {
-            AcceptClient, UserData
+            AcceptClient, AgentData
         };
 
         public const int DataLengthPos = 4;

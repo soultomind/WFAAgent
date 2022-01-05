@@ -210,7 +210,7 @@ namespace WFAAgent.WebSocket
             WebSocketSession session = WSServer.GetSessionByID(value.AppId);
             if (session != null)
             {
-                data = DefaultData.ToStringSerializeObject(value);
+                data = AcceptClient.ToStringSerializeObject(value);
                 if (session.TrySend(data))
                 {
                     CallbackMessage("전송성공");
@@ -226,16 +226,16 @@ namespace WFAAgent.WebSocket
             }
             CallbackMessage("OnAcceptClientDataReceived ============");
         }
-        public override void OnUserDataReceived(ushort type, string data)
+        public override void OnAgentDataReceived(ushort type, string data)
         {
             CallbackMessage("============ OnUserDataReceived");
             CallbackMessage(data);
 
-            UserData value = JsonConvert.DeserializeObject<UserData>(data);
+            AgentData value = JsonConvert.DeserializeObject<AgentData>(data);
             WebSocketSession session = WSServer.GetSessionByID(value.AppId);
             if (session != null)
             {
-                data = DefaultData.ToStringSerializeObject(value);
+                data = AgentData.ToStringSerializeObject(value);
                 if (session.TrySend(data))
                 {
                     CallbackMessage("전송성공");
@@ -251,7 +251,5 @@ namespace WFAAgent.WebSocket
             }
             CallbackMessage("============ OnUserDataReceived");
         }
-
-        
     }
 }

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WFAAgent.Framework.Application;
+using WFAAgent.Framework.Net;
 using WFAAgent.Framework.Net.Sockets;
 
 namespace TestClientNet45
@@ -82,8 +83,9 @@ namespace TestClientNet45
 
         private void _ButtonSendDataAgentTcpServer_Click(object sender, EventArgs e)
         {
-            JObject data = CallbackDataProcess.ToUserDataJson(_RichTextBoxSendDataAgentTcpServer.Text);
-            TcpClient.Send(DataPacket.UserData, data.ToString());
+            // TODO: 패킷 값을 통하여 객체를 생성해야 함
+            string text = _RichTextBoxSendDataAgentTcpServer.Text;
+            TcpClient.Send(DataPacket.AgentData, new AgentData(CallbackDataProcess, text));
         }
 
         private void _ButtonConnectAgentTcpServer_Click(object sender, EventArgs e)

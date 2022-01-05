@@ -1,10 +1,12 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WFAAgent.Framework.Application;
 
 namespace WFAAgent.Framework.Net
 {
@@ -15,6 +17,13 @@ namespace WFAAgent.Framework.Net
         public DefaultData()
         {
             EventName = "DataReceived";
+        }
+
+        public virtual JObject ToJson()
+        {
+            JObject retObj = new JObject();
+            //retObj.Add(Constant.DataTypeString, GetType().Name);
+            return retObj;
         }
 
         public static string ToStringSerializeObject(DefaultData value)

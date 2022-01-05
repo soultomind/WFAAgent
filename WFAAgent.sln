@@ -20,11 +20,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebContent", "WebContent", 
 	ProjectSection(SolutionItems) = preProject
 		WebContent\css\bootstrap.css = WebContent\css\bootstrap.css
 		WebContent\js\bootstrap.js = WebContent\js\bootstrap.js
-		WebContent\Test.html = WebContent\Test.html
+		WebContent\index.html = WebContent\index.html
 		WebContent\WFAAgent.js = WebContent\WFAAgent.js
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonLibrary", "..\CommonLibrary\CommonLibrary\CommonLibrary.csproj", "{A2902C7D-7EB2-4006-89BE-A98FB431CE09}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpCommonLibrary", "..\CSharpCommonLibrary\CSharpCommonLibrary\CSharpCommonLibrary.csproj", "{A2902C7D-7EB2-4006-89BE-A98FB431CE09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

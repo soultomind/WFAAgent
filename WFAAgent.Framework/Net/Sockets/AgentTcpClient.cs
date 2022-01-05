@@ -60,8 +60,7 @@ namespace WFAAgent.Framework.Net.Sockets
 
                 if (!_IsAcceptClientForSendServer)
                 {
-                    string data = CallbackDataProcess.ToJson().ToString();
-                    int sendBytes = Send(DataPacket.AcceptClient, data);
+                    int sendBytes = Send(DataPacket.AcceptClient, new AcceptClient(CallbackDataProcess));
                     _IsAcceptClientForSendServer = true;
                 }
                 return true;
@@ -86,6 +85,11 @@ namespace WFAAgent.Framework.Net.Sockets
         public int Send(DataPacket dataPacket, string data)
         {
             return ClientSocket.Send(dataPacket, data);
+        }
+
+        public int Send(DataPacket dataPacket, DefaultData data)
+        {
+            return Send(dataPacket, data.ToJson().ToString());
         }
     }
 }

@@ -37,21 +37,6 @@ namespace WFAAgent.Framework.Application
             ProcessId = currentProcess.Id;
         }
 
-        public JObject ToJson()
-        {
-            JObject retObj = new JObject();
-            retObj.Add(Constant.AppID, AppId);
-            retObj.Add(Constant.ProcessId, ProcessId);
-            return retObj;
-        }
-
-        public JObject ToUserDataJson(string data)
-        {
-            JObject retObj = ToJson();
-            retObj.Add(Constant.AppData, data);
-            return retObj;
-        }
-
         public override string ToString()
         {
             return new StringBuilder()

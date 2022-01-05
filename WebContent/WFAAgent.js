@@ -40,7 +40,7 @@ function WFAAgent(config) {
 
     this._evtTcpServerListenEventHandler = null;
     this._evtTcpServerAcceptClientEventHandler = null;
-    this._evtClientUserDataReceivedEventHandler = null;
+    this._evtClientDataReceivedEventHandler = null;
 
     this._WebSocket = null;
     this._bWsConnect = false;
@@ -119,8 +119,8 @@ WFAAgent.prototype.setTcpServerAcceptClientEventHandler = function (evt) {
     this._evtTcpServerAcceptClientEventHandler = evt;
 };
 
-WFAAgent.prototype.setClientUserDataReceivedEventHandler = function (evt) {
-    this._evtClientUserDataReceivedEventHandler = evt;
+WFAAgent.prototype.setClientDataReceivedEventHandler = function (evt) {
+    this._evtClientDataReceivedEventHandler = evt;
 }
 
 WFAAgent.prototype.OnClientEventCallbackHandler = function (e) {
@@ -256,9 +256,9 @@ WFAAgent.prototype.OnDataReceived = function (data) {
             // 내부 로직
             break;
 
-        case "UserData":
-            if (this._evtClientUserDataReceivedEventHandler != null) {
-                this._evtClientUserDataReceivedEventHandler(data.appData);
+        case "AgentData":
+            if (this._evtClientDataReceivedEventHandler != null) {
+                this._evtClientDataReceivedEventHandler(data.appData);
             }
             break;
     }

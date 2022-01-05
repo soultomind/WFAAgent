@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="./css/bootstrap.css">
+    <!--<link rel="stylesheet" type="text/css" href="./css/bootstrap.css">-->
     <script type="text/javascript" src="./WFAAgent.js"></script>
     <script>
         function wsStatus(value) {
@@ -55,7 +55,7 @@
             window.console.info(JSON.stringify(e));
         });
 
-        agent.setClientUserDataReceivedEventHandler(function (data) {
+        agent.setClientDataReceivedEventHandler(function (data) {
             window.console.info(data);
         });
 
@@ -86,7 +86,7 @@
     <div>
         <div>
             <!--<textarea id="wsSendText" cols="60" rows="10">{"eventName":"ProcessStart","data":{"fileName":"C:\\Workspace\\DotNet\\GitProject\\WFAAgent\\TestClientNet45\\bin\\Debug\\TestClientNet45.exe", "useCallbackData":true}}</textarea>-->
-            <textarea id="wsExecuteFileName" cols="60" rows="10">C:\\Workspace\\DotNet\\GitProject\\WFAAgent\\TestClientNet45\\bin\\Debug\\TestClientNet45.exe</textarea>
+            <textarea id="wsExecuteFileName" cols="60" rows="10">C:\\Workspace\\GitProject\\WFAAgent\\TestClientNet45\\bin\\Debug\\TestClientNet45.exe</textarea>
         </div>
         <div>
             <button type="button" class="btn btn-primary" onclick="wsExecute()">
@@ -94,6 +94,6 @@
             </button>
         </div>
     </div>
-    <script type="text/javascript" src="./js/bootstrap.js"></script>
+    <!--<script type="text/javascript" src="./js/bootstrap.js"></script>-->
 </body>
 </html>
