@@ -9,7 +9,7 @@ namespace WFAAgent.Framework.Net.Sockets
 {
     public class DataType
     {
-        public static readonly DataType AgentData = new DataType(DataContext.AgentData);
+        public static readonly DataType AgentData = new DataType(DataContext.AgentStringData);
         private ushort _Type;
         private DataType(ushort type)
         {

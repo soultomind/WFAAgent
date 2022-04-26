@@ -6,8 +6,14 @@ using System.Threading.Tasks;
 
 namespace WFAAgent.Framework.Application
 {
-    public class Context
+    public static class Context
     {
-        
+        public static string Root
+        {
+            get
+            {
+                return AppDomain.CurrentDomain.BaseDirectory;
+            }
+        }
     }
 }

@@ -84,7 +84,6 @@ namespace WFAAgent.Framework.Net.Sockets
 
             Socket clientSocket = socket.EndAccept(asyncResult);
             AcceptClient?.Invoke(this, new AcceptClientEventArgs(socket) { ClientSocket = clientSocket });
-            _ClientSockets[clientSocket.Handle] = clientSocket;
 
             // Accept 완료후 클라이언트에서 처음으로 전달되는 데이터에 AppId를 받은후에
             // AcceptClient 이벤트 핸들러 호출한다.
@@ -94,6 +93,7 @@ namespace WFAAgent.Framework.Net.Sockets
 
             try
             {
+                bool isAcceptClient = false;
                 while (true)
                 {
                     Array.Clear(dataPacketHeaderBuffer, 0, dataPacketHeaderBuffer.Length);
@@ -108,12 +108,24 @@ namespace WFAAgent.Framework.Net.Sockets
                         Exception exception = null;
                         Header header = DataPacket.ToHeader(dataPacketHeaderBuffer);
 
+                        // 실제 어플리케이션 단에서의 
+
                         byte[] dataBuffer = null;
                         SocketDataReceiver receiver = new SocketDataReceiver(clientSocket);
                         if (receiver.TryRead(header, out dataBuffer, out exception))
                         {
+                            // 최초 AcceptClient 패킷 왔을 경우 등록
+                            _ClientSockets[clientSocket.Handle] = clientSocket;
+
                             DataReceivedEventArgs e = new DataReceivedEventArgs();
                             e.SetData(header, dataBuffer);
+
+                            if (header.Type == DataContext.AcceptClient)
+                            {
+                                
+                                isAcceptClient = true;
+                            }
+
                             ClientDataReceived?.Invoke(this, e);
                         }
                         else

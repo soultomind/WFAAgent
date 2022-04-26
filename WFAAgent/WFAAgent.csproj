@@ -87,9 +87,10 @@
     <Compile Include="Common\Toolkit.cs" />
     <Compile Include="Core\LogLevel.cs" />
     <Compile Include="DefaultServerSocketException.cs" />
-    <Compile Include="DefaultSocketServer.cs" />
+    <Compile Include="DefaultServerSocket.cs" />
+    <Compile Include="EventProcessState.cs" />
     <Compile Include="IDefaultSocketServer.cs" />
-    <Compile Include="Tcp\AgentTcpSocketServer.cs" />
+    <Compile Include="Tcp\AgentTcpServerSocket.cs" />
     <Compile Include="WebSocket\EventData.cs" />
     <Compile Include="Core\EventProcessor.cs" />
     <Compile Include="Core\EventProcessorManager.cs" />
@@ -124,7 +125,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebSocket\AgentWebSocketServer.cs" />
+    <Compile Include="WebSocket\AgentWebServerSocket.cs" />
     <Compile Include="EventConstant.cs" />
     <Compile Include="WebSocket\WebSocketServerExtension.cs" />
     <EmbeddedResource Include="UI\InfoDialog.resx">

@@ -35,6 +35,7 @@
             this._LabelSendDataAgentTcpServer = new System.Windows.Forms.Label();
             this._RichTextBoxSendDataAgentTcpServer = new System.Windows.Forms.RichTextBox();
             this._ButtonSendDataAgentTcpServer = new System.Windows.Forms.Button();
+            this._ButtonImageFileBinary = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // _ButtonConnectAgentTcpServer
@@ -92,11 +93,22 @@
             this._ButtonSendDataAgentTcpServer.UseVisualStyleBackColor = true;
             this._ButtonSendDataAgentTcpServer.Click += new System.EventHandler(this._ButtonSendDataAgentTcpServer_Click);
             // 
+            // _ButtonImageFileBinary
+            // 
+            this._ButtonImageFileBinary.Location = new System.Drawing.Point(149, 83);
+            this._ButtonImageFileBinary.Name = "_ButtonImageFileBinary";
+            this._ButtonImageFileBinary.Size = new System.Drawing.Size(215, 23);
+            this._ButtonImageFileBinary.TabIndex = 6;
+            this._ButtonImageFileBinary.Text = "이미지 파일 바이너리 데이터 추가";
+            this._ButtonImageFileBinary.UseVisualStyleBackColor = true;
+            this._ButtonImageFileBinary.Click += new System.EventHandler(this. ButtonImageFileBinary_Click);
+            // 
             // MainWnd
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(484, 442);
+            this.Controls.Add(this._ButtonImageFileBinary);
             this.Controls.Add(this._ButtonSendDataAgentTcpServer);
             this.Controls.Add(this._LabelSendDataAgentTcpServer);
             this.Controls.Add(this._RichTextBoxSendDataAgentTcpServer);
@@ -124,5 +136,6 @@
         private System.Windows.Forms.Label _LabelSendDataAgentTcpServer;
         private System.Windows.Forms.RichTextBox _RichTextBoxSendDataAgentTcpServer;
         private System.Windows.Forms.Button _ButtonSendDataAgentTcpServer;
+        private System.Windows.Forms.Button _ButtonImageFileBinary;
     }
 }

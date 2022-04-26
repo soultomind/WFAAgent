@@ -26,12 +26,7 @@ namespace WFAAgent.Framework.Application
         /// 현재 프로세스 Id
         /// </summary>
         public int ProcessId { get; private set; }
-        public CallbackDataProcess()
-            : this(Process.GetCurrentProcess())
-        {
-            
-        }
-
+        
         public CallbackDataProcess(Process currentProcess)
         {
             ProcessId = currentProcess.Id;

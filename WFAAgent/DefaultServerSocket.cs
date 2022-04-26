@@ -9,7 +9,7 @@ using WFAAgent.Message;
 
 namespace WFAAgent
 {
-    public abstract class DefaultSocketServer : IDefaultSocketServer
+    public abstract class DefaultServerSocket : IDefaultSocketServer
     {
         public abstract IAgentManager AgentManager { get; set; }
 
@@ -32,7 +32,7 @@ namespace WFAAgent
                 case DataContext.AcceptClient:
                     OnAcceptClientDataReceived(type, data);
                     break;
-                case DataContext.AgentData:
+                case DataContext.AgentStringData:
                     OnAgentDataReceived(type, data);
                     break;
             }

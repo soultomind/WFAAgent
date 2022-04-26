@@ -13,7 +13,7 @@ using WFAAgent.Message;
 
 namespace WFAAgent.WebSocket
 {
-    public class AgentWebSocketServer : DefaultSocketServer
+    public class AgentWebServerSocket : DefaultServerSocket
     {
         public WebSocketServer WSServer { get; private set; }
         public ListenerConfig ListenerConfig { get; private set; }
@@ -36,7 +36,7 @@ namespace WFAAgent.WebSocket
         private event MessageObjectReceivedEventHandler _MessageObjectReceived;
 
 
-        public AgentWebSocketServer()
+        public AgentWebServerSocket()
         {
             Setup();
         }
@@ -96,6 +96,7 @@ namespace WFAAgent.WebSocket
         private void Server_NewSessionConnected(WebSocketSession session)
         {
             CallbackMessage("Server_NewSessionConnected=" + session.SessionID);
+            Toolkit.TraceWriteLine("SessionID.Length=" + session.SessionID.Length);
             CallbackMessage("Server.SessionCount=" + WSServer.SessionCount);
         }
 

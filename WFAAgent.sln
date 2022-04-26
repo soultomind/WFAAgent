@@ -21,10 +21,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebContent", "WebContent", 
 		WebContent\css\bootstrap.css = WebContent\css\bootstrap.css
 		WebContent\js\bootstrap.js = WebContent\js\bootstrap.js
 		WebContent\index.html = WebContent\index.html
-		WebContent\WFAAgent.js = WebContent\WFAAgent.js
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSharpCommonLibrary", "..\CSharpCommonLibrary\CSharpCommonLibrary\CSharpCommonLibrary.csproj", "{A2902C7D-7EB2-4006-89BE-A98FB431CE09}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{F4354B3B-B100-4F22-9F87-71F1A4FEC94B}"
+	ProjectSection(SolutionItems) = preProject
+		WebContent\css\main.css = WebContent\css\main.css
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "js", "js", "{3BC38C1C-0B97-4BA3-968C-EEDAC785BCA6}"
+	ProjectSection(SolutionItems) = preProject
+		WebContent\js\WFAAgent.js = WebContent\js\WFAAgent.js
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -121,6 +130,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F4354B3B-B100-4F22-9F87-71F1A4FEC94B} = {A08D0FFA-27A8-484D-9A66-0082E8C2A510}
+		{3BC38C1C-0B97-4BA3-968C-EEDAC785BCA6} = {A08D0FFA-27A8-484D-9A66-0082E8C2A510}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2B0888FF-0456-4D04-9FC3-6D8BCE8EF0C5}

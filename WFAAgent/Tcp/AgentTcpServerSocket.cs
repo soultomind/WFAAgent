@@ -9,7 +9,7 @@ using WFAAgent.Message;
 
 namespace WFAAgent.Tcp
 {
-    public class AgentTcpSocketServer : DefaultSocketServer
+    public class AgentTcpServerSocket : DefaultServerSocket
     {
         public override IAgentManager AgentManager { get; set; }
 

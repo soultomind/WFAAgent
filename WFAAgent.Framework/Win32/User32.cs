@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace WFAAgent.Framework.Win32
 {
-    class User32
+    public class User32
     {
         public const string FileName = "User32.dll";
 

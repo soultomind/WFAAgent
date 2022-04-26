@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using log4net;
+using Newtonsoft.Json.Linq;
 using SuperSocket.SocketBase.Config;
 using SuperSocket.WebSocket;
 using SuperSocket.WebSocket.SubProtocol;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using WFAAgent.Core;
 using WFAAgent.Framework;
@@ -19,10 +21,12 @@ namespace WFAAgent
 {
     internal class AgentManager : IAgentManager
     {
+        private static ILog Log = LogManager.GetLogger(typeof(AgentManager));
+
         public event MessageObjectReceivedEventHandler MessageObjectReceived;
 
         public ServerSocketType ServerSocketType { get; private set; }
-        public IDefaultSocketServer SocketServer { get; private set; }
+        public IDefaultSocketServer ServerSocket { get; private set; }
         public EventProcessorManager EventProcessorManager { get; private set; }
 
         public AgentTcpServer TcpServer { get; private set; }
@@ -49,23 +53,25 @@ namespace WFAAgent
             switch (ServerSocketType)
             {
                 case ServerSocketType.Web:
-                    SocketServer = new AgentWebSocketServer();
+                    ServerSocket = new AgentWebServerSocket();
                     break;
                 case ServerSocketType.Tcp:
-                    SocketServer = new AgentTcpSocketServer();
+                    ServerSocket = new AgentTcpServerSocket();
                     break;
             }
 
-            SocketServer.AgentManager = this;
-            SocketServer.MessageObjectReceived += OnMessageObjectReceived;
+            ServerSocket.AgentManager = this;
+            ServerSocket.MessageObjectReceived += OnMessageObjectReceived;
 
             try
             {
-                SocketServer.Start();
+                ServerSocket.Start();
             }
             catch (Exception ex)
             {
-                throw new DefaultServerSocketException(ex.Message, ex);
+                Log.Error(ex.Message);
+                Log.Error(ex.StackTrace);
+                throw new DefaultServerSocketException("Start Failed ServerSocket", ex);
             }
             
             try
@@ -74,17 +80,28 @@ namespace WFAAgent
             }
             catch (Exception ex)
             {
-                throw new AgentTcpServerException(ex.Message, ex);
+                Log.Error(ex.Message);
+                Log.Error(ex.StackTrace);
+                throw new AgentTcpServerException("Start Failed AgentTcpServer", ex);
             }
         }
 
         public void StopServer()
         {
-            SocketServer.Stop();
-            SocketServer.MessageObjectReceived -= OnMessageObjectReceived;
-            SocketServer.AgentManager = null;
+            try
+            {
+                ServerSocket.Stop();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                Log.Error(ex.StackTrace);
+            }
+            
+            ServerSocket.MessageObjectReceived -= OnMessageObjectReceived;
+            ServerSocket.AgentManager = null;
 
-            SocketServer = null;
+            ServerSocket = null;
 
             StopTcpServer();
         }
@@ -101,7 +118,7 @@ namespace WFAAgent
                     .AddString(EventConstant.IPAddress, ((IPEndPoint)e.ServerSocket.LocalEndPoint).Address.ToString())
                     .ToString();
 
-                ((AgentWebSocketServer)SocketServer).BroadCastTcpServerEvent(data);
+                ((AgentWebServerSocket)ServerSocket).BroadCastTcpServerEvent(data);
             }
             OnMessageObjectReceived("TcpServer_Listen ============");
         }
@@ -118,7 +135,7 @@ namespace WFAAgent
                     .AddString(EventConstant.IPAddress, ((IPEndPoint)e.ClientSocket.RemoteEndPoint).Address.ToString())
                     .ToString();
 
-                ((AgentWebSocketServer)SocketServer).BroadCastTcpServerEvent(data);
+                ((AgentWebServerSocket)ServerSocket).BroadCastTcpServerEvent(data);
             }
             OnMessageObjectReceived("TcpServer_AcceptClient ============");
         }
@@ -132,10 +149,10 @@ namespace WFAAgent
                 switch (e.Header.TransmissionData)
                 {
                     case TransmissionData.Text:
-                        SocketServer.OnDataReceived(e.Header.Type, e.Data);
+                        ServerSocket.OnDataReceived(e.Header.Type, e.Data);
                         break;
                     case TransmissionData.Binary:
-                        SocketServer.OnDataReceived(e.Header.Type, e.RawData);
+                        ServerSocket.OnDataReceived(e.Header.Type, e.RawData);
                         break;
                 }
                 OnMessageObjectReceived("TcpServer_DataReceived ============");
@@ -177,7 +194,7 @@ namespace WFAAgent
         {
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessStarted =====");
 
-            SocketServer.OnProcessStarted(sender as ProcessInfo);
+            ServerSocket.OnProcessStarted(sender as ProcessInfo);
 
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessStarted =====\n");
         }
@@ -186,7 +203,7 @@ namespace WFAAgent
         {
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====");
 
-            SocketServer.OnProcessExited(sender as ProcessInfo);
+            ServerSocket.OnProcessExited(sender as ProcessInfo);
 
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====\n");
         }
@@ -228,8 +245,20 @@ namespace WFAAgent
                     break;
             }
 
-            // TODO: ThreadPool 사용필요
-            eventProcessor.DoProcess(eventData);
+            ThreadPool.QueueUserWorkItem(
+                DoProcess, 
+                new EventProcessState()
+                {
+                    EventProcessor = eventProcessor,
+                    EventData = eventData
+                }
+            );
+        }
+
+        private void DoProcess(object state)
+        {
+            EventProcessState eventProcessState = state as EventProcessState;
+            eventProcessState.EventProcessor.DoProcess(eventProcessState.EventData);
         }
     }
 }

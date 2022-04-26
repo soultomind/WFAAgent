@@ -4,8 +4,10 @@
     <meta charset="utf-8" />
     <title></title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!--<link rel="stylesheet" type="text/css" href="./css/bootstrap.css">-->
-    <script type="text/javascript" src="./WFAAgent.js"></script>
+    <!--<link rel="stylesheet" type="text/css" href="./css/bootstrap/bootstrap.css">-->
+    <link rel="stylesheet" href="./css/main.css"/>
+
+    <script type="text/javascript" src="./js/WFAAgent.js"></script>
     <script>
         function wsStatus(value) {
             var innerText = "Connected : " + value;
@@ -18,8 +20,6 @@
 
             wsPort: 33000,
             // wssPort: 33001,
-
-
         };
 
         var agent = new WFAAgent(config);
@@ -74,10 +74,10 @@
 </head>
 <body>
     <div>
-        <h3>WFAAgent WebClient<span class="badge bg-secondary">Use SuperSocket</span></h3>
+        <h3>WFAAgent WebClient<span> Use SuperSocket</span></h3>
     </div>
     <div>
-        <span id="wsStatus" class="badge bg-primary">Connected : </span>
+        <span id="wsStatus">Connected : </span>
         <button type="button" class="btn btn-primary" onclick="wsConnect()">
             웹 소켓 연결
         </button>
@@ -86,10 +86,10 @@
     <div>
         <div>
             <!--<textarea id="wsSendText" cols="60" rows="10">{"eventName":"ProcessStart","data":{"fileName":"C:\\Workspace\\DotNet\\GitProject\\WFAAgent\\TestClientNet45\\bin\\Debug\\TestClientNet45.exe", "useCallbackData":true}}</textarea>-->
-            <textarea id="wsExecuteFileName" cols="60" rows="10">C:\\Workspace\\GitProject\\WFAAgent\\TestClientNet45\\bin\\Debug\\TestClientNet45.exe</textarea>
+            <textarea id="wsExecuteFileName" cols="100" rows="10">C:\\Workspace\\GitProject\\WFAAgent\\TestClientNet45\\bin\\Debug\\TestClientNet45.exe</textarea>
         </div>
         <div>
-            <button type="button" class="btn btn-primary" onclick="wsExecute()">
+            <button type="button" onclick="wsExecute()">
                 데이터 전송
             </button>
         </div>

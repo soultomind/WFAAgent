@@ -38,6 +38,7 @@ namespace WFAAgent.Framework.Net.Sockets
                 Connected?.Invoke(this, new ConnectedEventArgs(Socket));
 
                 _Thread = new Thread(Receive);
+                _Thread.IsBackground = true;
                 _Thread.Start();
                 return true;
             }
