@@ -68,13 +68,11 @@ namespace WFAAgent.Framework.Net.Sockets
 
     public class DisconnectEventArgs : SocketEventArgs
     {
-        public DisconnectEventArgs(Socket socket, bool isServer) 
+        public DisconnectEventArgs(Socket socket) 
             : base(socket)
         {
-            IsServer = isServer;
+            
         }
-
-        public bool IsServer { get; set; }
     }
 
     public class AsyncSendSocketEventArgs : SocketEventArgs

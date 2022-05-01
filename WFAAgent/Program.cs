@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -13,9 +14,27 @@ namespace WFAAgent
         [STAThread]
         static void Main(string[] args)
         {
+            ExecuteManager.ExecCommandLineArgs = args;
+
             if (args.Length == 0)
             {
-                args = ExecuteArgs.MonitoringArgs;
+                if (Debugger.IsAttached)
+                {
+                    args = new string[] { ExecuteManager.ExecuteServer };
+                }
+                else
+                {
+                    args = new string[] { ExecuteManager.ExecuteMonitoring };
+                }
+            }
+            else
+            {
+#if DEBUG
+                if (Debugger.IsAttached)
+                {
+                    MessageBox.Show("DEBUG");
+                }
+#endif
             }
             new Main().Run(args);
         }

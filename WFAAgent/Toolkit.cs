@@ -9,7 +9,10 @@ using System.Threading.Tasks;
 
 namespace WFAAgent
 {
-    public static class Toolkit
+    /// <summary>
+    /// 모듈에서 사용되는 툴킷 클래스
+    /// </summary>
+    internal static class Toolkit
     {
         /// <summary>
         /// DebugView Filter 이름
@@ -46,12 +49,10 @@ namespace WFAAgent
         public static bool UseNowToString;
         static Toolkit()
         {
-
-#if DEBUG
             _sIncludeFilterName = CreateNamespace();
+#if DEBUG
             IsDebugEnabled = true;
 #else
-            _sIncludeFilterName = "WFAAgent";
             IsDebugEnabled = false;
 #endif
             IsTraceEnabled = true;
@@ -69,15 +70,12 @@ namespace WFAAgent
             return DateTime.Now.ToString(format);
         }
 
-        private static string MakeMessage(string message)
+        private static string MakeMessage(string header, string message)
         {
-            string className = new StackFrame(1).GetMethod().ReflectedType.Name;
-            string methodName = new StackFrame(1, true).GetMethod().Name;
-            string header = String.Format("{0} :: {1}", className, methodName);
 #if DEBUG
-            message = String.Format("[{0}] DEBUG - {1}", header, message);
+            message = String.Format("[{0}] [{1}] DEBUG - {2}", _sIncludeFilterName, header, message);
 #else
-            message = String.Format("[{0}] TRACE - {1}", header, message);
+            message = String.Format("[{0}] [{1}] TRACE - {2}", _sIncludeFilterName, header, message);
 #endif
             return message;
         }
@@ -90,9 +88,29 @@ namespace WFAAgent
         {
             if (IsDebugEnabled)
             {
-                message = MakeMessage(message);
+                string className = new StackFrame(1).GetMethod().ReflectedType.Name;
+                string methodName = new StackFrame(1, true).GetMethod().Name;
+                string header = String.Format("{0} :: {1}", className, methodName);
+                message = MakeMessage(header, message);
                 Debug.WriteLine(message);
             }
+        }
+
+        /// <summary>
+        /// <see cref="System.Diagnostics.Debug.WriteLine(object)"/>을 활용하여 예외를 출력합니다.
+        /// </summary>
+        /// <param name="ex"></param>
+        internal static void DebugWriteLine(Exception ex)
+        {
+            string className = new StackFrame(1).GetMethod().ReflectedType.Name;
+            string methodName = new StackFrame(1, true).GetMethod().Name;
+            string header = String.Format("{0} :: {1}", className, methodName);
+
+            string message = MakeMessage(header, ex.Message);
+            DebugWriteLine(message);
+
+            message = MakeMessage(header, ex.StackTrace);
+            DebugWriteLine(message);
         }
 
         /// <summary>
@@ -103,7 +121,10 @@ namespace WFAAgent
         {
             if (IsDebugEnabled)
             {
-                message = MakeMessage(message);
+                string className = new StackFrame(1).GetMethod().ReflectedType.Name;
+                string methodName = new StackFrame(1, true).GetMethod().Name;
+                string header = String.Format("{0} :: {1}", className, methodName);
+                message = MakeMessage(header, message);
                 Debug.Write(message);
             }
         }
@@ -116,9 +137,29 @@ namespace WFAAgent
         {
             if (IsTraceEnabled)
             {
-                message = MakeMessage(message);
+                string className = new StackFrame(1).GetMethod().ReflectedType.Name;
+                string methodName = new StackFrame(1, true).GetMethod().Name;
+                string header = String.Format("{0} :: {1}", className, methodName);
+                message = MakeMessage(header, message);
                 Trace.WriteLine(message);
             }
+        }
+
+        /// <summary>
+        /// <see cref="System.Diagnostics.Trace.WriteLine(object)"/>을 활용하여 예외를 출력합니다.
+        /// </summary>
+        /// <param name="ex"></param>
+        internal static void TraceWriteLine(Exception ex)
+        {
+            string className = new StackFrame(1).GetMethod().ReflectedType.Name;
+            string methodName = new StackFrame(1, true).GetMethod().Name;
+            string header = String.Format("{0} :: {1}", className, methodName);
+
+            string message = MakeMessage(header, ex.Message);
+            TraceWriteLine(message);
+
+            message = MakeMessage(header, ex.StackTrace);
+            TraceWriteLine(message);
         }
 
         /// <summary>
@@ -129,12 +170,15 @@ namespace WFAAgent
         {
             if (IsTraceEnabled)
             {
-                message = MakeMessage(message);
+                string className = new StackFrame(1).GetMethod().ReflectedType.Name;
+                string methodName = new StackFrame(1, true).GetMethod().Name;
+                string header = String.Format("{0} :: {1}", className, methodName);
+                message = MakeMessage(header, message);
                 Trace.Write(message);
             }
         }
 
-        internal static bool IsCurrentAdministratorProcess()
+        internal static bool IsCurrentProcessAdministrator()
         {
             bool flag;
 
@@ -145,11 +189,8 @@ namespace WFAAgent
                 WindowsPrincipal principal = new WindowsPrincipal(identity);
                 flag = principal.IsInRole(WindowsBuiltInRole.Administrator);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                TraceWriteLine(ex.Message);
-                TraceWriteLine(ex.StackTrace);
-
                 flag = false;
             }
             finally

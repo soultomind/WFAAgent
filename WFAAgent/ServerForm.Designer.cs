@@ -1,6 +1,6 @@
 ﻿namespace WFAAgent
 {
-    partial class MainForm
+    partial class ServerForm
     {
         /// <summary>
         /// 필수 디자이너 변수입니다.
@@ -29,11 +29,11 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServerForm));
             this.TrayNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.TrayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ShowMonitoringDlgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TrayContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -41,7 +41,7 @@
             // 
             this.TrayNotifyIcon.ContextMenuStrip = this.TrayContextMenuStrip;
             this.TrayNotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("TrayNotifyIcon.Icon")));
-            this.TrayNotifyIcon.Text = "WFAAgent";
+            this.TrayNotifyIcon.Text = "WFAAgent.Server";
             this.TrayNotifyIcon.Visible = true;
             this.TrayNotifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.TrayNotifyIcon_MouseDoubleClick);
             // 
@@ -51,21 +51,21 @@
             this.ShowMonitoringDlgToolStripMenuItem,
             this.ExitToolStripMenuItem});
             this.TrayContextMenuStrip.Name = "TrayContextMenuStrip";
-            this.TrayContextMenuStrip.Size = new System.Drawing.Size(153, 70);
-            // 
-            // ExitToolStripMenuItem
-            // 
-            this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
-            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.ExitToolStripMenuItem.Text = "종료";
-            this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
+            this.TrayContextMenuStrip.Size = new System.Drawing.Size(123, 48);
             // 
             // ShowMonitoringDlgToolStripMenuItem
             // 
             this.ShowMonitoringDlgToolStripMenuItem.Name = "ShowMonitoringDlgToolStripMenuItem";
-            this.ShowMonitoringDlgToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.ShowMonitoringDlgToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.ShowMonitoringDlgToolStripMenuItem.Text = "모니터링";
             this.ShowMonitoringDlgToolStripMenuItem.Click += new System.EventHandler(this.ShowMonitoringDlgToolStripMenuItem_Click);
+            // 
+            // ExitToolStripMenuItem
+            // 
+            this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
+            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.ExitToolStripMenuItem.Text = "종료";
+            this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -79,7 +79,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MainForm";
-            this.Text = "MainForm";
+            this.Text = "WFAAgent.Server";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.Shown += new System.EventHandler(this.MainForm_Shown);
             this.TrayContextMenuStrip.ResumeLayout(false);

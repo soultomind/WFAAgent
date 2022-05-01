@@ -62,6 +62,7 @@
     <Compile Include="MainWnd.Designer.cs">
       <DependentUpon>MainWnd.cs</DependentUpon>
     </Compile>
+    <Compile Include="Toolkit.cs" />
     <Compile Include="UI\InfoDialog.cs">
       <SubType>Form</SubType>
     </Compile>

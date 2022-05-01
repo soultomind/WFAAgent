@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows.Forms;
 using WFAAgent.Core;
 using WFAAgent.Dialogs;
@@ -8,14 +9,14 @@ using WFAAgent.Message;
 
 namespace WFAAgent
 {
-    public partial class MainForm : Form
+    public partial class ServerForm : Form
     {
         private bool _IsAgentStart;
         private Exception _AgentStartException;
         private IAgentManager _AgentManager;
 
         private MessageItemQueueAppendWorker<MessageItem> _MessageItemQueueAppendWorker;
-        public MainForm()
+        public ServerForm(string[] args)
         {
             InitializeComponent();
 
@@ -27,6 +28,7 @@ namespace WFAAgent
             _MessageItemQueueAppendWorker = new MessageItemQueueAppendWorker<MessageItem>();
             _MessageItemQueueAppendWorker.MessageItemReceived += MessageItemQueueAppendWorker_MessageItemReceived;
 
+            Text = String.Format("WFAAgent.ServerForm Administrator={0}", Toolkit.IsCurrentProcessAdministrator());
         }
 
         #region Properties
@@ -48,6 +50,13 @@ namespace WFAAgent
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            
+        }
+
+        private void MainForm_Shown(object sender, EventArgs e)
+        {
+            Taskbar.RefreshTrayArea();
+
             try
             {
                 _AgentManager.StartServer();
@@ -58,11 +67,6 @@ namespace WFAAgent
                 _IsAgentStart = false;
                 _AgentStartException = ex;
             }
-        }
-
-        private void MainForm_Shown(object sender, EventArgs e)
-        {
-            Taskbar.RefreshTrayArea();
 
             if (!_IsAgentStart)
             {
@@ -151,7 +155,7 @@ namespace WFAAgent
         #region MonitoringDialog
         private void MonitoringDialog_Shown(object sender, EventArgs e)
         {
-            _MessageItemQueueAppendWorker.Start();
+            //_MessageItemQueueAppendWorker.Start();
         }
 
         private void MonitoringDlg_FormClosed(object sender, FormClosedEventArgs e)

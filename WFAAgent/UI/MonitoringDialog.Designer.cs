@@ -42,7 +42,7 @@
             this._RichTextBox.TabIndex = 0;
             this._RichTextBox.Text = "";
             // 
-            // MonitoringDlg
+            // MonitoringDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -52,8 +52,8 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
-            this.Name = "MonitoringDlg";
-            this.Text = "WFAAgent - Monitoring";
+            this.Name = "MonitoringDialog";
+            this.Text = "WFAAgent.Server - Terminal";
             this.Load += new System.EventHandler(this.MonitoringDlg_Load);
             this.Shown += new System.EventHandler(this.MonitoringDlg_Shown);
             this.ResumeLayout(false);

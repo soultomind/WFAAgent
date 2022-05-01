@@ -58,7 +58,7 @@ namespace WFAAgent.Framework.Net.Sockets
                     try
                     {
                         Socket.Disconnect(false);
-                        Disconnected?.Invoke(this, new DisconnectEventArgs(Socket, false));
+                        Disconnected?.Invoke(this, new DisconnectEventArgs(Socket));
 
                         Socket.Close();
                         Socket = null;
