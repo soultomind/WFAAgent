@@ -38,16 +38,8 @@ namespace WFAAgent.Framework.Net
         public override JObject ToJson()
         {
             JObject retObj = base.ToJson();
-            if (String.IsNullOrEmpty(AppStringData))
-            {
-                string base64 = Convert.ToBase64String(AppBinaryData);
-                retObj.Add(Constant.AppBinaryData, base64);
-            }
-            else
-            {
-                retObj.Add(Constant.AppStringData, AppStringData);
-            }
-            
+            retObj.Add(Constant.AppStringData, AppStringData);
+
             return retObj;
         }
     }

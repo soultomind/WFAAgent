@@ -78,8 +78,8 @@
             window.console.info(JSON.stringify(e));
         });
 
-        agent.setClientDataReceivedEventHandler(function (data) {
-            window.console.info(data);
+        agent.setClientDataReceivedEventHandler(function (e) {
+            window.console.info(e.data);
         });
 
         function wsConnect() {

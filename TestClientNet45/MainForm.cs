@@ -5,7 +5,6 @@ using System.Text;
 using System.Windows.Forms;
 using TestClient.UI;
 using TestClientNet45;
-using WFAAgent.Common;
 using WFAAgent.Framework.Application;
 using WFAAgent.Framework.Win32;
 

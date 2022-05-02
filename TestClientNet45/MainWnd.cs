@@ -103,7 +103,9 @@ namespace TestClientNet45
             //       웹 클라이언트로 전송하여 웹 클라이언트에서는 다시
             //       서버로 전송하여 서버에서 해당 데이터를 저장하는 플로우를 그려보자
             //       데이터 구조 = { Data : 실제바이너리 데이터, Type : File,General, FileName : Type이 File일 경우 파일 이름 명시, Base64 : Data Base64 처리 유무 }
-            TcpClient.Send(DataPacket.AgentBinaryData, new AgentData(CallbackDataProcess, data));
+
+
+            // TcpClient.Send(DataPacket.AgentBinaryData, new AgentData(CallbackDataProcess, data));
         }
 
         private void _ButtonSendDataAgentTcpServer_Click(object sender, EventArgs e)
