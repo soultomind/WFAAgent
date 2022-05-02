@@ -1,13 +1,9 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WFAAgent.WebSocket;
+using WFAAgent.Server;
 
-namespace WFAAgent.Core
+namespace WFAAgent.Server
 {
     public class ProcessInfo
     {

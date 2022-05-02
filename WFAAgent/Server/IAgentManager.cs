@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WFAAgent.Message;
 
-namespace WFAAgent
+namespace WFAAgent.Server
 {
     public interface IAgentManager
     {

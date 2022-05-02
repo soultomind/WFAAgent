@@ -2,14 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using WFAAgent.Core;
 using WFAAgent.Framework.Application;
 using WFAAgent.Framework.Utilities;
-using WFAAgent.WebSocket;
+using WFAAgent.Server;
 
-namespace WFAAgent.Core
+namespace WFAAgent.Server
 {
     public delegate void StartedEventHandler(object sender, EventArgs e);
     public delegate void ExitedEventHandler(object sender, EventArgs e);

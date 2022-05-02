@@ -1,6 +1,6 @@
-﻿namespace WFAAgent.Dialogs
+﻿namespace WFAAgent
 {
-    partial class MonitoringDialog
+    partial class TerminalDialog
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitoringDialog));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(TerminalDialog));
             this._RichTextBox = new System.Windows.Forms.RichTextBox();
             this.SuspendLayout();
             // 
@@ -54,8 +54,8 @@
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "MonitoringDialog";
             this.Text = "WFAAgent.Server - Terminal";
-            this.Load += new System.EventHandler(this.MonitoringDlg_Load);
-            this.Shown += new System.EventHandler(this.MonitoringDlg_Shown);
+            this.Load += new System.EventHandler(this.TerminalDialog_Load);
+            this.Shown += new System.EventHandler(this.TerminalDialog_Shown);
             this.ResumeLayout(false);
 
         }

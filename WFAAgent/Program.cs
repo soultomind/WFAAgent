@@ -14,17 +14,18 @@ namespace WFAAgent
         [STAThread]
         static void Main(string[] args)
         {
-            ExecuteManager.ExecCommandLineArgs = args;
+            // Environment.GetCommandLineArgs() 메서드는 실행파일 위치까지 포함하여 넘어오므로 아래 코드 추가
+            ExecuteContext.ExecCommandLineArgs = args;
 
             if (args.Length == 0)
             {
                 if (Debugger.IsAttached)
                 {
-                    args = new string[] { ExecuteManager.ExecuteServer };
+                    args = new string[] { ExecuteContext.ExecuteServer };
                 }
                 else
                 {
-                    args = new string[] { ExecuteManager.ExecuteMonitoring };
+                    args = new string[] { ExecuteContext.ExecuteMonitoring };
                 }
             }
             else

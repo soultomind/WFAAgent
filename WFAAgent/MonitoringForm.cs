@@ -31,6 +31,13 @@ namespace WFAAgent
             Text = String.Format("WFAAgent.MonitoringForm Administrator={0}", Toolkit.IsCurrentProcessAdministrator());
         }
 
+        #region Properties
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
+        internal InfoDialog InfoDialog { get; set; }
+
+        #endregion
+
         private void InitializeTaskbarTray()
         {
             this.WindowState = FormWindowState.Minimized;
@@ -47,12 +54,12 @@ namespace WFAAgent
             _isCurrentProcessExecuteAdministrator = isCurrentProcessExecuteAdministrator;
 
             string[] cmdLineArgs = null;
-            if (Debugger.IsAttached && isCurrentProcessExecuteAdministrator && ExecuteManager.ExecCommandLineArgs.Length == 0)
+            if (Debugger.IsAttached && isCurrentProcessExecuteAdministrator && ExecuteContext.ExecCommandLineArgs.Length == 0)
             {
                 isCurrentProcessExecuteAdministrator = false;
             }
 
-            if (ExecuteManager.ExecCommandLineArgs.Length == 0)
+            if (ExecuteContext.ExecCommandLineArgs.Length == 0)
             {
                 // 최초 처음 실행 사용자 인자
                 cmdLineArgs = Main.ExecuteArgs.UserCommandLineArgs;
@@ -60,7 +67,7 @@ namespace WFAAgent
             else
             {
                 // 그 후에 실행인자
-                cmdLineArgs = ExecuteManager.ExecCommandLineArgs;
+                cmdLineArgs = ExecuteContext.ExecCommandLineArgs;
             }
 
             if (isCurrentProcessExecuteAdministrator)
@@ -74,7 +81,7 @@ namespace WFAAgent
                 {
                     if (Main.ExecuteArgs.Execute == Execute.Monitoring)
                     {
-                        Process process = CreateExecuteAsAdmin(Application.ExecutablePath, ExecuteManager.ExecuteMonitoring.ToString());
+                        Process process = CreateExecuteAsAdmin(Application.ExecutablePath, ExecuteContext.ExecuteMonitoring.ToString());
                         if (process != null)
                         {
                             process.Start();
@@ -93,7 +100,7 @@ namespace WFAAgent
 
             if (_isCurrentProcessExecuteAdministrator)
             {
-                Process process = CreateExecuteAsAdmin(Application.ExecutablePath, ExecuteManager.ExecuteServer.ToString());
+                Process process = CreateExecuteAsAdmin(Application.ExecutablePath, ExecuteContext.ExecuteServer.ToString());
                 if (process != null)
                 {
                     process.Exited += ServerProcess_Exited;
@@ -153,7 +160,7 @@ namespace WFAAgent
                 Thread.Sleep(interval);
                 if (_isProcessAgentServerExited)
                 {
-                    StartServerExecuteAsAdmin(Application.ExecutablePath, ExecuteManager.ExecuteServer.ToString());
+                    StartServerExecuteAsAdmin(Application.ExecutablePath, ExecuteContext.ExecuteServer.ToString());
                 }
             }
         }
@@ -204,6 +211,31 @@ namespace WFAAgent
                 Toolkit.TraceWriteLine(ex.StackTrace);
                 return null;
             }
+        }
+
+        private void TrayNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            if (InfoDialog == null)
+            {
+                InfoDialog = new InfoDialog();
+                InfoDialog.Width += 20;
+                InfoDialog.Text = String.Format("{0}.{1}", Application.ProductName, Execute.Monitoring.ToString());
+            }
+
+            if (Main.HasOpenForm(InfoDialog.Text))
+            {
+                InfoDialog.Visible = true;
+            }
+            else
+            {
+                InfoDialog.Show();
+            }
+            InfoDialog.Activate();
+        }
+
+        private void ShowConfigDlgToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)

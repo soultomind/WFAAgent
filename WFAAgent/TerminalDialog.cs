@@ -10,22 +10,22 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using WFAAgent.Core;
 
-namespace WFAAgent.Dialogs
+namespace WFAAgent
 {
-    internal partial class MonitoringDialog : Form
+    internal partial class TerminalDialog : Form
     {
         
-        public MonitoringDialog()
+        public TerminalDialog()
         {
             InitializeComponent();
         }
 
-        private void MonitoringDlg_Load(object sender, EventArgs e)
+        private void TerminalDialog_Load(object sender, EventArgs e)
         {
 
         }
 
-        private void MonitoringDlg_Shown(object sender, EventArgs e)
+        private void TerminalDialog_Shown(object sender, EventArgs e)
         {
 
         }

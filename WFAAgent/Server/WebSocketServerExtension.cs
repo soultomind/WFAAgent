@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WFAAgent.WebSocket
+namespace WFAAgent.Server
 {
     public static class WebSocketServerExtension
     {

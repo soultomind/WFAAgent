@@ -1,4 +1,4 @@
-﻿namespace WFAAgent.Dialogs
+﻿namespace WFAAgent
 {
     partial class InfoDialog
     {
@@ -37,6 +37,8 @@
             // 
             // GroupBox
             // 
+            this.GroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.GroupBox.Controls.Add(this.VersionValueLabel);
             this.GroupBox.Controls.Add(this.VersionTitleLabel);
             this.GroupBox.Location = new System.Drawing.Point(12, 5);

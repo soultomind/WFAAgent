@@ -7,7 +7,7 @@ using WFAAgent.Core;
 using WFAAgent.Framework.Net.Sockets;
 using WFAAgent.Message;
 
-namespace WFAAgent
+namespace WFAAgent.Server
 {
     public abstract class DefaultServerSocket : IDefaultSocketServer
     {

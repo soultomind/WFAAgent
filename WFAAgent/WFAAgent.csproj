@@ -82,7 +82,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AgentManager.cs" />
+    <Compile Include="Server\AgentManager.cs" />
     <Compile Include="MonitoringForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -96,36 +96,36 @@
     </Compile>
     <Compile Include="Toolkit.cs" />
     <Compile Include="Core\LogLevel.cs" />
-    <Compile Include="DefaultServerSocketException.cs" />
-    <Compile Include="DefaultServerSocket.cs" />
-    <Compile Include="EventProcessState.cs" />
-    <Compile Include="IDefaultSocketServer.cs" />
-    <Compile Include="Tcp\AgentTcpServerSocket.cs" />
-    <Compile Include="WebSocket\EventData.cs" />
-    <Compile Include="Core\EventProcessor.cs" />
-    <Compile Include="Core\EventProcessorManager.cs" />
-    <Compile Include="Core\IEventProcessor.cs" />
-    <Compile Include="Core\ProcessStartEventProcessor.cs" />
-    <Compile Include="Core\ProcessInfo.cs" />
+    <Compile Include="Server\DefaultServerSocketException.cs" />
+    <Compile Include="Server\DefaultServerSocket.cs" />
+    <Compile Include="Server\EventProcessState.cs" />
+    <Compile Include="Server\IDefaultSocketServer.cs" />
+    <Compile Include="Server\AgentTcpServerSocket.cs" />
+    <Compile Include="Server\EventData.cs" />
+    <Compile Include="Server\EventProcessor.cs" />
+    <Compile Include="Server\EventProcessorManager.cs" />
+    <Compile Include="Server\IEventProcessor.cs" />
+    <Compile Include="Server\ProcessStartEventProcessor.cs" />
+    <Compile Include="Server\ProcessInfo.cs" />
     <Compile Include="Message\DetailMessageItem.cs" />
     <Compile Include="Core\ItemQueue.cs" />
     <Compile Include="Message\MessageItem.cs" />
     <Compile Include="Core\MessageItemQueueAppendWorker.cs" />
     <Compile Include="Message\MessageObjectReceivedEventHandler.cs" />
-    <Compile Include="UI\InfoDialog.cs">
+    <Compile Include="InfoDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\InfoDialog.Designer.cs">
+    <Compile Include="InfoDialog.Designer.cs">
       <DependentUpon>InfoDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="UI\MonitoringDialog.cs">
+    <Compile Include="TerminalDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="UI\MonitoringDialog.Designer.cs">
-      <DependentUpon>MonitoringDialog.cs</DependentUpon>
+    <Compile Include="TerminalDialog.Designer.cs">
+      <DependentUpon>TerminalDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Execute.cs" />
-    <Compile Include="IAgentManager.cs" />
+    <Compile Include="ExecuteContext.cs" />
+    <Compile Include="Server\IAgentManager.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="ServerForm.cs">
       <SubType>Form</SubType>
@@ -135,17 +135,17 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="WebSocket\AgentWebServerSocket.cs" />
-    <Compile Include="EventConstant.cs" />
-    <Compile Include="WebSocket\WebSocketServerExtension.cs" />
+    <Compile Include="Server\AgentWebServerSocket.cs" />
+    <Compile Include="Server\EventConstant.cs" />
+    <Compile Include="Server\WebSocketServerExtension.cs" />
     <EmbeddedResource Include="MonitoringForm.resx">
       <DependentUpon>MonitoringForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\InfoDialog.resx">
+    <EmbeddedResource Include="InfoDialog.resx">
       <DependentUpon>InfoDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UI\MonitoringDialog.resx">
-      <DependentUpon>MonitoringDialog.cs</DependentUpon>
+    <EmbeddedResource Include="TerminalDialog.resx">
+      <DependentUpon>TerminalDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ServerForm.resx">
       <DependentUpon>ServerForm.cs</DependentUpon>
@@ -187,7 +187,9 @@
       <Name>WFAAgent.Framework</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Monitoring\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

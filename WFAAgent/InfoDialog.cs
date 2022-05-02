@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace WFAAgent.Dialogs
+namespace WFAAgent
 {
     internal partial class InfoDialog : Form
     {
@@ -33,12 +33,6 @@ namespace WFAAgent.Dialogs
                 Visible = false;
                 e.Cancel = true;
             }
-        }
-
-        public void ReShow()
-        {
-            Visible = true;
-            Activate();
         }
     }
 }

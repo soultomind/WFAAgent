@@ -12,8 +12,8 @@ namespace WFAAgent.Framework.Application
     {
         /// <summary>
         /// AppId
-        /// <para><see cref="WFAAgent.Framework.ServerSocketType.Web"/>=세션 연결시 생성되는 SessionId</para>
-        /// <para><see cref="WFAAgent.Framework.ServerSocketType.Tcp"/>=<see cref="Guid.NewGuid()"/>.ToString()</para>
+        /// <para><see cref="WFAAgent.Framework.AgentServerSocket.Web"/>=세션 연결시 생성되는 SessionId</para>
+        /// <para><see cref="WFAAgent.Framework.AgentServerSocket.Tcp"/>=<see cref="Guid.NewGuid()"/>.ToString()</para>
         /// </summary>
         public string AppId { get; set; }
 

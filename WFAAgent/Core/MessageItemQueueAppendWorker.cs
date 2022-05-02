@@ -52,6 +52,7 @@ namespace WFAAgent.Core
         public void Start()
         {
             _Thread = new Thread(StartWorker);
+            _Thread.IsBackground = true;
             _Thread.Start();
         }
 

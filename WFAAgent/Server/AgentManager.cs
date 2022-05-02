@@ -1,23 +1,14 @@
 ﻿using log4net;
 using Newtonsoft.Json.Linq;
-using SuperSocket.SocketBase.Config;
-using SuperSocket.WebSocket;
-using SuperSocket.WebSocket.SubProtocol;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using WFAAgent.Core;
 using WFAAgent.Framework;
 using WFAAgent.Framework.Net.Sockets;
 using WFAAgent.Message;
-using WFAAgent.Tcp;
-using WFAAgent.WebSocket;
 
-namespace WFAAgent
+namespace WFAAgent.Server
 {
     internal class AgentManager : IAgentManager
     {
@@ -25,20 +16,20 @@ namespace WFAAgent
 
         public event MessageObjectReceivedEventHandler MessageObjectReceived;
 
-        public ServerSocketType ServerSocketType { get; private set; }
-        public IDefaultSocketServer ServerSocket { get; private set; }
+        public AgentServerSocket AgentServerSocket { get; private set; }
+        public IDefaultSocketServer DefaultServerSocket { get; private set; }
         public EventProcessorManager EventProcessorManager { get; private set; }
 
         public AgentTcpServer TcpServer { get; private set; }
 
         public AgentManager()
-            : this(ServerSocketType.Web)
+            : this(AgentServerSocket.Web)
         {
 
         }
-        public AgentManager(ServerSocketType serverSocketType)
+        public AgentManager(AgentServerSocket agentServerSocket)
         {
-            ServerSocketType = serverSocketType;
+            AgentServerSocket = agentServerSocket;
 
             EventProcessorManager = new EventProcessorManager();
         }
@@ -50,22 +41,22 @@ namespace WFAAgent
 
         public void StartServer()
         {
-            switch (ServerSocketType)
+            switch (AgentServerSocket)
             {
-                case ServerSocketType.Web:
-                    ServerSocket = new AgentWebServerSocket();
+                case AgentServerSocket.Web:
+                    DefaultServerSocket = new AgentWebServerSocket();
                     break;
-                case ServerSocketType.Tcp:
-                    ServerSocket = new AgentTcpServerSocket();
+                case AgentServerSocket.Tcp:
+                    DefaultServerSocket = new AgentTcpServerSocket();
                     break;
             }
 
-            ServerSocket.AgentManager = this;
-            ServerSocket.MessageObjectReceived += OnMessageObjectReceived;
+            DefaultServerSocket.AgentManager = this;
+            DefaultServerSocket.MessageObjectReceived += OnMessageObjectReceived;
 
             try
             {
-                ServerSocket.Start();
+                DefaultServerSocket.Start();
             }
             catch (Exception ex)
             {
@@ -90,18 +81,18 @@ namespace WFAAgent
         {
             try
             {
-                ServerSocket.Stop();
+                DefaultServerSocket.Stop();
             }
             catch (Exception ex)
             {
                 Log.Error(ex.Message);
                 Log.Error(ex.StackTrace);
             }
-            
-            ServerSocket.MessageObjectReceived -= OnMessageObjectReceived;
-            ServerSocket.AgentManager = null;
 
-            ServerSocket = null;
+            DefaultServerSocket.MessageObjectReceived -= OnMessageObjectReceived;
+            DefaultServerSocket.AgentManager = null;
+
+            DefaultServerSocket = null;
 
             StopTcpServer();
         }
@@ -109,7 +100,7 @@ namespace WFAAgent
         private void TcpServer_Listen(object sender, ListenEventArgs e)
         {
             OnMessageObjectReceived("============ TcpServer_Listen");
-            if (ServerSocketType == ServerSocketType.Web)
+            if (AgentServerSocket == AgentServerSocket.Web)
             {
                 string data = new JObject()
                     .AddString(EventConstant.EventName, EventConstant.TcpServerListenEvent)
@@ -118,7 +109,7 @@ namespace WFAAgent
                     .AddString(EventConstant.IPAddress, ((IPEndPoint)e.ServerSocket.LocalEndPoint).Address.ToString())
                     .ToString();
 
-                ((AgentWebServerSocket)ServerSocket).BroadCastTcpServerEvent(data);
+                ((AgentWebServerSocket)DefaultServerSocket).BroadCastTcpServerEvent(data);
             }
             OnMessageObjectReceived("TcpServer_Listen ============");
         }
@@ -126,7 +117,7 @@ namespace WFAAgent
         private void TcpServer_AcceptClient(object sender, AcceptClientEventArgs e)
         {
             OnMessageObjectReceived("============ TcpServer_AcceptClient");
-            if (ServerSocketType == ServerSocketType.Web)
+            if (AgentServerSocket == AgentServerSocket.Web)
             {
                 string data = new JObject()
                     .AddString(EventConstant.EventName, EventConstant.TcpServerAcceptClientEvent)
@@ -135,7 +126,7 @@ namespace WFAAgent
                     .AddString(EventConstant.IPAddress, ((IPEndPoint)e.ClientSocket.RemoteEndPoint).Address.ToString())
                     .ToString();
 
-                ((AgentWebServerSocket)ServerSocket).BroadCastTcpServerEvent(data);
+                ((AgentWebServerSocket)DefaultServerSocket).BroadCastTcpServerEvent(data);
             }
             OnMessageObjectReceived("TcpServer_AcceptClient ============");
         }
@@ -149,10 +140,10 @@ namespace WFAAgent
                 switch (e.Header.TransmissionData)
                 {
                     case TransmissionData.Text:
-                        ServerSocket.OnDataReceived(e.Header.Type, e.Data);
+                        DefaultServerSocket.OnDataReceived(e.Header.Type, e.Data);
                         break;
                     case TransmissionData.Binary:
-                        ServerSocket.OnDataReceived(e.Header.Type, e.RawData);
+                        DefaultServerSocket.OnDataReceived(e.Header.Type, e.RawData);
                         break;
                 }
                 OnMessageObjectReceived("TcpServer_DataReceived ============");
@@ -194,7 +185,7 @@ namespace WFAAgent
         {
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessStarted =====");
 
-            ServerSocket.OnProcessStarted(sender as ProcessInfo);
+            DefaultServerSocket.OnProcessStarted(sender as ProcessInfo);
 
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessStarted =====\n");
         }
@@ -203,7 +194,7 @@ namespace WFAAgent
         {
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====");
 
-            ServerSocket.OnProcessExited(sender as ProcessInfo);
+            DefaultServerSocket.OnProcessExited(sender as ProcessInfo);
 
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====\n");
         }
@@ -234,13 +225,13 @@ namespace WFAAgent
             JObject data = messageObj[EventConstant.Data] as JObject;
 
             EventData eventData = new EventData() { Data = data };
-            switch (ServerSocketType)
+            switch (AgentServerSocket)
             {
-                case ServerSocketType.Web:
+                case AgentServerSocket.Web:
                     string sessionId = messageObj[EventConstant.SessionID].ToObject<string>();
                     eventData.SessionId = sessionId;
                     break;
-                case ServerSocketType.Tcp:
+                case AgentServerSocket.Tcp:
                     eventData.SessionId = Guid.NewGuid().ToString();
                     break;
             }

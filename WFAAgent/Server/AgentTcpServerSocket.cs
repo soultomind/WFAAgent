@@ -7,7 +7,7 @@ using WFAAgent.Core;
 using WFAAgent.Framework.Net.Sockets;
 using WFAAgent.Message;
 
-namespace WFAAgent.Tcp
+namespace WFAAgent.Server
 {
     public class AgentTcpServerSocket : DefaultServerSocket
     {

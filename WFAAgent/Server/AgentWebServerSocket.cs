@@ -11,7 +11,7 @@ using WFAAgent.Framework.Net;
 using WFAAgent.Framework.Net.Sockets;
 using WFAAgent.Message;
 
-namespace WFAAgent.WebSocket
+namespace WFAAgent.Server
 {
     public class AgentWebServerSocket : DefaultServerSocket
     {

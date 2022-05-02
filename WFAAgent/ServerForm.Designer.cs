@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ServerForm));
             this.TrayNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.TrayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.ShowMonitoringDlgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ShowTerminalDlgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TrayContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -48,17 +48,17 @@
             // TrayContextMenuStrip
             // 
             this.TrayContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ShowMonitoringDlgToolStripMenuItem,
+            this.ShowTerminalDlgToolStripMenuItem,
             this.ExitToolStripMenuItem});
             this.TrayContextMenuStrip.Name = "TrayContextMenuStrip";
             this.TrayContextMenuStrip.Size = new System.Drawing.Size(123, 48);
             // 
-            // ShowMonitoringDlgToolStripMenuItem
+            // ShowTerminalDlgToolStripMenuItem
             // 
-            this.ShowMonitoringDlgToolStripMenuItem.Name = "ShowMonitoringDlgToolStripMenuItem";
-            this.ShowMonitoringDlgToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
-            this.ShowMonitoringDlgToolStripMenuItem.Text = "모니터링";
-            this.ShowMonitoringDlgToolStripMenuItem.Click += new System.EventHandler(this.ShowMonitoringDlgToolStripMenuItem_Click);
+            this.ShowTerminalDlgToolStripMenuItem.Name = "ShowTerminalDlgToolStripMenuItem";
+            this.ShowTerminalDlgToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
+            this.ShowTerminalDlgToolStripMenuItem.Text = "모니터링";
+            this.ShowTerminalDlgToolStripMenuItem.Click += new System.EventHandler(this.ShowTerminalDialogToolStripMenuItem_Click);
             // 
             // ExitToolStripMenuItem
             // 
@@ -67,7 +67,7 @@
             this.ExitToolStripMenuItem.Text = "종료";
             this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
             // 
-            // MainForm
+            // ServerForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -78,10 +78,10 @@
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "MainForm";
+            this.Name = "ServerForm";
             this.Text = "WFAAgent.Server";
-            this.Load += new System.EventHandler(this.MainForm_Load);
-            this.Shown += new System.EventHandler(this.MainForm_Shown);
+            this.Load += new System.EventHandler(this.ServerForm_Load);
+            this.Shown += new System.EventHandler(this.ServerForm_Shown);
             this.TrayContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -92,7 +92,7 @@
         private System.Windows.Forms.NotifyIcon TrayNotifyIcon;
         private System.Windows.Forms.ContextMenuStrip TrayContextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem ExitToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ShowMonitoringDlgToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ShowTerminalDlgToolStripMenuItem;
     }
 }
 

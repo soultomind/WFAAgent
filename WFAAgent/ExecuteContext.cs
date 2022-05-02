@@ -7,27 +7,28 @@ using System.Threading.Tasks;
 
 namespace WFAAgent
 {
-    public class ExecuteManager
+    public class ExecuteContext
     {
         public const string ExecuteType = "ExecuteType";
         public const string ExecuteType_Monitoring = "Monitoring";
         public const string ExecuteType_Server = "Server";
 
-        public ExecuteManager()
+        public ExecuteContext()
         {
             ArgsDictionary = new Dictionary<string, string>();
         }
+
+        public Execute Execute
+        {
+            get; set;
+        }
+
         public Dictionary<string, string> ArgsDictionary
         {
             get; set;
         }
 
         public string[] UserCommandLineArgs
-        {
-            get; set;
-        }
-
-        public Execute Execute
         {
             get; set;
         }
@@ -53,9 +54,9 @@ namespace WFAAgent
             get; set;
         }
 
-        public static ExecuteManager Parse(string[] args)
+        public static ExecuteContext Parse(string[] args)
         {
-            ExecuteManager o = new ExecuteManager();
+            ExecuteContext o = new ExecuteContext();
             o.UserCommandLineArgs = args;
             if (args.Length == 1)
             {

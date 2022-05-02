@@ -50,6 +50,7 @@
             this.ShowConfigDlgToolStripMenuItem.Name = "ShowConfigDlgToolStripMenuItem";
             this.ShowConfigDlgToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
             this.ShowConfigDlgToolStripMenuItem.Text = "환경설정";
+            this.ShowConfigDlgToolStripMenuItem.Click += new System.EventHandler(this.ShowConfigDlgToolStripMenuItem_Click);
             // 
             // ExitToolStripMenuItem
             // 
@@ -64,6 +65,7 @@
             this.TrayNotifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("TrayNotifyIcon.Icon")));
             this.TrayNotifyIcon.Text = "WFAAgent.Monitoring";
             this.TrayNotifyIcon.Visible = true;
+            this.TrayNotifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.TrayNotifyIcon_MouseDoubleClick);
             // 
             // MonitoringForm
             // 

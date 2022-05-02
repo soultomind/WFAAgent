@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WFAAgent.Framework
 {
-    public enum ServerSocketType
+    public enum AgentServerSocket
     {
         Tcp, Web
     }
