@@ -84,7 +84,8 @@
         agent.setTcpClientDataReceivedEventHandler(function (e) {
             if (e.appBinaryData != null) {
                 var img = document.getElementById("base64Image");
-                img.src = "data:image/png;base64," + e.appBinaryData;
+                var extension = e.extension;
+                img.src = "data:image/" + e.extension + ";base64," + e.appBinaryData;
             } else {
                 window.console.info("Text=" + e.appStringData);
             }
