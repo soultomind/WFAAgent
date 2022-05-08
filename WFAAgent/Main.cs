@@ -35,12 +35,14 @@ namespace WFAAgent
         private void Run(ExecuteContext args)
         {
             string executeType = args.ArgsDictionary[ExecuteContext.ExecuteType];
-            switch (executeType)
+
+            Execute execute = (Execute)Enum.Parse(typeof(Execute), executeType);
+            switch (execute)
             {
-                case ExecuteContext.ExecuteType_Server:
+                case Execute.Server:
                     CurrentForm = new ServerForm(args.UserCommandLineArgs);
                     break;
-                case ExecuteContext.ExecuteType_Monitoring:
+                case Execute.Monitoring:
                     CurrentForm = new MonitoringForm(args.UserCommandLineArgs);
                     break;
             }

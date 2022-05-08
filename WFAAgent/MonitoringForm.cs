@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WFAAgent.Framework.Application;
 using WFAAgent.Framework.Win32;
 
 namespace WFAAgent
@@ -81,7 +82,7 @@ namespace WFAAgent
                 {
                     if (Main.ExecuteArgs.Execute == Execute.Monitoring)
                     {
-                        Process process = CreateExecuteAsAdmin(Application.ExecutablePath, ExecuteContext.ExecuteMonitoring.ToString());
+                        Process process = CreateExecuteAsAdmin(Application.ExecutablePath, ExecuteContext.ExecuteMonitoringArgs.ToString());
                         if (process != null)
                         {
                             process.Start();
@@ -100,7 +101,9 @@ namespace WFAAgent
 
             if (_isCurrentProcessExecuteAdministrator)
             {
-                Process process = CreateExecuteAsAdmin(Application.ExecutablePath, ExecuteContext.ExecuteServer.ToString());
+                Dictionary<string, string> dictionary = MakeServerDictionaryArgs();
+
+                Process process = CreateExecuteAsAdmin(Application.ExecutablePath, ExecuteContext.MakeStringArgs(dictionary));
                 if (process != null)
                 {
                     process.Exited += ServerProcess_Exited;
@@ -135,6 +138,14 @@ namespace WFAAgent
             }
         }
 
+        private Dictionary<string, string> MakeServerDictionaryArgs()
+        {
+            // 모니터링 Pid 같이 실행인자로 추가하여 넘겨주기
+            Dictionary<string, string> dictionary = ExecuteContext.Server.CopyArgsDirectory;
+            dictionary.Add(Constant.ParentProcessId, Process.GetCurrentProcess().Id.ToString());
+            return dictionary;
+        }
+
         private void ServerProcess_Exited(object sender, EventArgs e)
         {
             // TODO: 해당 이벤트 발생시에
@@ -155,12 +166,14 @@ namespace WFAAgent
 
             int interval = (int)argument;
 
+            Dictionary<string, string> dictionary = MakeServerDictionaryArgs();
+
             while (_isServerProcessStartWorker)
             {
                 Thread.Sleep(interval);
                 if (_isProcessAgentServerExited)
                 {
-                    StartServerExecuteAsAdmin(Application.ExecutablePath, ExecuteContext.ExecuteServer.ToString());
+                    StartServerExecuteAsAdmin(Application.ExecutablePath, ExecuteContext.MakeStringArgs(dictionary));
                 }
             }
         }
@@ -202,7 +215,15 @@ namespace WFAAgent
                 process.StartInfo.Arguments = arguments;
                 process.StartInfo.UseShellExecute = true;
                 process.StartInfo.Verb = "runas";
+
+                process.StartInfo.RedirectStandardError = true;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.OutputDataReceived += Process_OutputDataReceived;
+                process.ErrorDataReceived += Process_ErrorDataReceived;
                 process.EnableRaisingEvents = true;
+
+                process.BeginErrorReadLine();
+                process.BeginOutputReadLine();
                 return process;
             }
             catch (Exception ex)
@@ -211,6 +232,16 @@ namespace WFAAgent
                 Toolkit.TraceWriteLine(ex.StackTrace);
                 return null;
             }
+        }
+
+        private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+               
+        }
+
+        private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            
         }
 
         private void TrayNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)

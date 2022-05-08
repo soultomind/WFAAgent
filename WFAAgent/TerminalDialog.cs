@@ -34,12 +34,7 @@ namespace WFAAgent
         {
             if (_RichTextBox.InvokeRequired)
             {
-                _RichTextBox.Invoke(new Action(() =>
-                {
-                    _RichTextBox.AppendText(message);
-                    _RichTextBox.AppendText(Environment.NewLine);
-                    _RichTextBox.ScrollToCaret();
-                }));
+                _RichTextBox.Invoke(new Action<string>(AppendMessageLine), new object[] { message });
             }
             else
             {

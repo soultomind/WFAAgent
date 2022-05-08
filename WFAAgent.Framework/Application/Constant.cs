@@ -8,6 +8,8 @@ namespace WFAAgent.Framework.Application
 {
     public class Constant
     {
+        public const string ParentProcessId = "parentProcessId";
+
         public const string DataTypeString = "dataType";
         public const string ProcessId = "processId";
         public const string AppID = "appId";
