@@ -67,12 +67,7 @@ namespace TestClientNet45
         {
             if (InvokeRequired)
             {
-                _RichTextBoxReceiveDataAgentTcpServer.Invoke(new Action(() =>
-                {
-                    _RichTextBoxReceiveDataAgentTcpServer.AppendText(text);
-                    _RichTextBoxReceiveDataAgentTcpServer.AppendText(Environment.NewLine);
-                    _RichTextBoxReceiveDataAgentTcpServer.ScrollToCaret();
-                }));
+                _RichTextBoxReceiveDataAgentTcpServer.Invoke(new Action<string>(RichTextBoxReceiveDataAgentTcpServer_AppendText), text);
             }
             else
             {
@@ -94,18 +89,24 @@ namespace TestClientNet45
                 }
             }
 
-            MessageBox.Show("Path=" + path);
-            byte[] data = ImageToBinary(path);
-            MessageBox.Show("Data=" + data.Length);
+            //MessageBox.Show("Path=" + path);
+            byte[] data = null;
+            using (Image image = Image.FromFile(path))
+            {
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    image.Save(ms, image.RawFormat);
+                    data = ms.ToArray();
+                }
+            }
+            //MessageBox.Show("Data=" + data.Length);
 
-            _RichTextBoxSendDataAgentTcpServer.Text = Encoding.UTF8.GetString(data);
+                _RichTextBoxSendDataAgentTcpServer.Text = Encoding.UTF8.GetString(data);
             // TODO: 데이터 구성에 실제 Binary 데이터 및, 저장할 파일 이름, 파일 크기정보를 포함하여 
             //       웹 클라이언트로 전송하여 웹 클라이언트에서는 다시
             //       서버로 전송하여 서버에서 해당 데이터를 저장하는 플로우를 그려보자
-            //       데이터 구조 = { Data : 실제바이너리 데이터, Type : File,General, FileName : Type이 File일 경우 파일 이름 명시, Base64 : Data Base64 처리 유무 }
 
-
-            // TcpClient.Send(DataPacket.AgentBinaryData, new AgentData(CallbackDataProcess, data));
+            TcpClient.Send(DataPacket.AgentStringData, new AgentData(CallbackDataProcess, data) { Extension = new FileInfo(path).Extension });
         }
 
         private void _ButtonSendDataAgentTcpServer_Click(object sender, EventArgs e)

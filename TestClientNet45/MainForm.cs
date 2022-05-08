@@ -63,7 +63,7 @@ namespace TestClient
 
             if (ArgException != null)
             {
-                MessageBox.Show(this, ArgException.Message);
+                MessageBox.Show(this, ArgException.Message, "[ 에러 발생 ]");
             }
         }
 

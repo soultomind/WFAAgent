@@ -87,6 +87,11 @@ namespace WFAAgent.Framework.Net.Sockets
             return ClientSocket.Send(dataPacket, data);
         }
 
+        public int Send(DataPacket dataPacket, byte[] data)
+        {
+            return ClientSocket.Send(dataPacket, data);
+        }
+
         public int Send(DataPacket dataPacket, DefaultData data)
         {
             return Send(dataPacket, data.ToJson().ToString());

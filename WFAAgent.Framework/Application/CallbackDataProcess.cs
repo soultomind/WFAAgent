@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,6 +28,11 @@ namespace WFAAgent.Framework.Application
         /// </summary>
         public int ProcessId { get; private set; }
         
+        public CallbackDataProcess()
+        {
+
+        }
+
         public CallbackDataProcess(Process currentProcess)
         {
             ProcessId = currentProcess.Id;
@@ -41,9 +47,15 @@ namespace WFAAgent.Framework.Application
 
         public static CallbackDataProcess Parse(JObject argObj, Process currentProcess)
         {
+            /*
             CallbackDataProcess o = new CallbackDataProcess(currentProcess);
             o.AppId = argObj[Constant.AppID].ToObject<string>();
             o.AgentTcpServerPort = argObj[Constant.AgentTcpServerPort].ToObject<int>();
+            */
+
+            // JsonConvert.DeserializeObject 사용시 디폴트 생성자 선언이 되어 있어야함
+            CallbackDataProcess o = JsonConvert.DeserializeObject<CallbackDataProcess>(argObj.ToString());
+            o.ProcessId = currentProcess.Id;
             return o;
         }
     }

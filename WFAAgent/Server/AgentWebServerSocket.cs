@@ -6,6 +6,7 @@ using SuperSocket.SocketBase.Config;
 using SuperSocket.WebSocket;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using WFAAgent.Core;
 using WFAAgent.Framework.Net;
 using WFAAgent.Framework.Net.Sockets;
@@ -207,6 +208,8 @@ namespace WFAAgent.Server
             CallbackMessage("============ OnAcceptClientDataReceived");
             CallbackMessage(data);
 
+            // JsonConvert.DeserializeObject 활용을 위해서는
+            // 모든 프로퍼티 get, set 접근지정자 public 필요
             AcceptClient value = JsonConvert.DeserializeObject<AcceptClient>(data);
             WebSocketSession session = WSServer.GetSessionByID(value.AppId);
             if (session != null)
@@ -229,7 +232,7 @@ namespace WFAAgent.Server
         }
         public override void OnAgentDataReceived(ushort type, string data)
         {
-            CallbackMessage("============ OnUserDataReceived");
+            CallbackMessage("============ OnAgentDataReceived");
             CallbackMessage(data);
 
             AgentData value = JsonConvert.DeserializeObject<AgentData>(data);
@@ -237,20 +240,30 @@ namespace WFAAgent.Server
             if (session != null)
             {
                 data = AgentData.ToStringSerializeObject(value);
-                if (session.TrySend(data))
+                switch (type)
                 {
-                    CallbackMessage("전송성공");
+                    case DataContext.AgentStringData:
+                        {
+                            if (session.TrySend(data))
+                            {
+                                CallbackMessage("전송성공");
+                            }
+                            else
+                            {
+                                CallbackMessage("전송실패");
+                            }
+                        }
+                        break;
+                    case DataContext.UnknownData:
+                        throw new InvalidOperationException(nameof(DataContext.UnknownData));
                 }
-                else
-                {
-                    CallbackMessage("전송실패");
-                }
+
             }
             else
             {
                 CallbackMessage(value.AppId + " 세션을 찾을 수 없습니다.");
             }
-            CallbackMessage("============ OnUserDataReceived");
+            CallbackMessage("============ OnAgentDataReceived");
         }
     }
 }

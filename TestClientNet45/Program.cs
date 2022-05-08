@@ -16,6 +16,9 @@ namespace TestClient
         [STAThread]
         static void Main(string[] args)
         {
+#if DEBUG
+            MessageBox.Show("DEBUG");
+#endif
             new Main().Run(args);
         }
     }

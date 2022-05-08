@@ -131,11 +131,11 @@ namespace WFAAgent.Server
             OnMessageObjectReceived("TcpServer_AcceptClient ============");
         }
 
-        private void TcpServer_DataReceived(object sender, DataReceivedEventArgs e)
+        private void TcpServer_DataReceivedClient(object sender, DataReceivedEventArgs e)
         {
             if (e.Exception == null)
             {
-                OnMessageObjectReceived("============ TcpServer_DataReceived");
+                OnMessageObjectReceived("============ TcpServer_DataReceivedClient");
                 OnMessageObjectReceived(e.ToString());
                 switch (e.Header.TransmissionData)
                 {
@@ -146,11 +146,11 @@ namespace WFAAgent.Server
                         DefaultServerSocket.OnDataReceived(e.Header.Type, e.RawData);
                         break;
                 }
-                OnMessageObjectReceived("TcpServer_DataReceived ============");
+                OnMessageObjectReceived("TcpServer_DataReceivedClient ============");
             }
             else
             {
-                OnMessageObjectReceived("TcpServer_DataReceived Error");
+                OnMessageObjectReceived("TcpServer_DataReceivedClient Error");
                 OnMessageObjectReceived("Cause=" + e.Exception.Message);
                 OnMessageObjectReceived(e.Exception.StackTrace);
             }
@@ -163,7 +163,7 @@ namespace WFAAgent.Server
                 TcpServer = new AgentTcpServer();
                 TcpServer.Listen += new ListenEventHandler(TcpServer_Listen);
                 TcpServer.AcceptClient += new AcceptClientEventHandler(TcpServer_AcceptClient);
-                TcpServer.DataReceived += new WFAAgent.Framework.Net.Sockets.DataReceivedEventhandler(TcpServer_DataReceived);
+                TcpServer.DataReceived += new WFAAgent.Framework.Net.Sockets.DataReceivedEventhandler(TcpServer_DataReceivedClient);
                 TcpServer.Start();
             }
         }
@@ -174,7 +174,7 @@ namespace WFAAgent.Server
             {
                 TcpServer.Listen -= new ListenEventHandler(TcpServer_Listen);
                 TcpServer.AcceptClient -= new AcceptClientEventHandler(TcpServer_AcceptClient);
-                TcpServer.DataReceived -= new WFAAgent.Framework.Net.Sockets.DataReceivedEventhandler(TcpServer_DataReceived);
+                TcpServer.DataReceived -= new WFAAgent.Framework.Net.Sockets.DataReceivedEventhandler(TcpServer_DataReceivedClient);
                 TcpServer.Stop();
                 TcpServer = null;
             }

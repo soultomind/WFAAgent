@@ -242,7 +242,7 @@ ModelManifest.xml
 .fake/
 
 #WebContent BootStrap
-WebContent/css/boostrap
+WebContent/css/bootstrap
 WebContent/fonts
 WebContent/icons
 WebContent/js/bootstrap

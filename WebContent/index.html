@@ -28,6 +28,9 @@
                 데이터 전송
             </button>
         </div>
+        <div>
+            <img id="base64Image"/>
+        </div>
     </div>
     <!--<script type="text/javascript" src="./js/bootstrap.js"></script>-->
     <script type="text/javascript" src="./js/WFAAgent.js"></script>
@@ -78,8 +81,13 @@
             window.console.info(JSON.stringify(e));
         });
 
-        agent.setClientDataReceivedEventHandler(function (e) {
-            window.console.info(e.data);
+        agent.setTcpClientDataReceivedEventHandler(function (e) {
+            if (e.appBinaryData != null) {
+                var img = document.getElementById("base64Image");
+                img.src = "data:image/png;base64," + e.appBinaryData;
+            } else {
+                window.console.info("Text=" + e.appStringData);
+            }
         });
 
         function wsConnect() {

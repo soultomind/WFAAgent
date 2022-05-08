@@ -16,7 +16,7 @@ namespace WFAAgent.Framework.Net
         public string Type { get; set; }
         public DefaultData()
         {
-            EventName = "DataReceived";
+            EventName = "TcpClientDataReceived";
         }
 
         public virtual JObject ToJson()

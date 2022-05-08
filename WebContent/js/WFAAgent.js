@@ -41,7 +41,7 @@ function WFAAgent(config) {
 
     this._evtTcpServerListenEventHandler = null;
     this._evtTcpServerAcceptClientEventHandler = null;
-    this._evtClientDataReceivedEventHandler = null;
+    this._evtTcpClientDataReceivedEventHandler = null;
 
     this._WebSocket = null;
     this._bWsConnect = false;
@@ -124,13 +124,22 @@ WFAAgent.prototype.setTcpServerAcceptClientEventHandler = function (evt) {
     this._evtTcpServerAcceptClientEventHandler = evt;
 };
 
-WFAAgent.prototype.setClientDataReceivedEventHandler = function (evt) {
-    this._evtClientDataReceivedEventHandler = evt;
+WFAAgent.prototype.setTcpClientDataReceivedEventHandler = function (evt) {
+    this._evtTcpClientDataReceivedEventHandler = evt;
 }
 
 WFAAgent.prototype.OnClientEventCallbackHandler = function (e) {
     if (e.data instanceof Blob) {
         var blob = e.data;
+
+        // TODO: byte[] data 처리 필요
+        /*
+        switch (data.eventName) {
+            case "DataReceived":
+                this.OnDataReceived(data);
+                break;
+        }
+        */
 
         var fileReader = new FileReader();
         fileReader.onload = function (event) {
@@ -171,8 +180,8 @@ WFAAgent.prototype.OnClientEventCallbackHandler = function (e) {
                         this._evtTcpServerAcceptClientEventHandler(data);
                     }
                     break;
-                case "DataReceived":
-                    this.OnDataReceived(data);
+                case "TcpClientDataReceived":
+                    this.OnTcpClientDataReceived(data);
                     break;
             }
         } catch (e) {
@@ -256,8 +265,8 @@ WFAAgent.prototype.wsExecute = function (fileName, data) {
     }
 }
 
-WFAAgent.prototype.OnDataReceived = function (data) {
-    window.console.info("OnDataReceived=" + JSON.stringify(data));
+WFAAgent.prototype.OnTcpClientDataReceived = function (data) {
+    // window.console.info("OnTcpClientDataReceived=" + JSON.stringify(data));
 
     switch (data.type) {
         case "AcceptClient":
@@ -265,12 +274,8 @@ WFAAgent.prototype.OnDataReceived = function (data) {
             break;
 
         case "AgentData":
-            if (this._evtClientDataReceivedEventHandler != null) {
-                if (data.appStringData != null) {
-                    this._evtClientDataReceivedEventHandler({ data: data.appStringData});
-                } else {
-                    this._evtClientDataReceivedEventHandler({ data: data.appBinaryData });
-                }
+            if (this._evtTcpClientDataReceivedEventHandler != null) {
+                this._evtTcpClientDataReceivedEventHandler(data);
             }
             break;
     }

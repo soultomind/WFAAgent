@@ -12,7 +12,12 @@ namespace WFAAgent.Framework.Application
         public const string ProcessId = "processId";
         public const string AppID = "appId";
         public const string AgentTcpServerPort = "agentTcpServerPort";
+
         public const string AppStringData = "appStringData";
+
         public const string AppBinaryData = "appBinaryData";
+        public const string IsBase64 = "isBase64";
+        public const string BinaryData = "binaryData";
+        public const string Extension = "extension";
     }
 }
