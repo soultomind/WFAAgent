@@ -44,6 +44,7 @@ namespace WFAAgent.Server
 
         private void CallbackMessage(string message)
         {
+            // TODO: MessageItem 작업
             _MessageObjectReceived?.Invoke(message);
         }
 
@@ -235,15 +236,17 @@ namespace WFAAgent.Server
             CallbackMessage("============ OnAgentDataReceived");
             CallbackMessage(data);
 
-            AgentData value = JsonConvert.DeserializeObject<AgentData>(data);
-            WebSocketSession session = WSServer.GetSessionByID(value.AppId);
+            JObject client = JObject.Parse(data);
+            string appId = client["appId"].ToString();
+            WebSocketSession session = WSServer.GetSessionByID(appId);
             if (session != null)
             {
-                data = AgentData.ToStringSerializeObject(value);
                 switch (type)
                 {
                     case DataContext.AgentStringData:
                         {
+                            AgentStringData value = JsonConvert.DeserializeObject<AgentStringData>(data);
+                            data = AgentStringData.ToStringSerializeObject(value);
                             if (session.TrySend(data))
                             {
                                 CallbackMessage("전송성공");
@@ -261,8 +264,25 @@ namespace WFAAgent.Server
             }
             else
             {
-                CallbackMessage(value.AppId + " 세션을 찾을 수 없습니다.");
+                CallbackMessage(appId + " 세션을 찾을 수 없습니다.");
             }
+            CallbackMessage("============ OnAgentDataReceived");
+        }
+
+        public override void OnAgentDataReceived(ushort type, byte[] data)
+        {
+            CallbackMessage("============ OnAgentDataReceived");
+
+            WebSocketSession session = null; // WSServer.GetSessionByID(appId);
+            if (session != null)
+            {
+                
+            }
+            else
+            {
+
+            }
+
             CallbackMessage("============ OnAgentDataReceived");
         }
     }

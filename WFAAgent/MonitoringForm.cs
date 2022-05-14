@@ -63,7 +63,7 @@ namespace WFAAgent
             if (ExecuteContext.ExecCommandLineArgs.Length == 0)
             {
                 // 최초 처음 실행 사용자 인자
-                cmdLineArgs = Main.ExecuteArgs.UserCommandLineArgs;
+                cmdLineArgs = Main.ExecuteContext.UserCommandLineArgs;
             }
             else
             {
@@ -80,7 +80,7 @@ namespace WFAAgent
                 // 최초 처음 실행 사용자 인자
                 if ((cmdLineArgs != null && cmdLineArgs.Length == 1))
                 {
-                    if (Main.ExecuteArgs.Execute == Execute.Monitoring)
+                    if (Main.ExecuteContext.Execute == Execute.Monitoring)
                     {
                         Process process = CreateExecuteAsAdmin(Application.ExecutablePath, ExecuteContext.ExecuteMonitoringArgs.ToString());
                         if (process != null)

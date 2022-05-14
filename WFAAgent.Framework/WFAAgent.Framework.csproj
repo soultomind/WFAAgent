@@ -55,6 +55,7 @@
     <Compile Include="Application\CallbackDataProcess.cs" />
     <Compile Include="Extension.cs" />
     <Compile Include="Net\AcceptClient.cs" />
+    <Compile Include="Net\AgentBinaryData.cs" />
     <Compile Include="Net\DefaultData.cs" />
     <Compile Include="Net\Sockets\AgentTcpClient.cs" />
     <Compile Include="Net\Sockets\AgentTcpServer.cs" />
@@ -71,7 +72,7 @@
     <Compile Include="Net\Sockets\SocketDataReceiver.cs" />
     <Compile Include="Net\Sockets\SocketEventArgs.cs" />
     <Compile Include="Net\Sockets\SocketEventHandler.cs" />
-    <Compile Include="Net\AgentData.cs" />
+    <Compile Include="Net\AgentStringData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Net\Sockets\TransmissionData.cs" />
     <Compile Include="AgentServerSocket.cs" />

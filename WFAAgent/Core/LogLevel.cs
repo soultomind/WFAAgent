@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace WFAAgent.Core
 {
-    public class LogLevel
+    public enum LogLevel
     {
+        Debug, Info, Warn, Error
     }
 }

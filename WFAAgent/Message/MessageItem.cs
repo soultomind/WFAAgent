@@ -1,14 +1,23 @@
 ﻿using System;
 using System.Globalization;
+using WFAAgent.Core;
 
 namespace WFAAgent.Message
 {
     public class MessageItem
     {
+        public LogLevel LogLevel { get; set; }
         public string Message { get; set; }
         public string NowDateTime { get; private set; }
+
+        /*
+        string className = new StackFrame(1).GetMethod().ReflectedType.Name;
+        string methodName = new StackFrame(1, true).GetMethod().Name;
+        */
+
         public MessageItem()
         {
+            LogLevel = LogLevel.Info;
             Message = String.Empty;
             NowDateTime = NowToString();
         }
@@ -21,6 +30,11 @@ namespace WFAAgent.Message
         public override string ToString()
         {
             return Message;
+        }
+
+        public string MakeMessage()
+        {
+            return String.Format("{0} {1} : {2}", LogLevel.ToString().ToUpper(), NowDateTime, Message);
         }
     }
 }

@@ -11,7 +11,7 @@ namespace WFAAgent
 
         private static string _sEntryAssemblyVersion;
         private static string[] _sArgs;
-        private static ExecuteContext _sExecuteArgs;
+        private static ExecuteContext _sExecuteContext;
         private static Form _sCurrentForm;
         public Main()
         {
@@ -28,7 +28,7 @@ namespace WFAAgent
         {
             Args = args;
             
-            Run(ExecuteArgs = ExecuteContext.Parse(args));
+            Run(ExecuteContext = ExecuteContext.Parse(args));
             
         }
 
@@ -70,10 +70,10 @@ namespace WFAAgent
             }
         }
 
-        public static ExecuteContext ExecuteArgs
+        public static ExecuteContext ExecuteContext
         {
-            get { return _sExecuteArgs; }
-            set { _sExecuteArgs = value; }
+            get { return _sExecuteContext; }
+            set { _sExecuteContext = value; }
         }
 
         public static Form CurrentForm

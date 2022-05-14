@@ -122,7 +122,6 @@ namespace WFAAgent.Framework.Net.Sockets
 
                             if (header.Type == DataContext.AcceptClient)
                             {
-                                
                                 isAcceptClient = true;
                             }
 

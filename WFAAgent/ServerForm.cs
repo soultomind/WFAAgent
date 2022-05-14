@@ -103,7 +103,7 @@ namespace WFAAgent
                 }
                 else
                 {
-                    TerminalDialog.AppendMessageLine(item.Message);
+                    TerminalDialog.AppendMessageLine(item.MakeMessage());
                 }
             }
         }

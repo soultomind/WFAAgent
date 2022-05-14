@@ -40,10 +40,16 @@ namespace WFAAgent.Server
 
         public virtual void OnDataReceived(ushort type, byte[] data)
         {
-            
+            switch (type)
+            {
+                case DataContext.AgentBinaryData:
+                    OnAgentDataReceived(type, data);
+                    break;
+            }
         }
 
         public abstract void OnAcceptClientDataReceived(ushort type, string data);
         public abstract void OnAgentDataReceived(ushort type, string data);
+        public abstract void OnAgentDataReceived(ushort type, byte[] data);
     }
 }

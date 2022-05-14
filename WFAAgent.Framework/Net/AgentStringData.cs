@@ -11,12 +11,17 @@ namespace WFAAgent.Framework.Net
     /// <summary>
     /// WFAAgent 데이터
     /// </summary>
-    public class AgentData : AcceptClient
+    public class AgentStringData : AcceptClient
     {
+        #region String
         /// <summary>
         /// 문자열 데이터
         /// </summary>
         public string AppStringData { get; set; }
+
+        #endregion
+
+        #region Base64 String
         /// <summary>
         /// 바이너리 데이터
         /// </summary>
@@ -24,21 +29,37 @@ namespace WFAAgent.Framework.Net
         /// <summary>
         /// 문자열 데이터(Binary Base64 데이터 유무)
         /// </summary>
-        public bool IsBase64 { get; set; }
+        public bool IsBase64 { get; set; } = false;
         /// <summary>
         /// 바이너리 데이터 여부
         /// </summary>
-        public bool BinaryData { get; set; }
+        public bool BinaryData { get; set; } = false;
+
         /// <summary>
-        /// Base64String 데이터일때 특정 이미지 확장자를 판별할때 사용
+        /// 파일 데이터 인지 여부
         /// </summary>
-        public string Extension { get; set; }
-        public AgentData()
+        public bool IsFile { get; set; }
+        /// <summary>
+        /// Base64 문자열 데이터가 파일일때 확장자 여부
+        /// </summary>
+        public string Extension
+        {
+            get { return _Extension; }
+            set
+            {
+                _Extension = value;
+                IsFile = true;
+            }
+        }
+        private string _Extension = String.Empty;
+
+        #endregion
+        public AgentStringData()
         {
             Type = GetType().Name;
         }
 
-        private AgentData(CallbackDataProcess callbackDataProcess)
+        private AgentStringData(CallbackDataProcess callbackDataProcess)
             : base(callbackDataProcess)
         {
 
@@ -49,12 +70,10 @@ namespace WFAAgent.Framework.Net
         /// </summary>
         /// <param name="callbackDataProcess"></param>
         /// <param name="data"></param>
-        public AgentData(CallbackDataProcess callbackDataProcess, string data)
+        public AgentStringData(CallbackDataProcess callbackDataProcess, string data)
            : this(callbackDataProcess)
         {
             AppStringData = data;
-            IsBase64 = false;
-            BinaryData = false;
         }
 
         /// <summary>
@@ -62,12 +81,10 @@ namespace WFAAgent.Framework.Net
         /// </summary>
         /// <param name="callbackDataProcess"></param>
         /// <param name="data"></param>
-        public AgentData(CallbackDataProcess callbackDataProcess, byte[] data)
+        public AgentStringData(CallbackDataProcess callbackDataProcess, byte[] data)
            : this(callbackDataProcess)
         {
             AppBinaryData = data;
-            IsBase64 = true;
-            BinaryData = true;
         }
 
         public override JObject ToJson()

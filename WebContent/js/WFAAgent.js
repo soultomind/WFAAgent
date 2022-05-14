@@ -130,6 +130,7 @@ WFAAgent.prototype.setTcpClientDataReceivedEventHandler = function (evt) {
 
 WFAAgent.prototype.OnClientEventCallbackHandler = function (e) {
     if (e.data instanceof Blob) {
+        // AppBinaryData
         var blob = e.data;
 
         // TODO: byte[] data 처리 필요
@@ -273,7 +274,7 @@ WFAAgent.prototype.OnTcpClientDataReceived = function (data) {
             // 내부 로직
             break;
 
-        case "AgentData":
+        case "AgentStringData":
             if (this._evtTcpClientDataReceivedEventHandler != null) {
                 this._evtTcpClientDataReceivedEventHandler(data);
             }

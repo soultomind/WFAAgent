@@ -101,33 +101,43 @@ namespace TestClientNet45
             }
             //MessageBox.Show("Data=" + data.Length);
 
-                _RichTextBoxSendDataAgentTcpServer.Text = Encoding.UTF8.GetString(data);
+            _RichTextBoxSendDataAgentTcpServer.Text = Encoding.UTF8.GetString(data);
             // TODO: 데이터 구성에 실제 Binary 데이터 및, 저장할 파일 이름, 파일 크기정보를 포함하여 
             //       웹 클라이언트로 전송하여 웹 클라이언트에서는 다시
             //       서버로 전송하여 서버에서 해당 데이터를 저장하는 플로우를 그려보자
 
-            TcpClient.Send(DataPacket.AgentStringData, new AgentData(CallbackDataProcess, data) { Extension = new FileInfo(path).Extension });
+            /*
+            TcpClient.Send(DataPacket.AgentStringData,
+                new AgentStringData(CallbackDataProcess, data)
+                {
+                    IsBase64 = true,
+                    BinaryData = true,
+                    Extension = new FileInfo(path).Extension
+                }
+            );
+            */
+
+            TcpClient.Send(DataPacket.AgentBinaryData,
+                new AgentBinaryData(CallbackDataProcess, data)
+            );
         }
 
         private void _ButtonSendDataAgentTcpServer_Click(object sender, EventArgs e)
         {
             // TODO: 패킷 값을 통하여 객체를 생성해야 함
             string text = _RichTextBoxSendDataAgentTcpServer.Text;
-            TcpClient.Send(DataPacket.AgentStringData, new AgentData(CallbackDataProcess, text));
+            TcpClient.Send(DataPacket.AgentStringData, 
+                new AgentStringData(CallbackDataProcess, text)
+                {
+                    IsBase64 = false,
+                    BinaryData = false
+                }
+            );
         }
 
         private void _ButtonConnectAgentTcpServer_Click(object sender, EventArgs e)
         {
             TcpClient.Connect(CallbackDataProcess);
-        }
-
-        public static byte[] ImageToBinary(string path)
-        {
-            FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read);
-            byte[] buffer = new byte[fileStream.Length];
-            fileStream.Read(buffer, 0, (int)fileStream.Length);
-            fileStream.Close();
-            return buffer;
         }
     }
 }

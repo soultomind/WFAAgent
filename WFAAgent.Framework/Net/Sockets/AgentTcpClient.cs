@@ -82,19 +82,33 @@ namespace WFAAgent.Framework.Net.Sockets
             }
         }
 
-        public int Send(DataPacket dataPacket, string data)
+        internal int Send(DataPacket dataPacket, string data)
         {
             return ClientSocket.Send(dataPacket, data);
         }
 
-        public int Send(DataPacket dataPacket, byte[] data)
+        internal int Send(DataPacket dataPacket, byte[] data)
         {
             return ClientSocket.Send(dataPacket, data);
         }
 
         public int Send(DataPacket dataPacket, DefaultData data)
         {
-            return Send(dataPacket, data.ToJson().ToString());
+            if (Object.ReferenceEquals(dataPacket, DataPacket.AgentBinaryData))
+            {
+                if (!(data is AgentBinaryData))
+                {
+                    throw new ArgumentException();
+                }
+                // TOOD: 실제 RawData 및 앞에 CallbackDataProcess 정보 추가 필요
+                AgentBinaryData binaryData = (data as AgentBinaryData);
+                byte[] buffer = null;
+                return Send(dataPacket, buffer);
+            }
+            else
+            {
+                return Send(dataPacket, data.ToJson().ToString());
+            }
         }
     }
 }

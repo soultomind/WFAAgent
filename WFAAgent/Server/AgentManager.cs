@@ -36,6 +36,7 @@ namespace WFAAgent.Server
 
         internal void OnMessageObjectReceived(object messageObject)
         {
+            // TODO: MessageItem 작업
             MessageObjectReceived?.Invoke(messageObject);
         }
 
