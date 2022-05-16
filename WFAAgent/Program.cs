@@ -17,7 +17,7 @@ namespace WFAAgent
             // Environment.GetCommandLineArgs() 메서드는 실행파일 위치까지 포함하여 넘어오므로 아래 코드 추가
             ExecuteContext.ExecCommandLineArgs = args;
 
-            Toolkit.TraceWrite("============= Start Main");
+            Toolkit.TraceWrite("============= Start Main ");
             if (args != null && args.Length > 0)
             {
                 for (int index = 0; index < args.Length; index++)
@@ -25,7 +25,7 @@ namespace WFAAgent
                     Toolkit.TraceWrite(String.Format("{0}:{1}", (index + 1), args[index]));
                 }
             }
-            Toolkit.TraceWrite("Start Main =============");
+            Toolkit.TraceWrite(" Start Main =============");
 
             if (args.Length == 0)
             {

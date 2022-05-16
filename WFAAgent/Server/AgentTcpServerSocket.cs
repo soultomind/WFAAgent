@@ -43,5 +43,10 @@ namespace WFAAgent.Server
         {
 
         }
+
+        public override void OnAgentDataReceived(ushort type, byte[] data)
+        {
+            
+        }
     }
 }
