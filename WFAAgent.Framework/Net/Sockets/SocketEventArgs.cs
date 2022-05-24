@@ -14,7 +14,7 @@ namespace WFAAgent.Framework.Net.Sockets
             EventSocket = socket;
         }
 
-        protected Socket EventSocket
+        public Socket EventSocket
         {
             get;
             private set;
@@ -50,6 +50,8 @@ namespace WFAAgent.Framework.Net.Sockets
             get;
             set;
         }
+
+        public string AppId { get; set; }
     }
 
     public class ConnectedEventArgs : SocketEventArgs
@@ -58,11 +60,6 @@ namespace WFAAgent.Framework.Net.Sockets
             : base(socket)
         {
             
-        }
-
-        public Socket ClientSocket
-        {
-            get { return EventSocket; }
         }
     }
 
@@ -73,6 +70,8 @@ namespace WFAAgent.Framework.Net.Sockets
         {
             
         }
+
+        public string AppId { get; set; }
     }
 
     public class AsyncSendSocketEventArgs : SocketEventArgs
@@ -108,6 +107,8 @@ namespace WFAAgent.Framework.Net.Sockets
             }
         }
 
+        public string AppId { get; set; }
+
         public override string ToString()
         {
             switch (Header.TransmissionData)
@@ -115,13 +116,13 @@ namespace WFAAgent.Framework.Net.Sockets
                 case TransmissionData.Binary:
                     return new StringBuilder()
                         .AppendFormat("[Header]").AppendLine()
-                        .AppendFormat("Type={0}", Header.Type).AppendLine()
+                        .AppendFormat("Type={0},", Header.Type).AppendLine()
                         .AppendFormat("RawData={0}", RawData).AppendLine()
                         .ToString();
                 case TransmissionData.Text:
                     return new StringBuilder()
                         .AppendFormat("[Header]").AppendLine()
-                        .AppendFormat("Type={0}", Header.Type).AppendLine()
+                        .AppendFormat("Type={0},", Header.Type).AppendLine()
                         .AppendFormat("Data={0}", Data).AppendLine()
                         .ToString();
                 default:

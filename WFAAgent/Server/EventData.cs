@@ -10,12 +10,7 @@ namespace WFAAgent.Server
     public class EventData
     {
         public JObject Data { get; set; }
-        public string SessionId
-        {
-            get { return _SessionId; }
-            set { _SessionId = value; }
-        }
-        private string _SessionId;
+        public string AppId { get; set; }
 
         public EventData()
         {

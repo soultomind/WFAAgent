@@ -25,6 +25,8 @@ namespace WFAAgent.Server
         public event StartedEventHandler Started;
         public event ExitedEventHandler Exited;
 
+        private static object _Lock = new object();
+
         public override void DoProcess(EventData eventData)
         {
             if (IsMultiProcess)
@@ -33,56 +35,60 @@ namespace WFAAgent.Server
             }
             else
             {
-                if (ProcessInfo == null)
+                lock (_Lock)
                 {
-                    string fileName = String.Empty;
-                    bool useCallbackData = false;
-                    try
+                    if (ProcessInfo == null)
                     {
-                        fileName = eventData.Data[DataFileName].ToObject<string>();
-                        if (eventData.Data.ContainsKey(DataUseCallbackData))
+                        string fileName = String.Empty;
+                        bool useCallbackData = false;
+                        try
                         {
-                            useCallbackData = eventData.Data[DataUseCallbackData].ToObject<bool>();
+                            fileName = eventData.Data[DataFileName].ToObject<string>();
+                            if (eventData.Data.ContainsKey(DataUseCallbackData))
+                            {
+                                useCallbackData = eventData.Data[DataUseCallbackData].ToObject<bool>();
+                            }
+
+
+                            Process process = null;
+                            if (useCallbackData)
+                            {
+                                string sessionID = eventData.AppId;
+                                int agentTcpServerPort = AgentTcpServerPort;
+
+                                JObject argObj = new JObject();
+                                argObj.Add(Constant.AppID, sessionID);
+                                argObj.Add(Constant.AgentTcpServerPort, agentTcpServerPort);
+                                string arguments = ConvertUtility.Base64Encode(argObj.ToString());
+                                process = Process.Start(fileName, arguments);
+                            }
+                            else
+                            {
+                                process = Process.Start(fileName);
+                            }
+
+                            ProcessInfo = new ProcessInfo()
+                            {
+                                FileName = fileName,
+                                Process = process,
+                                SessionId = eventData.AppId
+                            };
+
+                            // Exited Event Enabled
+                            ProcessInfo.Process.EnableRaisingEvents = true;
+                            ProcessInfo.Process.Exited += Process_Exited;
+
+                            Started?.Invoke(ProcessInfo, EventArgs.Empty);
                         }
-                        
-                        
-                        Process process = null;
-                        if (useCallbackData)
+                        catch (Exception ex)
                         {
-                            string sessionID = eventData.SessionId;
-                            int agentTcpServerPort = AgentTcpServerPort;
 
-                            JObject argObj = new JObject();
-                            argObj.Add(Constant.AppID, sessionID);
-                            argObj.Add(Constant.AgentTcpServerPort, agentTcpServerPort);
-                            string arguments = ConvertUtility.Base64Encode(argObj.ToString());
-                            process = Process.Start(fileName, arguments);
                         }
-                        else
-                        {
-                            process = Process.Start(fileName);
-                        }
-
-                        ProcessInfo = new ProcessInfo() {
-                            FileName = fileName,
-                            Process = process,
-                            SessionId = eventData.SessionId
-                        };
-
-                        // Exited Event Enabled
-                        ProcessInfo.Process.EnableRaisingEvents = true;
-                        ProcessInfo.Process.Exited += Process_Exited;
-
-                        Started?.Invoke(ProcessInfo, EventArgs.Empty);
                     }
-                    catch (Exception ex)
+                    else
                     {
-
+                        // TODO: 창만 User32.ShowWindow 처리
                     }
-                }
-                else
-                {
-                    // TODO: 창만 User32.ShowWindow 처리
                 }
             }
         }
@@ -106,8 +112,12 @@ namespace WFAAgent.Server
             }
             else
             {
-                Exited?.Invoke(ProcessInfo, e);
-                ProcessInfo.Close();
+                lock (_Lock)
+                {
+                    Exited?.Invoke(ProcessInfo, e);
+                    ProcessInfo.Close();
+                    ProcessInfo = null;
+                }
             }
         }
     }

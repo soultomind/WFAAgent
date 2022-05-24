@@ -12,8 +12,10 @@ namespace WFAAgent.Framework.Net.Sockets
 
         public event ListenEventHandler Listen;
 
+        public event DataReceivedEventhandler ClientDataReceived;
         public event AcceptClientEventHandler AcceptClient;
-        public event DataReceivedEventhandler DataReceived;
+        public event DisconnectedEventHandler DisconnectedClient;
+        
 
         public AgentTcpServer()
             : this("127.0.0.1")
@@ -41,12 +43,12 @@ namespace WFAAgent.Framework.Net.Sockets
         }
         private void ServerSocket_ClientDataReceived(object sender, DataReceivedEventArgs e)
         {
-            DataReceived?.Invoke(sender, e);
+            ClientDataReceived?.Invoke(sender, e);
         }
 
         private void ServerSocket_DisconnectedClient(object sender, DisconnectEventArgs e)
         {
-            
+            DisconnectedClient?.Invoke(sender, e);
         }
 
         public void Start()

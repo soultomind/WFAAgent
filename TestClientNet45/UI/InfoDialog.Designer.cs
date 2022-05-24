@@ -30,38 +30,60 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InfoDialog));
             this.GroupBox = new System.Windows.Forms.GroupBox();
-            this.VersionValueLabel = new System.Windows.Forms.Label();
-            this.VersionTitleLabel = new System.Windows.Forms.Label();
+            this._LabelValueVersion = new System.Windows.Forms.Label();
+            this._LabelTitleVersion = new System.Windows.Forms.Label();
+            this._LabelValueAppId = new System.Windows.Forms.Label();
+            this._LabelTitleAppId = new System.Windows.Forms.Label();
             this.GroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // GroupBox
             // 
-            this.GroupBox.Controls.Add(this.VersionValueLabel);
-            this.GroupBox.Controls.Add(this.VersionTitleLabel);
+            this.GroupBox.Controls.Add(this._LabelValueAppId);
+            this.GroupBox.Controls.Add(this._LabelTitleAppId);
+            this.GroupBox.Controls.Add(this._LabelValueVersion);
+            this.GroupBox.Controls.Add(this._LabelTitleVersion);
             this.GroupBox.Location = new System.Drawing.Point(12, 8);
             this.GroupBox.Name = "GroupBox";
             this.GroupBox.Size = new System.Drawing.Size(260, 120);
             this.GroupBox.TabIndex = 1;
             this.GroupBox.TabStop = false;
             // 
-            // VersionValueLabel
+            // _LabelValueVersion
             // 
-            this.VersionValueLabel.AutoSize = true;
-            this.VersionValueLabel.Location = new System.Drawing.Point(80, 28);
-            this.VersionValueLabel.Name = "VersionValueLabel";
-            this.VersionValueLabel.Size = new System.Drawing.Size(44, 15);
-            this.VersionValueLabel.TabIndex = 2;
-            this.VersionValueLabel.Text = "1.0.0.0";
+            this._LabelValueVersion.AutoSize = true;
+            this._LabelValueVersion.Location = new System.Drawing.Point(80, 28);
+            this._LabelValueVersion.Name = "_LabelValueVersion";
+            this._LabelValueVersion.Size = new System.Drawing.Size(44, 15);
+            this._LabelValueVersion.TabIndex = 2;
+            this._LabelValueVersion.Text = "1.0.0.0";
             // 
-            // VersionTitleLabel
+            // _LabelTitleVersion
             // 
-            this.VersionTitleLabel.AutoSize = true;
-            this.VersionTitleLabel.Location = new System.Drawing.Point(32, 28);
-            this.VersionTitleLabel.Name = "VersionTitleLabel";
-            this.VersionTitleLabel.Size = new System.Drawing.Size(42, 15);
-            this.VersionTitleLabel.TabIndex = 1;
-            this.VersionTitleLabel.Text = "버전 : ";
+            this._LabelTitleVersion.AutoSize = true;
+            this._LabelTitleVersion.Location = new System.Drawing.Point(32, 28);
+            this._LabelTitleVersion.Name = "_LabelTitleVersion";
+            this._LabelTitleVersion.Size = new System.Drawing.Size(42, 15);
+            this._LabelTitleVersion.TabIndex = 1;
+            this._LabelTitleVersion.Text = "버전 : ";
+            // 
+            // _LabelValueAppId
+            // 
+            this._LabelValueAppId.AutoSize = true;
+            this._LabelValueAppId.Location = new System.Drawing.Point(80, 53);
+            this._LabelValueAppId.Name = "_LabelValueAppId";
+            this._LabelValueAppId.Size = new System.Drawing.Size(44, 15);
+            this._LabelValueAppId.TabIndex = 4;
+            this._LabelValueAppId.Text = "1.0.0.0";
+            // 
+            // _LabelTitleAppId
+            // 
+            this._LabelTitleAppId.AutoSize = true;
+            this._LabelTitleAppId.Location = new System.Drawing.Point(32, 53);
+            this._LabelTitleAppId.Name = "_LabelTitleAppId";
+            this._LabelTitleAppId.Size = new System.Drawing.Size(50, 15);
+            this._LabelTitleAppId.TabIndex = 3;
+            this._LabelTitleAppId.Text = "AppId : ";
             // 
             // InfoDialog
             // 
@@ -87,7 +109,9 @@
         #endregion
 
         private System.Windows.Forms.GroupBox GroupBox;
-        private System.Windows.Forms.Label VersionValueLabel;
-        private System.Windows.Forms.Label VersionTitleLabel;
+        private System.Windows.Forms.Label _LabelValueVersion;
+        private System.Windows.Forms.Label _LabelTitleVersion;
+        private System.Windows.Forms.Label _LabelValueAppId;
+        private System.Windows.Forms.Label _LabelTitleAppId;
     }
 }

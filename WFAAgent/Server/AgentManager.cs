@@ -127,7 +127,7 @@ namespace WFAAgent.Server
                     .AddString(EventConstant.IPAddress, ((IPEndPoint)e.ClientSocket.RemoteEndPoint).Address.ToString())
                     .ToString();
 
-                ((AgentWebServerSocket)DefaultServerSocket).BroadCastTcpServerEvent(data);
+                ((AgentWebServerSocket)DefaultServerSocket).SendWebClient(e.AppId, data);
             }
             OnMessageObjectReceived("TcpServer_AcceptClient ============");
         }
@@ -136,6 +136,7 @@ namespace WFAAgent.Server
         {
             if (e.Exception == null)
             {
+                // TODO: 데이터만 받아서 처리하는걸로 변경 필요(SendWebClient 메서드로 변경)
                 OnMessageObjectReceived("============ TcpServer_DataReceivedClient");
                 OnMessageObjectReceived(e.ToString());
                 switch (e.Header.TransmissionData)
@@ -157,6 +158,25 @@ namespace WFAAgent.Server
             }
         }
 
+        private void TcpServer_DisconnectedClient(object sender, DisconnectEventArgs e)
+        {
+            OnMessageObjectReceived("============ TcpServer_DisconnectedClient");
+            
+            if (AgentServerSocket == AgentServerSocket.Web)
+            {
+                string data = new JObject()
+                   .AddString(EventConstant.EventName, EventConstant.TcpClientDisconnectEvent)
+                   .AddInt(EventConstant.SocketHandle, (int)e.EventSocket.Handle)
+                   .AddInt(EventConstant.Port, ((IPEndPoint)e.EventSocket.RemoteEndPoint).Port)
+                   .AddString(EventConstant.IPAddress, ((IPEndPoint)e.EventSocket.RemoteEndPoint).Address.ToString())
+                   .ToString();
+
+                ((AgentWebServerSocket)DefaultServerSocket).SendWebClient(e.AppId, data);
+            }
+
+            OnMessageObjectReceived("TcpServer_Listen TcpServer_DisconnectedClient");
+        }
+
         private void StartTcpServer()
         {
             if (TcpServer == null)
@@ -164,7 +184,8 @@ namespace WFAAgent.Server
                 TcpServer = new AgentTcpServer();
                 TcpServer.Listen += new ListenEventHandler(TcpServer_Listen);
                 TcpServer.AcceptClient += new AcceptClientEventHandler(TcpServer_AcceptClient);
-                TcpServer.DataReceived += new WFAAgent.Framework.Net.Sockets.DataReceivedEventhandler(TcpServer_DataReceivedClient);
+                TcpServer.ClientDataReceived += new WFAAgent.Framework.Net.Sockets.DataReceivedEventhandler(TcpServer_DataReceivedClient);
+                TcpServer.DisconnectedClient += new DisconnectedEventHandler(TcpServer_DisconnectedClient);
                 TcpServer.Start();
             }
         }
@@ -175,7 +196,8 @@ namespace WFAAgent.Server
             {
                 TcpServer.Listen -= new ListenEventHandler(TcpServer_Listen);
                 TcpServer.AcceptClient -= new AcceptClientEventHandler(TcpServer_AcceptClient);
-                TcpServer.DataReceived -= new WFAAgent.Framework.Net.Sockets.DataReceivedEventhandler(TcpServer_DataReceivedClient);
+                TcpServer.ClientDataReceived -= new WFAAgent.Framework.Net.Sockets.DataReceivedEventhandler(TcpServer_DataReceivedClient);
+                TcpServer.DisconnectedClient -= new DisconnectedEventHandler(TcpServer_DisconnectedClient);
                 TcpServer.Stop();
                 TcpServer = null;
             }
@@ -230,10 +252,10 @@ namespace WFAAgent.Server
             {
                 case AgentServerSocket.Web:
                     string sessionId = messageObj[EventConstant.SessionID].ToObject<string>();
-                    eventData.SessionId = sessionId;
+                    eventData.AppId = sessionId;
                     break;
                 case AgentServerSocket.Tcp:
-                    eventData.SessionId = Guid.NewGuid().ToString();
+                    eventData.AppId = Guid.NewGuid().ToString();
                     break;
             }
 

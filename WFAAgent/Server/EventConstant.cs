@@ -21,8 +21,8 @@ namespace WFAAgent.Server
         public const string IPAddress = "ipAddress";
 
         public const string TcpServerAcceptClientEvent = "TcpServerAcceptClient";
-
-        public const string DataReceivedEvent = "DataReceived";
+        public const string TcpClientDataReceivedEvent = "TcpClientDataReceived";
+        public const string TcpClientDisconnectEvent = "TcpClientDisconnectEvent";
 
         public const string Data = "data";
         public const string SessionID = "sessionId";

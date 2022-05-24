@@ -189,6 +189,30 @@ namespace WFAAgent.Server
             }
         }
 
+        private WebSocketSession GetSessionById(string sessionId)
+        {
+            WebSocketSession session = null;
+            IEnumerator<WebSocketSession> sessions = WSServer.GetAllSessions().GetEnumerator();
+            while (sessions.MoveNext())
+            {
+                if (sessions.Current.SessionID.Equals(sessionId))
+                {
+                    session = sessions.Current;
+                    break;
+                }
+            }
+            return session;
+        }
+
+        public void SendWebClient(string sessionId, string data)
+        {
+            WebSocketSession session = GetSessionById(sessionId);
+            if (session != null)
+            {
+                session.Send(data);
+            }
+        }
+
         public void BroadCastTcpServerEvent(string data)
         {
             // BroadCast 지만 실질적으로는 처음 wsExecue 를 호출한 세션만 해당함

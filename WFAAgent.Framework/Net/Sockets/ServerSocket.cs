@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -13,8 +14,8 @@ namespace WFAAgent.Framework.Net.Sockets
 {
     public class ServerSocket : DefaultSocket
     {
-        private volatile ConcurrentDictionary<IntPtr, Socket> _ClientSockets = 
-            new ConcurrentDictionary<IntPtr, Socket>();
+        private volatile ConcurrentDictionary<IntPtr, AppClientSocket> _ClientSockets = 
+            new ConcurrentDictionary<IntPtr, AppClientSocket>();
 
         public event DataReceivedEventhandler ClientDataReceived;
         public event AcceptClientEventHandler AcceptClient;
@@ -83,24 +84,26 @@ namespace WFAAgent.Framework.Net.Sockets
             Socket socket = asyncResult.AsyncState as Socket;
 
             Socket clientSocket = socket.EndAccept(asyncResult);
-            AcceptClient?.Invoke(this, new AcceptClientEventArgs(socket) { ClientSocket = clientSocket });
-
-            // Accept 완료후 클라이언트에서 처음으로 전달되는 데이터에 AppId를 받은후에
-            // AcceptClient 이벤트 핸들러 호출한다.
 
             byte[] dataPacketHeaderBuffer = DataContext.NewDefaultDataPacketHeaderBuffer();
             int receiveBytes = 0;
 
             try
             {
-                bool isAcceptClient = false;
                 while (true)
                 {
                     Array.Clear(dataPacketHeaderBuffer, 0, dataPacketHeaderBuffer.Length);
                     receiveBytes = clientSocket.Receive(dataPacketHeaderBuffer, dataPacketHeaderBuffer.Length, SocketFlags.None);
                     if (receiveBytes == 0)
                     {
-                        // TODO: 1. 데이터헤더 패킷 읽는중 클라이언트 소켓 해제 처리
+                        // 최초 AcceptClient 패킷 왔을 경우 등록
+                        AppClientSocket obj = null;
+                        if (_ClientSockets.TryRemove(clientSocket.Handle, out obj))
+                        {
+                            DisconnectEventArgs e = new DisconnectEventArgs(clientSocket) { AppId = obj.AppId };
+                            DisconnectedClient?.Invoke(this, e);
+                        }
+                        
                         break;
                     }
                     else
@@ -114,18 +117,32 @@ namespace WFAAgent.Framework.Net.Sockets
                         SocketDataReceiver receiver = new SocketDataReceiver(clientSocket);
                         if (receiver.TryRead(header, out dataBuffer, out exception))
                         {
-                            // 최초 AcceptClient 패킷 왔을 경우 등록
-                            _ClientSockets[clientSocket.Handle] = clientSocket;
-
                             DataReceivedEventArgs e = new DataReceivedEventArgs();
                             e.SetData(header, dataBuffer);
 
                             if (header.Type == DataContext.AcceptClient)
                             {
-                                isAcceptClient = true;
-                            }
+                                JObject data = JObject.Parse(e.Data);
+                                string appId = data["appId"].ToObject<string>();
 
-                            ClientDataReceived?.Invoke(this, e);
+                                AppClientSocket obj = new AppClientSocket(clientSocket, appId);
+                                if (_ClientSockets.TryAdd(clientSocket.Handle, obj))
+                                {
+                                    
+                                    AcceptClient?.Invoke(
+                                        this,
+                                        new AcceptClientEventArgs(socket)
+                                        {
+                                            ClientSocket = clientSocket,
+                                            AppId = appId
+                                        }
+                                    );
+                                }
+                            }
+                            else
+                            {
+                                ClientDataReceived?.Invoke(this, e);
+                            }
                         }
                         else
                         {
@@ -166,7 +183,7 @@ namespace WFAAgent.Framework.Net.Sockets
         {
             try
             {
-                Socket clientSocket = _ClientSockets[handle];
+                Socket clientSocket = _ClientSockets[handle].Socket;
                 byte[] bytes = Encoding.UTF8.GetBytes(strData);
                 return clientSocket.Send(bytes, bytes.Length, SocketFlags.None);
             }
@@ -180,12 +197,23 @@ namespace WFAAgent.Framework.Net.Sockets
         {
             try
             {
-                Socket clientSocket = _ClientSockets[handle];
+                Socket clientSocket = _ClientSockets[handle].Socket;
                 return clientSocket.Send(binaryData, binaryData.Length, SocketFlags.None);
             }
             catch (KeyNotFoundException)
             {
                 return -1;
+            }
+        }
+
+        internal class AppClientSocket
+        {
+            internal Socket Socket { get; set; }
+            internal string AppId { get; set; }
+            internal AppClientSocket(Socket socket, string appId)
+            {
+                Socket = socket;
+                AppId = appId;
             }
         }
     }

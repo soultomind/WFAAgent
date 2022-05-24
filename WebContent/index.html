@@ -91,6 +91,10 @@
             }
         });
 
+        agent.setTcpClientDisconnectedEventHandler(function (e) {
+            window.console.log(JSON.stringify(e));
+        });
+
         function wsConnect() {
             agent.wsConnect();
         }

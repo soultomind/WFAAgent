@@ -42,6 +42,7 @@ function WFAAgent(config) {
     this._evtTcpServerListenEventHandler = null;
     this._evtTcpServerAcceptClientEventHandler = null;
     this._evtTcpClientDataReceivedEventHandler = null;
+    this._evtTcpClientDisconnectedEventHandler = null;
 
     this._WebSocket = null;
     this._bWsConnect = false;
@@ -126,7 +127,11 @@ WFAAgent.prototype.setTcpServerAcceptClientEventHandler = function (evt) {
 
 WFAAgent.prototype.setTcpClientDataReceivedEventHandler = function (evt) {
     this._evtTcpClientDataReceivedEventHandler = evt;
-}
+};
+
+WFAAgent.prototype.setTcpClientDisconnectedEventHandler = function (evt) {
+    this._evtTcpClientDisconnectedEventHandler = evt;
+};
 
 WFAAgent.prototype.OnClientEventCallbackHandler = function (e) {
     if (e.data instanceof Blob) {
@@ -183,6 +188,11 @@ WFAAgent.prototype.OnClientEventCallbackHandler = function (e) {
                     break;
                 case "TcpClientDataReceived":
                     this.OnTcpClientDataReceived(data);
+                    break;
+                case "TcpClientDisconnectEvent":
+                    if (this._evtTcpClientDisconnectedEventHandler != null) {
+                        this._evtTcpClientDisconnectedEventHandler(data);
+                    }
                     break;
             }
         } catch (e) {

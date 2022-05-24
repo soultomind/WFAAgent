@@ -12,14 +12,18 @@ namespace TestClient.UI
 {
     public partial class InfoDialog : Form
     {
-        public InfoDialog()
+        public string AppId { get; set; }
+        public InfoDialog(string appId)
         {
             InitializeComponent();
+
+            AppId = appId;
         }
 
         private void InfoDialog_Load(object sender, EventArgs e)
         {
-            VersionValueLabel.Text = Main.EntryAssemblyVersion;
+            _LabelValueVersion.Text = Main.EntryAssemblyVersion;
+            _LabelValueAppId.Text = AppId;
 
             Screen screen = Screen.PrimaryScreen;
             int x = (screen.WorkingArea.Width - Width) / 2;

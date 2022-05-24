@@ -43,12 +43,7 @@ namespace TestClient
                     Toolkit.TraceWriteLine("Base64Decode=" + arg0);
                     JObject data = JObject.Parse(arg0);
                     CallbackDataProcess = CallbackDataProcess.Parse(data, Process.GetCurrentProcess());
-#if DEBUG
-                    MessageBox.Show(CallbackDataProcess.ToString());
                     Toolkit.TraceWriteLine("CallbackDataProcess=" + CallbackDataProcess.ToString());
-#else
-                    Toolkit.TraceWriteLine("CallbackDataProcess=" + CallbackDataProcess.ToString());
-#endif
                 }
                 catch (Exception ex)
                 {
@@ -71,7 +66,7 @@ namespace TestClient
         {
             if (InfoDialog == null)
             {
-                InfoDialog = new InfoDialog();
+                InfoDialog = new InfoDialog(CallbackDataProcess.AppId);
             }
 
             if (Main.OpenForm(InfoDialog.Text))
