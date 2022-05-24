@@ -1,11 +1,15 @@
-## WFAAgent .NET Framework 4.5
+## WFAAgent
 WFA(Windows Form Application) Agent
+
+### 개발환경   
++ .NET Framework 4.5
++ Visual Studio 2015 Professional
 
 # 프로그램 설명
 웹 브라우저에서 웹 소켓을 통하여 .NET Framework C# WinForm 으로 개발된 프로그램을 실행시켜주는 프로그램
 
 1) 웹 소켓 서버를 통하여 클라이언트(웹 브라우저)에서 보낸 이벤트 메시지를 받아 클라이언트 프로그램을 실행
-2) 반대로 1)에서 실행한 클라이언트 프로그램의 데이터를 받아 웹 블라이언트(웹 브라우저)로 데이터를 보내준다.
+2) 1 이후에는 양방향 통신으로 웹 브라우저 <--> 클라이언트 프로그램 간의 데이터 송수신 가능
 
 # 
 <strong>WFAAgent</strong>는 크게 2개의 프로세스로 구분됩니다.
