@@ -50,8 +50,9 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="DataPacketBinaryUnitTest.cs" />
     <Compile Include="DataPacketHeaderUnitTest.cs" />
-    <Compile Include="DataPacketUnitTest.cs" />
+    <Compile Include="DataPacketTextUnitTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

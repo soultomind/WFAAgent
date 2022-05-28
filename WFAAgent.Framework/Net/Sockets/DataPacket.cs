@@ -105,23 +105,43 @@ namespace WFAAgent.Framework.Net.Sockets
             return dataBuffer;
         }
 
+        private static byte[] GetAppIdBuffer(byte[] dataPacketHeader)
+        {
+            byte[] buffer = new byte[36];
+            for (int i = 0; i < buffer.Length; i++)
+            {
+                buffer[i] = dataPacketHeader[i];
+            }
+            return buffer;
+        }
+
         public static Header ToHeader(byte[] dataPacketHeader)
         {
+            byte[] appIdBuffer = GetAppIdBuffer(dataPacketHeader);
+
             Header header = new Header();
+            // 35Byte
+            header.AppId = Encoding.UTF8.GetString(appIdBuffer);
+
             // 2Byte
-            header.Type = (ushort) BitConverter.ToInt16(dataPacketHeader, 0);
+            header.Type = (ushort) BitConverter.ToInt16(dataPacketHeader, appIdBuffer.Length);
             // 1Byte
-            header.TransmissionData = (TransmissionData)dataPacketHeader[2];
+            header.TransmissionData = (TransmissionData)dataPacketHeader[appIdBuffer.Length + 2];
 
             // 1Byte 후에
-            header.DataLength = BitConverter.ToInt32(dataPacketHeader, DataPacket.DataLengthPos);
+            header.DataLength = BitConverter.ToInt32(dataPacketHeader, appIdBuffer.Length + DataPacket.DataLengthPos);
             return header;
         }
 
-        public static byte[] ToHeaderBytes(ushort type, byte[] data)
+        public static byte[] ToHeaderBytes(string appId, ushort type, byte[] data)
         {
             byte[] destBuffer = DataContext.NewDefaultDataPacketHeaderBuffer();
             int offset = 0;
+
+            int appIdLength = appId.Length;
+            byte[] sourceAppIdBuffer = Encoding.UTF8.GetBytes(appId);
+            Array.Copy(sourceAppIdBuffer, offset, destBuffer, offset, sourceAppIdBuffer.Length);
+            offset += sourceAppIdBuffer.Length;
 
             byte[] sourceTypeBuffer = BitConverter.GetBytes(type);
             Array.Copy(sourceTypeBuffer, offset, destBuffer, offset, sourceTypeBuffer.Length);
@@ -138,13 +158,18 @@ namespace WFAAgent.Framework.Net.Sockets
             return destBuffer;
         }
 
-        public static byte[] ToHeaderBytes(ushort type, string data)
+        public static byte[] ToHeaderBytes(string appId, ushort type, string data)
         {
             byte[] destBuffer = DataContext.NewDefaultDataPacketHeaderBuffer();
             int offset = 0;
-            
+
+            int appIdLength = appId.Length;
+            byte[] sourceAppIdBuffer = Encoding.UTF8.GetBytes(appId);
+            Array.Copy(sourceAppIdBuffer, 0, destBuffer, offset, sourceAppIdBuffer.Length);
+            offset += sourceAppIdBuffer.Length;
+
             byte[] sourceTypeBuffer = BitConverter.GetBytes(type);
-            Array.Copy(sourceTypeBuffer, offset, destBuffer, offset, sourceTypeBuffer.Length);
+            Array.Copy(sourceTypeBuffer, 0, destBuffer, offset, sourceTypeBuffer.Length);
             offset += sourceTypeBuffer.Length;
 
             destBuffer[offset] = (byte)TransmissionData.Text;

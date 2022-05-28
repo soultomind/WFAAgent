@@ -1,25 +1,27 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
-using WFAAgent.Framework;
+using System.Threading.Tasks;
 using WFAAgent.Framework.Net.Sockets;
 
 namespace WFAAgent.UnitTest
 {
-    [TestClass]
-    public class DataPacketUnitTest
+    [TestClass()]
+    public class DataPacketBinaryUnitTest
     {
-        [TestMethod]
+        [TestMethod()]
         public void Run()
         {
-            Trace.WriteLine(typeof(DataPacketUnitTest).Name);
+            Trace.WriteLine(typeof(DataPacketTextUnitTest).Name);
 
-            string inputData = typeof(DataPacketUnitTest).Name;
+            byte[] inputData = Encoding.UTF8.GetBytes(typeof(DataPacketTextUnitTest).Name);
 
             ushort inputType = DataContext.Max;
-            TransmissionData inputTransmissionData = TransmissionData.Text;
-            int inputDataLength = Encoding.UTF8.GetBytes(inputData).Length;
+            TransmissionData inputTransmissionData = TransmissionData.Binary;
+            int inputDataLength = inputData.Length;
 
             DataPacket dataHeader = new DataPacket(inputType);
             byte[] sourceCreateBuffer = dataHeader.CreateData(inputData);
@@ -57,9 +59,19 @@ namespace WFAAgent.UnitTest
             Trace.WriteLine("outputLength=" + outputLength);
             Assert.AreEqual(dataHeader.Header.DataLength, outputLength);
 
-            string outputData = Encoding.UTF8.GetString(destDataBuffer);
+            byte[] outputData = destDataBuffer;
             Trace.WriteLine("OutputData=" + outputData);
-            Assert.AreEqual(inputData, outputData, false);
+
+            Assert.AreEqual(inputData.Length, outputData.Length);
+
+            int length = outputData.Length;
+            for (int index = 0; index < length; index++)
+            {
+                byte iData = inputData[index];
+                byte oData = outputData[index];
+                Assert.AreEqual(iData, oData);
+            }
+            
             /////////////////////////////////////////////////////////////////////////// 
         }
     }

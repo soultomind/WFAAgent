@@ -134,6 +134,8 @@ namespace TestClientNet45
                     BinaryData = false
                 }
             );
+
+            _RichTextBoxSendDataAgentTcpServer.Text = "";
         }
 
         private void _ButtonConnectAgentTcpServer_Click(object sender, EventArgs e)

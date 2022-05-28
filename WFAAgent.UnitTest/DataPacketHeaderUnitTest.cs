@@ -15,14 +15,17 @@ namespace WFAAgent.UnitTest
         {
             Trace.WriteLine(typeof(DataPacketHeaderUnitTest).Name);
 
-            string inputData = typeof(DataPacketUnitTest).Name;
+            string appId = Guid.NewGuid().ToString();
+            Trace.WriteLine("AppId=" + appId);
+            string inputData = typeof(DataPacketTextUnitTest).Name;
 
             ushort inputType = DataContext.Max;
             TransmissionData inputTransmissionData = TransmissionData.Text;
             int dataLength = Encoding.UTF8.GetBytes(inputData).Length;
 
-            Header header = DataPacket.ToHeader(DataPacket.ToHeaderBytes(inputType, inputData));
+            Header header = DataPacket.ToHeader(DataPacket.ToHeaderBytes(appId, inputType, inputData));
 
+            Assert.AreEqual(appId, header.AppId);
             Assert.AreEqual(inputType, header.Type);
             Assert.AreEqual(inputTransmissionData, header.TransmissionData);
             Assert.AreEqual(dataLength, header.DataLength);

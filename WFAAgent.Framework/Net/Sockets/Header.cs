@@ -8,6 +8,17 @@ namespace WFAAgent.Framework.Net.Sockets
 {
     public class Header
     {
+        /// <summary>
+        /// TcpClient 쪽 클라이언트 프로그램 AppId
+        /// <para>WebSocket 에서는 SessionId정보</para>
+        /// <para>TcpSocket 에서는 Guid정보</para>
+        /// </summary>
+        public string AppId
+        {
+            get { return _AppId; }
+            set { _AppId = value; }
+        }
+        private string _AppId = String.Empty;
         public ushort Type
         {
             get { return _Type; }

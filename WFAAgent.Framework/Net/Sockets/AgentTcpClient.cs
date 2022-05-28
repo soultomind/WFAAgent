@@ -82,18 +82,19 @@ namespace WFAAgent.Framework.Net.Sockets
             }
         }
 
-        internal int Send(DataPacket dataPacket, string data)
+        private int Send(DataPacket dataPacket, string data)
         {
             return ClientSocket.Send(dataPacket, data);
         }
 
-        internal int Send(DataPacket dataPacket, byte[] data)
+        private int Send(DataPacket dataPacket, byte[] data)
         {
             return ClientSocket.Send(dataPacket, data);
         }
 
-        public int Send(DataPacket dataPacket, DefaultData data)
+        public int Send(DataPacket dataPacket, AcceptClient data)
         {
+            dataPacket.Header.AppId = data.AppId;
             if (Object.ReferenceEquals(dataPacket, DataPacket.AgentBinaryData))
             {
                 if (!(data is AgentBinaryData))
@@ -102,7 +103,8 @@ namespace WFAAgent.Framework.Net.Sockets
                 }
                 // TOOD: 실제 RawData 및 앞에 CallbackDataProcess 정보 추가 필요
                 AgentBinaryData binaryData = (data as AgentBinaryData);
-                byte[] buffer = null;
+                
+                byte[] buffer = binaryData.AppBinaryData;
                 return Send(dataPacket, buffer);
             }
             else

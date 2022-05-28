@@ -16,6 +16,8 @@ namespace TestClient
         [STAThread]
         static void Main(string[] args)
         {
+            string guid = Guid.NewGuid().ToString();
+
 #if DEBUG
             MessageBox.Show("DEBUG");
 #endif

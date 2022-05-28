@@ -28,7 +28,7 @@ namespace WFAAgent.Framework.Net
         public override JObject ToJson()
         {
             JObject retObj = base.ToJson();
-            retObj.Add(Constant.AppID, AppId);
+            //retObj.Add(Constant.AppID, AppId);
             retObj.Add(Constant.ProcessId, ProcessId);
             return retObj;
         }
