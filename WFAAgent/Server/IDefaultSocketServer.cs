@@ -18,8 +18,7 @@ namespace WFAAgent.Server
 
         void OnProcessStarted(ProcessInfo processInfo);
         void OnProcessExited(ProcessInfo processInfo);
-
-        void OnDataReceived(ushort type, string data);
-        void OnDataReceived(ushort type, byte[] data);
+        void OnAcceptClientDataReceived(AcceptClientEventArgs e);
+        void OnDataReceived(DataReceivedEventArgs e);
     }
 }

@@ -1,11 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace WFAAgent.Framework.Net.Sockets
 {
+    /// <summary>
+    /// TCP/IP 소켓 데이터 패킷 클래스
+    /// <para>1. AppId = 36Byte</para>
+    /// <para>2. ProcessId = 4Byte</para>
+    /// <para></para>
+    /// </summary>
     public class DataPacket
     {
         public static DataPacket AcceptClient = new DataPacket(DataContext.AcceptClient);
@@ -17,170 +24,403 @@ namespace WFAAgent.Framework.Net.Sockets
             AcceptClient, AgentStringData, AgentBinaryData
         };
 
-        public const int DataLengthPos = 4;
-        public const int HeaderLength = 255;
+        /// <summary>
+        /// AppId 속성 값 길이
+        /// </summary>
+        public const int AppIdBufferLength = 36;
+
+        /// <summary>
+        /// ProcessId 속성 값 길이
+        /// </summary>
+        public const int ProcessIdBufferLength = 4;
+        
+        /// <summary>
+        /// 패킷 헤더
+        /// </summary>
         public Header Header
         {
             get { return _Header; }
             internal set { _Header = value; }
         }
         private Header _Header = new Header();
+
+        /// <summary>
+        /// 실제 전송 데이터
+        /// </summary>
         public byte[] Buffer
         {
             get { return _Buffer; }
+            set { _Buffer = value; }
         }
         private byte[] _Buffer;
 
-        public DataPacket()
-        {
+        #region Constructor
 
+        private DataPacket(Header header)
+        {
+            DataContext.CheckedType(header.Type);
+            this.Header = header;
         }
+
         public DataPacket(ushort type)
         {
             DataContext.CheckedType(type);
             this.Header.Type = type;
         }
+        public DataPacket(ushort type, string appId)
+            : this(type)
+        {
+            this.Header.AppId = appId;
+            this.Header.ProcessId = new Random().Next(1000, 10000);
+        }
 
-        public byte[] CreateData(string data)
+        public DataPacket(ushort type, string appId, int processId)
+            : this(type)
+        {
+            this.Header.AppId = appId;
+            this.Header.ProcessId = processId;
+        }
+
+        #endregion
+
+        #region Method
+
+        #region Private
+
+        private byte[] CreatePacket(string data)
+        {
+            return CreatePacket(Header.AppId, Header.ProcessId, Header.Type, data);
+        }
+
+        private byte[] CreatePacket(byte[] data)
+        {
+            return CreatePacket(Header.AppId, Header.ProcessId, Header.Type, data);
+        }
+
+        private byte[] CreatePacket(string data, out int dataLength)
+        {
+            return CreatePacket(Header.AppId, Header.ProcessId, Header.Type, data, out dataLength);
+        }
+
+        private byte[] CreatePacket(byte[] data, out int dataLength)
+        {
+            return CreatePacket(Header.AppId, Header.ProcessId, Header.Type, data, out dataLength);
+        }
+
+        private byte[] CreatePacket(string appId, int processId, ushort type, string data)
+        {
+            byte[] packetBytes = new byte[DataContext.DefaultDataPacketHeaderLength + data.Length];
+
+            int offset = 0;
+
+            // AppId
+            int appIdLength = appId.Length;
+            byte[] appIdBytes = Encoding.UTF8.GetBytes(appId);
+            Array.Copy(appIdBytes, 0, packetBytes, offset, appIdBytes.Length);
+            offset += appIdBytes.Length;
+
+            // ProcessId
+            byte[] processIdBytes = BitConverter.GetBytes(processId);
+            offset += processIdBytes.Length;
+
+            // Type
+            byte[] typeBytes = BitConverter.GetBytes(type);
+            Array.Copy(typeBytes, 0, packetBytes, offset, typeBytes.Length);
+            offset += typeBytes.Length;
+
+            // TransmissionData
+            packetBytes[offset] = (byte)TransmissionData.Text;
+            offset++;
+
+            // Length
+            byte[] dataLengthBytes = BitConverter.GetBytes(Encoding.UTF8.GetBytes(data).Length);
+            Array.Copy(dataLengthBytes, 0, packetBytes, offset, dataLengthBytes.Length);
+            offset += dataLengthBytes.Length;
+
+            // Data 
+            _Buffer = Encoding.UTF8.GetBytes(data);
+            Array.Copy(_Buffer, 0, packetBytes, DataContext.DefaultDataPacketHeaderLength, _Buffer.Length);
+
+            Header.DataLength = _Buffer.Length;
+            return packetBytes;
+        }
+
+        private byte[] CreatePacket(string appId, int processId, ushort type, byte[] data)
+        {
+            byte[] packetBytes = new byte[DataContext.DefaultDataPacketHeaderLength + data.Length];
+
+            int offset = 0;
+
+            // AppId
+            int appIdLength = appId.Length;
+            byte[] appIdBytes = Encoding.UTF8.GetBytes(appId);
+            Array.Copy(appIdBytes, 0, packetBytes, offset, appIdBytes.Length);
+            offset += appIdBytes.Length;
+
+            // ProcessId
+            byte[] processIdBytes = BitConverter.GetBytes(processId);
+            Array.Copy(processIdBytes, 0, packetBytes, offset, processIdBytes.Length);
+            offset += processIdBytes.Length;
+
+            // Type
+            byte[] typeBytes = BitConverter.GetBytes(type);
+            Array.Copy(typeBytes, 0, packetBytes, offset, typeBytes.Length);
+            offset += typeBytes.Length;
+
+            // TransmissionData
+            packetBytes[offset] = (byte)TransmissionData.Binary;
+            offset++;
+
+            // Length
+            byte[] dataLengthBytes = BitConverter.GetBytes(data.Length);
+            Array.Copy(dataLengthBytes, 0, packetBytes, offset, dataLengthBytes.Length);
+            offset += dataLengthBytes.Length;
+
+            // Data 
+            _Buffer = data;
+            Array.Copy(_Buffer, 0, packetBytes, DataContext.DefaultDataPacketHeaderLength, _Buffer.Length);
+
+            Header.DataLength = _Buffer.Length;
+            return packetBytes;
+        }
+
+        private byte[] CreatePacket(string appId, int processId, ushort type, string data, out int dataLength)
+        {
+            // Data 
+            _Buffer = Encoding.UTF8.GetBytes(data);
+
+            byte[] packetBytes = new byte[DataContext.DefaultDataPacketHeaderLength + _Buffer.Length];
+
+            int offset = 0;
+
+            // AppId
+            int appIdLength = appId.Length;
+            byte[] appIdBytes = Encoding.UTF8.GetBytes(appId);
+            Array.Copy(appIdBytes, 0, packetBytes, offset, appIdBytes.Length);
+            offset += appIdBytes.Length;
+
+            // ProcessId
+            byte[] processIdBytes = BitConverter.GetBytes(processId);
+            Array.Copy(processIdBytes, 0, packetBytes, offset, processIdBytes.Length);
+            offset += processIdBytes.Length;
+
+            // Type
+            byte[] typeBytes = BitConverter.GetBytes(type);
+            Array.Copy(typeBytes, 0, packetBytes, offset, typeBytes.Length);
+            offset += typeBytes.Length;
+
+            // TransmissionData
+            packetBytes[offset] = (byte)TransmissionData.Text;
+            offset++;
+
+            // Length
+            byte[] dataLengthBytes = BitConverter.GetBytes(Encoding.UTF8.GetBytes(data).Length);
+            Array.Copy(dataLengthBytes, 0, packetBytes, offset, dataLengthBytes.Length);
+            offset += dataLengthBytes.Length;
+
+            // Data
+            Array.Copy(_Buffer, 0, packetBytes, DataContext.DefaultDataPacketHeaderLength, _Buffer.Length);
+
+            dataLength = _Buffer.Length;
+            Header.DataLength = dataLength;
+            return packetBytes;
+        }
+
+        private byte[] CreatePacket(string appId, int processId, ushort type, byte[] data, out int dataLength)
+        {
+            byte[] packetBytes = new byte[DataContext.DefaultDataPacketHeaderLength + data.Length];
+
+            int offset = 0;
+
+            // AppId
+            int appIdLength = appId.Length;
+            byte[] appIdBytes = Encoding.UTF8.GetBytes(appId);
+            Array.Copy(appIdBytes, 0, packetBytes, offset, appIdBytes.Length);
+            offset += appIdBytes.Length;
+
+            // ProcessId
+            byte[] processIdBytes = BitConverter.GetBytes(processId);
+            Array.Copy(processIdBytes, 0, packetBytes, offset, processIdBytes.Length);
+            offset += processIdBytes.Length;
+
+            // Type
+            byte[] typeBytes = BitConverter.GetBytes(type);
+            Array.Copy(typeBytes, 0, packetBytes, offset, typeBytes.Length);
+            offset += typeBytes.Length;
+
+            // TransmissionData
+            packetBytes[offset] = (byte)TransmissionData.Binary;
+            offset++;
+
+            // Length
+            byte[] dataLengthBytes = BitConverter.GetBytes(data.Length);
+            Array.Copy(dataLengthBytes, 0, packetBytes, offset, dataLengthBytes.Length);
+            offset += dataLengthBytes.Length;
+
+            // Data 
+            _Buffer = data;
+            Array.Copy(_Buffer, 0, packetBytes, DataContext.DefaultDataPacketHeaderLength, _Buffer.Length);
+
+            dataLength = _Buffer.Length;
+            Header.DataLength = dataLength;
+            return packetBytes;
+        }
+        #endregion
+
+        public byte[] ToPacketBytes(string data)
         {
             this.Header.TransmissionData = TransmissionData.Text;
-            _Buffer = Encoding.UTF8.GetBytes(data);
-            this.Header.DataLength = _Buffer.Length;
-            return CreateData();
+
+            int dataLength = 0;
+            byte[] dataPacketBytes = CreatePacket(Header.AppId, Header.ProcessId, Header.Type, data, out dataLength);
+            this.Header.DataLength = dataLength;
+
+            return dataPacketBytes;
         }
 
-        public byte[] CreateData(byte[] data)
+        public byte[] ToPacketBytes(byte[] data)
         {
             this.Header.TransmissionData = TransmissionData.Binary;
-            _Buffer = data;
-            this.Header.DataLength = _Buffer.Length;
-            return CreateData();
-        }
-        
-        private byte[] CreateData()
-        {
-            // 1. 첫 번째 헤더 4Byte = 2Byte [ Type(0-65535) ] + 1Byte [ TransmissionData(0-1) ] + 1Byte [ 255 ]
-            // 2. 두 번째 헤더 4Byte = 4Byte [ DataLength ]
-            // == HeaderLength End 255 ==
-            // 3. Data ..
 
-            byte[] newHeaderBuffer = DataContext.NewDefaultDataPacketHeaderBuffer();
+            int dataLength = 0;
+            byte[] dataPacketBytes = CreatePacket(Header.AppId, Header.ProcessId, Header.Type, data, out dataLength);
+            this.Header.DataLength = dataLength;
 
-            int header1Index = 0;
-            byte[] sourceHeaderBuffer1 = new byte[4];
-            
-            // 2Byte=Type
-            byte[] typeBuffer = BitConverter.GetBytes(Header.Type);
-            Array.Copy(typeBuffer, 0, sourceHeaderBuffer1, 0, typeBuffer.Length);
-            header1Index += typeBuffer.Length;
-
-            // 1Byte=TransmissionData
-            sourceHeaderBuffer1[header1Index] = (byte)Header.TransmissionData;
-            header1Index++;
-
-            // 1Byte=HeaderLength [추후 변경이 필요시 3번째 요소에 값 수정]
-            sourceHeaderBuffer1[header1Index] = HeaderLength;
-            header1Index++;
-
-            // 4Byte=DataLength
-            byte[] sourceHeaderBuffer2 = BitConverter.GetBytes(Header.DataLength);
-
-
-
-
-            ///// 1. 타입 + 헤더길이 + 전송타입(Text,Binary)
-            Array.Copy(sourceHeaderBuffer1, 0, newHeaderBuffer, 0, sourceHeaderBuffer1.Length);
-
-            ///// 2. 데이터 길이 복사
-            Array.Copy(sourceHeaderBuffer2, 0, newHeaderBuffer, sourceHeaderBuffer1.Length, sourceHeaderBuffer2.Length);
-
-            // 실제 전송되는 버퍼
-            byte[] dataBuffer = new byte[newHeaderBuffer.Length + _Buffer.Length];
-
-            ///// 3. 헤더 복사
-            Array.Copy(newHeaderBuffer, 0, dataBuffer, 0, newHeaderBuffer.Length);
-            ///// 4. 실제 데이터 복사
-            Array.Copy(_Buffer, 0, dataBuffer, newHeaderBuffer.Length, _Buffer.Length);
-
-            return dataBuffer;
+            return dataPacketBytes;
         }
 
-        private static byte[] GetAppIdBuffer(byte[] dataPacketHeader)
+        #region Static
+
+        private static byte[] ToAppIdBytes(byte[] dataPacketHeader, int startIndex, int endIndex)
         {
-            byte[] buffer = new byte[36];
-            for (int i = 0; i < buffer.Length; i++)
+            int length = endIndex - startIndex;
+            byte[] buffer = new byte[length];
+
+            for (int i = startIndex; i < buffer.Length; i++)
             {
                 buffer[i] = dataPacketHeader[i];
             }
             return buffer;
         }
 
-        public static Header ToHeader(byte[] dataPacketHeader)
+        private static byte[] ToProcessIdBytes(byte[] dataPacketHeader, int startIndex, int endIndex)
         {
-            byte[] appIdBuffer = GetAppIdBuffer(dataPacketHeader);
+            // 프로세스 ID 값 범위는 1 - 99999 추정됨
+
+            int length = endIndex - startIndex;
+            if (length != 4)
+            {
+                throw new InvalidOperationException("Length != 4");
+            }
+
+            byte[] buffer = new byte[length];
+
+            int bufferIndex = 0;
+            for (int i = startIndex; i < endIndex; i++)
+            {
+                buffer[bufferIndex] = dataPacketHeader[i];
+                bufferIndex++;
+            }
+            return buffer;
+        }
+
+        public static Header ToHeader(byte[] dataPakcetBytes)
+        {
+            byte[] appIdBytes = ToAppIdBytes(dataPakcetBytes, 
+                0, 
+                AppIdBufferLength);
+
+            byte[] processIdBytes = ToProcessIdBytes(dataPakcetBytes,
+                appIdBytes.Length,
+                appIdBytes.Length + ProcessIdBufferLength);
 
             Header header = new Header();
             // 35Byte
-            header.AppId = Encoding.UTF8.GetString(appIdBuffer);
+            header.AppId = Encoding.UTF8.GetString(appIdBytes);
+            int startIndex = appIdBytes.Length;
+
+            header.ProcessId = BitConverter.ToInt32(processIdBytes, 0);
+            startIndex += processIdBytes.Length;
 
             // 2Byte
-            header.Type = (ushort) BitConverter.ToInt16(dataPacketHeader, appIdBuffer.Length);
-            // 1Byte
-            header.TransmissionData = (TransmissionData)dataPacketHeader[appIdBuffer.Length + 2];
+            header.Type = (ushort)BitConverter.ToInt16(dataPakcetBytes, startIndex);
+            startIndex += 2;
 
-            // 1Byte 후에
-            header.DataLength = BitConverter.ToInt32(dataPacketHeader, appIdBuffer.Length + DataPacket.DataLengthPos);
+            // 1Byte
+            header.TransmissionData = (TransmissionData)dataPakcetBytes[startIndex];
+            startIndex += 1;
+
+            // 4Byte
+            header.DataLength = BitConverter.ToInt32(dataPakcetBytes, startIndex);
+            startIndex += 4;
+
             return header;
         }
 
-        public static byte[] ToHeaderBytes(string appId, ushort type, byte[] data)
+        public static Header ToHeader(byte[] dataPakcetBytes, out int startIndex)
         {
-            byte[] destBuffer = DataContext.NewDefaultDataPacketHeaderBuffer();
-            int offset = 0;
+            byte[] appIdBytes = ToAppIdBytes(dataPakcetBytes, 0, AppIdBufferLength);
+            byte[] processIdBytes = ToProcessIdBytes(dataPakcetBytes, AppIdBufferLength, AppIdBufferLength + ProcessIdBufferLength);
 
-            int appIdLength = appId.Length;
-            byte[] sourceAppIdBuffer = Encoding.UTF8.GetBytes(appId);
-            Array.Copy(sourceAppIdBuffer, offset, destBuffer, offset, sourceAppIdBuffer.Length);
-            offset += sourceAppIdBuffer.Length;
+            Header header = new Header();
+            // 35Byte
+            header.AppId = Encoding.UTF8.GetString(appIdBytes);
+            startIndex = appIdBytes.Length;
 
-            byte[] sourceTypeBuffer = BitConverter.GetBytes(type);
-            Array.Copy(sourceTypeBuffer, offset, destBuffer, offset, sourceTypeBuffer.Length);
-            offset += sourceTypeBuffer.Length;
+            header.ProcessId = BitConverter.ToInt32(processIdBytes, 0);
+            startIndex += processIdBytes.Length;
 
-            destBuffer[offset] = (byte)TransmissionData.Text;
-            offset++;
+            // 2Byte
+            header.Type = (ushort)BitConverter.ToInt16(dataPakcetBytes, startIndex);
+            startIndex += 2;
 
-            // 5번째부터 넣음
-            offset++;
-            byte[] sourceDataLengthBuffer = BitConverter.GetBytes(data.Length);
-            Array.Copy(sourceDataLengthBuffer, 0, destBuffer, offset, sourceDataLengthBuffer.Length);
+            // 1Byte
+            header.TransmissionData = (TransmissionData)dataPakcetBytes[startIndex];
+            startIndex += 1;
 
-            return destBuffer;
+            // 4Byte
+            header.DataLength = BitConverter.ToInt32(dataPakcetBytes, startIndex);
+            startIndex += 4;
+
+            return header;
         }
 
-        public static byte[] ToHeaderBytes(string appId, ushort type, string data)
+        public static DataPacket ToPacket(byte[] dataPakcetBytes)
         {
-            byte[] destBuffer = DataContext.NewDefaultDataPacketHeaderBuffer();
-            int offset = 0;
+            Header header = ToHeader(dataPakcetBytes);
+            DataPacket dp = new DataPacket(header);
 
-            int appIdLength = appId.Length;
-            byte[] sourceAppIdBuffer = Encoding.UTF8.GetBytes(appId);
-            Array.Copy(sourceAppIdBuffer, 0, destBuffer, offset, sourceAppIdBuffer.Length);
-            offset += sourceAppIdBuffer.Length;
+            int size = dataPakcetBytes.Length - DataContext.DefaultDataPacketHeaderLength;
+            byte[] buffer = new byte[size];
 
-            byte[] sourceTypeBuffer = BitConverter.GetBytes(type);
-            Array.Copy(sourceTypeBuffer, 0, destBuffer, offset, sourceTypeBuffer.Length);
-            offset += sourceTypeBuffer.Length;
-
-            destBuffer[offset] = (byte)TransmissionData.Text;
-            offset++;
-
-            // 5번째부터 넣음
-            offset++;
-            byte[] sourceDataLengthBuffer = BitConverter.GetBytes(Encoding.UTF8.GetBytes(data).Length);
-            Array.Copy(sourceDataLengthBuffer, 0, destBuffer, offset, sourceDataLengthBuffer.Length);
-
-            return destBuffer;
+            int bufferIndex = 0;
+            for (int dataIndex = DataContext.DefaultDataPacketHeaderLength; dataIndex < dataPakcetBytes.Length; dataIndex++)
+            {
+                buffer[bufferIndex] = dataPakcetBytes[dataIndex];
+                bufferIndex++;
+            }
+            dp.Buffer = buffer;
+            return dp;
         }
+
+        public static byte[] ToDataPacketBytes(string appId, ushort type, byte[] data)
+        {
+            DataPacket dp = new DataPacket(type, appId);
+            int dataLength = 0;
+            byte[] packet = dp.CreatePacket(data, out dataLength);
+            return packet;
+        }
+
+        public static byte[] ToDataPacketBytes(string appId, ushort type, string data)
+        {
+            DataPacket dp = new DataPacket(type, appId);
+            int dataLength = 0;
+            byte[] packet = dp.CreatePacket(data, out dataLength);
+            return packet;
+        }
+
+        #endregion
+
+        #endregion
     }
 }

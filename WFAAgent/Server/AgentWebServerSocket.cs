@@ -6,8 +6,10 @@ using SuperSocket.SocketBase.Config;
 using SuperSocket.WebSocket;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using WFAAgent.Core;
+using WFAAgent.Framework;
 using WFAAgent.Framework.Net;
 using WFAAgent.Framework.Net.Sockets;
 using WFAAgent.Message;
@@ -228,18 +230,26 @@ namespace WFAAgent.Server
 
         }
 
-        public override void OnAcceptClientDataReceived(ushort type, string data)
+        public override void OnAcceptClientDataReceived(AcceptClientEventArgs e)
         {
             CallbackMessage("============ OnAcceptClientDataReceived");
-            CallbackMessage(data);
 
-            // JsonConvert.DeserializeObject 활용을 위해서는
-            // 모든 프로퍼티 get, set 접근지정자 public 필요
-            AcceptClient value = JsonConvert.DeserializeObject<AcceptClient>(data);
-            WebSocketSession session = WSServer.GetSessionByID(value.AppId);
+            string data = new JObject()
+                    .AddString(EventConstant.EventName, EventConstant.TcpServerAcceptClientEvent)
+
+                    .AddInt(EventConstant.ProcessId, e.ProcessId)
+
+                    .AddInt(EventConstant.SocketHandle, (int)e.ClientSocket.Handle)
+                    .AddInt(EventConstant.Port, ((IPEndPoint)e.ClientSocket.RemoteEndPoint).Port)
+                    .AddString(EventConstant.IPAddress, ((IPEndPoint)e.ClientSocket.RemoteEndPoint).Address.ToString())
+
+                    .ToString();
+
+            CallbackMessage(data);
+            
+            WebSocketSession session = WSServer.GetSessionByID(e.AppId);
             if (session != null)
             {
-                data = AcceptClient.ToStringSerializeObject(value);
                 if (session.TrySend(data))
                 {
                     CallbackMessage("전송성공");
@@ -251,63 +261,64 @@ namespace WFAAgent.Server
             }
             else
             {
-                CallbackMessage(value.AppId + " 세션을 찾을 수 없습니다.");
+                CallbackMessage(e.AppId + " 세션을 찾을 수 없습니다.");
             }
             CallbackMessage("OnAcceptClientDataReceived ============");
         }
-        public override void OnAgentDataReceived(ushort type, string data)
+        public override void OnAgentDataReceived(DataReceivedEventArgs e)
         {
             CallbackMessage("============ OnAgentDataReceived");
+
+            if (e.Header.TransmissionData == TransmissionData.Text)
+            {
+                switch (e.Header.Type)
+                {
+                    case DataContext.AgentStringData:
+                        OnAgentStringDataReceived(e);
+                        break;
+                    case DataContext.AgentBinaryData:
+                        OnAgentBinaryDataReceived(e);
+                        break;
+                }
+            }
+            else
+            {
+                // Do nothing
+            }
+            
+            CallbackMessage("============ OnAgentDataReceived");
+        }
+
+        private void OnAgentStringDataReceived(DataReceivedEventArgs e)
+        {
+            string data = e.Data;
             CallbackMessage(data);
 
             JObject client = JObject.Parse(data);
-            string appId = client["appId"].ToString();
+            string appId = e.Header.AppId;
             WebSocketSession session = WSServer.GetSessionByID(appId);
             if (session != null)
             {
-                switch (type)
+                AgentStringData value = JsonConvert.DeserializeObject<AgentStringData>(data);
+                data = AgentStringData.ToStringSerializeObject(value);
+                if (session.TrySend(data))
                 {
-                    case DataContext.AgentStringData:
-                        {
-                            AgentStringData value = JsonConvert.DeserializeObject<AgentStringData>(data);
-                            data = AgentStringData.ToStringSerializeObject(value);
-                            if (session.TrySend(data))
-                            {
-                                CallbackMessage("전송성공");
-                            }
-                            else
-                            {
-                                CallbackMessage("전송실패");
-                            }
-                        }
-                        break;
-                    case DataContext.UnknownData:
-                        throw new InvalidOperationException(nameof(DataContext.UnknownData));
+                    CallbackMessage("전송성공");
                 }
-
+                else
+                {
+                    CallbackMessage("전송실패");
+                }
             }
             else
             {
                 CallbackMessage(appId + " 세션을 찾을 수 없습니다.");
             }
-            CallbackMessage("============ OnAgentDataReceived");
         }
 
-        public override void OnAgentDataReceived(ushort type, byte[] data)
+        private void OnAgentBinaryDataReceived(DataReceivedEventArgs e)
         {
-            CallbackMessage("============ OnAgentDataReceived");
 
-            WebSocketSession session = null; // WSServer.GetSessionByID(appId);
-            if (session != null)
-            {
-                
-            }
-            else
-            {
-
-            }
-
-            CallbackMessage("============ OnAgentDataReceived");
         }
     }
 }

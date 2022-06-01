@@ -91,7 +91,7 @@ namespace WFAAgent.Framework.Net.Sockets
 
                     byte[] dataBuffer = null;
                     SocketDataReceiver receiver = new SocketDataReceiver(Socket);
-                    if (receiver.TryRead(header, out dataBuffer, out exception))
+                    if (receiver.TryReadSocket(header, out dataBuffer, out exception))
                     {
                         DataReceivedEventArgs e = new DataReceivedEventArgs();
                         e.SetData(header, dataBuffer);
@@ -110,12 +110,12 @@ namespace WFAAgent.Framework.Net.Sockets
         #region Sync
         private int Socket_Send(DataPacket packet, string data)
         {
-            byte[] sendData = packet.CreateData(data);
+            byte[] sendData = packet.ToPacketBytes(data);
             return Socket.Send(sendData, 0, sendData.Length, SocketFlags.None);
         }
         private int Socket_Send(DataPacket packet, byte[] data)
         {
-            byte[] sendData = packet.CreateData(data);
+            byte[] sendData = packet.ToPacketBytes(data);
             return Socket.Send(sendData, 0, sendData.Length, SocketFlags.None);
         }
         public int Send(DataPacket packet, string data)
@@ -150,12 +150,12 @@ namespace WFAAgent.Framework.Net.Sockets
         #region Async
         private IAsyncResult Socket_BeginSend(DataPacket packet, string data)
         {
-            byte[] sendData = packet.CreateData(data);
+            byte[] sendData = packet.ToPacketBytes(data);
             return Socket.BeginSend(sendData, 0, sendData.Length, SocketFlags.None, new AsyncCallback(AsyncSendData), new AsyncSendSocketState() { Socket = Socket });
         }
         private IAsyncResult Socket_BeginSend(DataPacket packet, byte[] data)
         {
-            byte[] sendData = packet.CreateData(data);
+            byte[] sendData = packet.ToPacketBytes(data);
             return Socket.BeginSend(sendData, 0, sendData.Length, SocketFlags.None, new AsyncCallback(AsyncSendData), new AsyncSendSocketState() { Socket = Socket });
         }
 

@@ -28,14 +28,10 @@ namespace WFAAgent.Framework.Net
         public override JObject ToJson()
         {
             JObject retObj = base.ToJson();
-            //retObj.Add(Constant.AppID, AppId);
-            retObj.Add(Constant.ProcessId, ProcessId);
+            // 패킷 헤더로 보내므로 주석처리
+            // retObj.Add(Constant.AppID, AppId);
+            // retObj.Add(Constant.ProcessId, ProcessId);
             return retObj;
-        }
-
-        public JObject ToCustomJson()
-        {
-            return ToJson();
         }
     }
 }

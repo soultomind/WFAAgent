@@ -107,7 +107,7 @@ namespace TestClientNet45
             //       서버로 전송하여 서버에서 해당 데이터를 저장하는 플로우를 그려보자
 
             
-            /*
+            
             TcpClient.Send(DataPacket.AgentStringData,
                 new AgentStringData(CallbackDataProcess, data)
                 {
@@ -116,11 +116,13 @@ namespace TestClientNet45
                     Extension = new FileInfo(path).Extension
                 }
             );
-            */
+            
 
+            /*
             TcpClient.Send(DataPacket.AgentBinaryData,
                 new AgentBinaryData(CallbackDataProcess, data)
             );
+            */
         }
 
         private void _ButtonSendDataAgentTcpServer_Click(object sender, EventArgs e)

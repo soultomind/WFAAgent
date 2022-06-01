@@ -120,14 +120,7 @@ namespace WFAAgent.Server
             OnMessageObjectReceived("============ TcpServer_AcceptClient");
             if (AgentServerSocket == AgentServerSocket.Web)
             {
-                string data = new JObject()
-                    .AddString(EventConstant.EventName, EventConstant.TcpServerAcceptClientEvent)
-                    .AddInt(EventConstant.SocketHandle, (int)e.ClientSocket.Handle)
-                    .AddInt(EventConstant.Port, ((IPEndPoint)e.ClientSocket.RemoteEndPoint).Port)
-                    .AddString(EventConstant.IPAddress, ((IPEndPoint)e.ClientSocket.RemoteEndPoint).Address.ToString())
-                    .ToString();
-
-                ((AgentWebServerSocket)DefaultServerSocket).SendWebClient(e.AppId, data);
+                DefaultServerSocket.OnAcceptClientDataReceived(e);
             }
             OnMessageObjectReceived("TcpServer_AcceptClient ============");
         }
@@ -136,18 +129,9 @@ namespace WFAAgent.Server
         {
             if (e.Exception == null)
             {
-                // TODO: 데이터만 받아서 처리하는걸로 변경 필요(SendWebClient 메서드로 변경)
                 OnMessageObjectReceived("============ TcpServer_DataReceivedClient");
                 OnMessageObjectReceived(e.ToString());
-                switch (e.Header.TransmissionData)
-                {
-                    case TransmissionData.Text:
-                        DefaultServerSocket.OnDataReceived(e.Header.Type, e.Data);
-                        break;
-                    case TransmissionData.Binary:
-                        DefaultServerSocket.OnDataReceived(e.Header.Type, e.RawData);
-                        break;
-                }
+                DefaultServerSocket.OnDataReceived(e);
                 OnMessageObjectReceived("TcpServer_DataReceivedClient ============");
             }
             else

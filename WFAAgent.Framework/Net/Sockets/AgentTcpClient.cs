@@ -60,7 +60,8 @@ namespace WFAAgent.Framework.Net.Sockets
 
                 if (!_IsAcceptClientForSendServer)
                 {
-                    int sendBytes = Send(DataPacket.AcceptClient, new AcceptClient(CallbackDataProcess));
+                    int sendBytes = Send(DataPacket.AcceptClient, 
+                        new AcceptClient(CallbackDataProcess));
                     _IsAcceptClientForSendServer = true;
                 }
                 return true;
@@ -94,7 +95,16 @@ namespace WFAAgent.Framework.Net.Sockets
 
         public int Send(DataPacket dataPacket, AcceptClient data)
         {
-            dataPacket.Header.AppId = data.AppId;
+            if (String.IsNullOrEmpty(dataPacket.Header.AppId))
+            {
+                dataPacket.Header.AppId = data.AppId;
+            }
+
+            if (dataPacket.Header.ProcessId == 0)
+            {
+                dataPacket.Header.ProcessId = data.ProcessId;
+            }
+
             if (Object.ReferenceEquals(dataPacket, DataPacket.AgentBinaryData))
             {
                 if (!(data is AgentBinaryData))
@@ -107,7 +117,11 @@ namespace WFAAgent.Framework.Net.Sockets
                 byte[] buffer = binaryData.AppBinaryData;
                 return Send(dataPacket, buffer);
             }
-            else
+            else if (Object.ReferenceEquals(dataPacket, DataPacket.AcceptClient))
+            {
+                return Send(dataPacket, "==AcceptClient==");
+            }
+            else 
             {
                 return Send(dataPacket, data.ToJson().ToString());
             }

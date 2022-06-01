@@ -61,6 +61,7 @@
     <Compile Include="Net\Sockets\AgentTcpServer.cs" />
     <Compile Include="Net\Sockets\AgentTcpSocketException.cs" />
     <Compile Include="Net\Sockets\DataContext.cs" />
+    <Compile Include="Net\Sockets\DataReceiver.cs" />
     <Compile Include="Net\Sockets\DataType.cs" />
     <Compile Include="Net\Sockets\AsyncSendSocketState.cs" />
     <Compile Include="Net\Sockets\ClientSocket.cs" />

@@ -47,7 +47,5 @@ namespace WFAAgent.Framework.Net.Sockets
         {
             return NewDataBuffer(TempReceiveBufferSize);
         }
-
-        
     }
 }

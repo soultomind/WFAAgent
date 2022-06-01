@@ -52,6 +52,7 @@ namespace WFAAgent.Framework.Net.Sockets
         }
 
         public string AppId { get; set; }
+        public int ProcessId { get; set; }
     }
 
     public class ConnectedEventArgs : SocketEventArgs

@@ -14,6 +14,7 @@ namespace WFAAgent.Server
 
         public const string ProcessStartedEvent = "ProcessStarted";
         public const string ProcessExitedEvent = "ProcessExited";
+        public const string ProcessId = "processId";
 
         public const string TcpServerListenEvent = "TcpServerListen";
         public const string SocketHandle = "socketHandle";

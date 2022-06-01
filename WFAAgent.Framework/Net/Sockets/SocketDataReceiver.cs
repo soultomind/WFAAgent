@@ -9,16 +9,44 @@ namespace WFAAgent.Framework.Net.Sockets
 {
     public class SocketDataReceiver
     {
-        public Socket Socket { get; set; }
+        public Socket Socket { get; internal set; }
+        public byte[] Data { get; internal set; }
         public SocketDataReceiver(Socket socket)
         {
             Socket = socket;
         }
 
-        internal bool TryRead(Header header, out byte[] data, out Exception exception)
+        public SocketDataReceiver(byte[] data)
+        {
+            Data = data;
+        }
+
+        internal bool TryReadData(Header header, out byte[] data, out Exception exception)
+        {
+            bool isRead = true;
+            byte[] buffer = ReadData(header, out isRead, out exception);
+            if (isRead)
+            {
+                data = buffer;
+            }
+            else
+            {
+                data = null;
+            }
+            return isRead;
+        }
+
+        private byte[] ReadData(Header header, out bool isRead, out Exception ex)
+        {
+            isRead = false;
+            ex = null;
+            return null;
+        }
+
+        internal bool TryReadSocket(Header header, out byte[] data, out Exception exception)
         {
             bool isReceive = true;
-            byte[] buffer = Read(header, out isReceive, out exception);
+            byte[] buffer = ReceiveSocketData(header, out isReceive, out exception);
             if (isReceive)
             {
                 data = buffer;
@@ -30,7 +58,7 @@ namespace WFAAgent.Framework.Net.Sockets
             return isReceive;
         }
 
-        private byte[] Read(Header header, out bool isReceive, out Exception exception)
+        private byte[] ReceiveSocketData(Header header, out bool isReceive, out Exception exception)
         {
             int size = header.DataLength;
             byte[] dataBuffer = new byte[size];

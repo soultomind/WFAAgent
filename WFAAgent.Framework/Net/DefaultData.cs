@@ -13,7 +13,7 @@ namespace WFAAgent.Framework.Net
     public abstract class DefaultData
     {
         public string EventName { get; set; }
-        public string Type { get; set; }
+        public string Type { get; set; } = String.Empty;
         public DefaultData()
         {
             EventName = "TcpClientDataReceived";

@@ -13,22 +13,32 @@ namespace WFAAgent.UnitTest
         [TestMethod]
         public void Run()
         {
-            Trace.WriteLine(typeof(DataPacketHeaderUnitTest).Name);
+            Trace.WriteLine("========================================");
 
-            string appId = Guid.NewGuid().ToString();
-            Trace.WriteLine("AppId=" + appId);
+            string inputAppId = Guid.NewGuid().ToString();
             string inputData = typeof(DataPacketTextUnitTest).Name;
-
             ushort inputType = DataContext.Max;
-            TransmissionData inputTransmissionData = TransmissionData.Text;
-            int dataLength = Encoding.UTF8.GetBytes(inputData).Length;
+            int inputDataLength = Encoding.UTF8.GetBytes(inputData).Length;
 
-            Header header = DataPacket.ToHeader(DataPacket.ToHeaderBytes(appId, inputType, inputData));
+            Header header = DataPacket.ToHeader(DataPacket.ToDataPacketBytes(inputAppId, inputType, inputData));
 
-            Assert.AreEqual(appId, header.AppId);
+            Assert.AreEqual(inputAppId, header.AppId);
             Assert.AreEqual(inputType, header.Type);
-            Assert.AreEqual(inputTransmissionData, header.TransmissionData);
-            Assert.AreEqual(dataLength, header.DataLength);
+            Assert.AreEqual(TransmissionData.Text, header.TransmissionData);
+            Assert.AreEqual(inputDataLength, header.DataLength);
+
+            byte[] binaryInputData = Encoding.UTF8.GetBytes(typeof(DataPacketTextUnitTest).Name);
+            inputType = DataContext.Max - 1;
+            inputDataLength = binaryInputData.Length;
+
+            header = DataPacket.ToHeader(DataPacket.ToDataPacketBytes(inputAppId, inputType, binaryInputData));
+
+            Assert.AreEqual(inputAppId, header.AppId);
+            Assert.AreEqual(inputType, header.Type);
+            Assert.AreEqual(TransmissionData.Binary, header.TransmissionData);
+            Assert.AreEqual(inputDataLength, header.DataLength);
+
+            Trace.WriteLine("========================================");
         }
     }
 }

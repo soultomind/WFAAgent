@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using WFAAgent.Framework.Application;
 
 namespace WFAAgent.Framework.Net.Sockets
 {
@@ -111,30 +112,28 @@ namespace WFAAgent.Framework.Net.Sockets
                         Exception exception = null;
                         Header header = DataPacket.ToHeader(dataPacketHeaderBuffer);
 
-                        // 실제 어플리케이션 단에서의 
-
                         byte[] dataBuffer = null;
                         SocketDataReceiver receiver = new SocketDataReceiver(clientSocket);
-                        if (receiver.TryRead(header, out dataBuffer, out exception))
+                        if (receiver.TryReadSocket(header, out dataBuffer, out exception))
                         {
                             DataReceivedEventArgs e = new DataReceivedEventArgs();
                             e.SetData(header, dataBuffer);
 
                             if (header.Type == DataContext.AcceptClient)
                             {
-                                JObject data = JObject.Parse(e.Data);
-                                string appId = data["appId"].ToObject<string>();
+                                string appId = header.AppId;
+                                int processId = header.ProcessId;
 
                                 AppClientSocket obj = new AppClientSocket(clientSocket, appId);
                                 if (_ClientSockets.TryAdd(clientSocket.Handle, obj))
                                 {
-                                    
                                     AcceptClient?.Invoke(
                                         this,
                                         new AcceptClientEventArgs(socket)
                                         {
                                             ClientSocket = clientSocket,
-                                            AppId = appId
+                                            AppId = appId,
+                                            ProcessId = processId
                                         }
                                     );
                                 }

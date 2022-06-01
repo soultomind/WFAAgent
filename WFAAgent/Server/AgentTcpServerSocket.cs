@@ -35,18 +35,13 @@ namespace WFAAgent.Server
 
         }
 
-        public override void OnAcceptClientDataReceived(ushort type, string data)
+        public override void OnAcceptClientDataReceived(AcceptClientEventArgs e)
         {
 
         }
-        public override void OnAgentDataReceived(ushort type, string data)
+        public override void OnAgentDataReceived(DataReceivedEventArgs e)
         {
 
-        }
-
-        public override void OnAgentDataReceived(ushort type, byte[] data)
-        {
-            
         }
     }
 }

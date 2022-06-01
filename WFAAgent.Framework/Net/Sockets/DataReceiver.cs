@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace WFAAgent.Framework.Net.Sockets
 {
-    public enum TransmissionData
+    public interface DataReceiver
     {
-        Text = 0,
-        Binary = 1,
+        bool TryReadData(out byte[] data, out Exception exception);
     }
 }
