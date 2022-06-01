@@ -20,6 +20,9 @@ WFA(Windows Form Application) Agent
 WebSocket 서버 : 브라우저와 통신을 담당.   
 TcpSocket 서버 : 클라이언트 프로그램과 통신을 담당.
 
+#### 패킷 헤더 구조
+<p align="center"><img src="패킷 헤더 구조.png"/>
+
 
 사용 라이브러리
 
