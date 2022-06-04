@@ -116,7 +116,7 @@ namespace WFAAgent.Framework.Net.Sockets
             // AppId
             int appIdLength = appId.Length;
             byte[] appIdBytes = Encoding.UTF8.GetBytes(appId);
-            Array.Copy(appIdBytes, 0, packetBytes, offset, appIdBytes.Length);
+            System.Buffer.BlockCopy(appIdBytes, 0, packetBytes, offset, appIdBytes.Length);
             offset += appIdBytes.Length;
 
             // ProcessId
@@ -125,7 +125,7 @@ namespace WFAAgent.Framework.Net.Sockets
 
             // Type
             byte[] typeBytes = BitConverter.GetBytes(type);
-            Array.Copy(typeBytes, 0, packetBytes, offset, typeBytes.Length);
+            System.Buffer.BlockCopy(typeBytes, 0, packetBytes, offset, typeBytes.Length);
             offset += typeBytes.Length;
 
             // TransmissionData
@@ -134,12 +134,12 @@ namespace WFAAgent.Framework.Net.Sockets
 
             // Length
             byte[] dataLengthBytes = BitConverter.GetBytes(Encoding.UTF8.GetBytes(data).Length);
-            Array.Copy(dataLengthBytes, 0, packetBytes, offset, dataLengthBytes.Length);
+            System.Buffer.BlockCopy(dataLengthBytes, 0, packetBytes, offset, dataLengthBytes.Length);
             offset += dataLengthBytes.Length;
 
             // Data 
             _Buffer = Encoding.UTF8.GetBytes(data);
-            Array.Copy(_Buffer, 0, packetBytes, DataContext.DefaultDataPacketHeaderLength, _Buffer.Length);
+            System.Buffer.BlockCopy(_Buffer, 0, packetBytes, DataContext.DefaultDataPacketHeaderLength, _Buffer.Length);
 
             Header.DataLength = _Buffer.Length;
             return packetBytes;
@@ -154,17 +154,17 @@ namespace WFAAgent.Framework.Net.Sockets
             // AppId
             int appIdLength = appId.Length;
             byte[] appIdBytes = Encoding.UTF8.GetBytes(appId);
-            Array.Copy(appIdBytes, 0, packetBytes, offset, appIdBytes.Length);
+            System.Buffer.BlockCopy(appIdBytes, 0, packetBytes, offset, appIdBytes.Length);
             offset += appIdBytes.Length;
 
             // ProcessId
             byte[] processIdBytes = BitConverter.GetBytes(processId);
-            Array.Copy(processIdBytes, 0, packetBytes, offset, processIdBytes.Length);
+            System.Buffer.BlockCopy(processIdBytes, 0, packetBytes, offset, processIdBytes.Length);
             offset += processIdBytes.Length;
 
             // Type
             byte[] typeBytes = BitConverter.GetBytes(type);
-            Array.Copy(typeBytes, 0, packetBytes, offset, typeBytes.Length);
+            System.Buffer.BlockCopy(typeBytes, 0, packetBytes, offset, typeBytes.Length);
             offset += typeBytes.Length;
 
             // TransmissionData
@@ -173,12 +173,12 @@ namespace WFAAgent.Framework.Net.Sockets
 
             // Length
             byte[] dataLengthBytes = BitConverter.GetBytes(data.Length);
-            Array.Copy(dataLengthBytes, 0, packetBytes, offset, dataLengthBytes.Length);
+            System.Buffer.BlockCopy(dataLengthBytes, 0, packetBytes, offset, dataLengthBytes.Length);
             offset += dataLengthBytes.Length;
 
             // Data 
             _Buffer = data;
-            Array.Copy(_Buffer, 0, packetBytes, DataContext.DefaultDataPacketHeaderLength, _Buffer.Length);
+            System.Buffer.BlockCopy(_Buffer, 0, packetBytes, DataContext.DefaultDataPacketHeaderLength, _Buffer.Length);
 
             Header.DataLength = _Buffer.Length;
             return packetBytes;
@@ -196,17 +196,17 @@ namespace WFAAgent.Framework.Net.Sockets
             // AppId
             int appIdLength = appId.Length;
             byte[] appIdBytes = Encoding.UTF8.GetBytes(appId);
-            Array.Copy(appIdBytes, 0, packetBytes, offset, appIdBytes.Length);
+            System.Buffer.BlockCopy(appIdBytes, 0, packetBytes, offset, appIdBytes.Length);
             offset += appIdBytes.Length;
 
             // ProcessId
             byte[] processIdBytes = BitConverter.GetBytes(processId);
-            Array.Copy(processIdBytes, 0, packetBytes, offset, processIdBytes.Length);
+            System.Buffer.BlockCopy(processIdBytes, 0, packetBytes, offset, processIdBytes.Length);
             offset += processIdBytes.Length;
 
             // Type
             byte[] typeBytes = BitConverter.GetBytes(type);
-            Array.Copy(typeBytes, 0, packetBytes, offset, typeBytes.Length);
+            System.Buffer.BlockCopy(typeBytes, 0, packetBytes, offset, typeBytes.Length);
             offset += typeBytes.Length;
 
             // TransmissionData
@@ -215,11 +215,11 @@ namespace WFAAgent.Framework.Net.Sockets
 
             // Length
             byte[] dataLengthBytes = BitConverter.GetBytes(Encoding.UTF8.GetBytes(data).Length);
-            Array.Copy(dataLengthBytes, 0, packetBytes, offset, dataLengthBytes.Length);
+            System.Buffer.BlockCopy(dataLengthBytes, 0, packetBytes, offset, dataLengthBytes.Length);
             offset += dataLengthBytes.Length;
 
             // Data
-            Array.Copy(_Buffer, 0, packetBytes, DataContext.DefaultDataPacketHeaderLength, _Buffer.Length);
+            System.Buffer.BlockCopy(_Buffer, 0, packetBytes, DataContext.DefaultDataPacketHeaderLength, _Buffer.Length);
 
             dataLength = _Buffer.Length;
             Header.DataLength = dataLength;
@@ -235,17 +235,17 @@ namespace WFAAgent.Framework.Net.Sockets
             // AppId
             int appIdLength = appId.Length;
             byte[] appIdBytes = Encoding.UTF8.GetBytes(appId);
-            Array.Copy(appIdBytes, 0, packetBytes, offset, appIdBytes.Length);
+            System.Buffer.BlockCopy(appIdBytes, 0, packetBytes, offset, appIdBytes.Length);
             offset += appIdBytes.Length;
 
             // ProcessId
             byte[] processIdBytes = BitConverter.GetBytes(processId);
-            Array.Copy(processIdBytes, 0, packetBytes, offset, processIdBytes.Length);
+            System.Buffer.BlockCopy(processIdBytes, 0, packetBytes, offset, processIdBytes.Length);
             offset += processIdBytes.Length;
 
             // Type
             byte[] typeBytes = BitConverter.GetBytes(type);
-            Array.Copy(typeBytes, 0, packetBytes, offset, typeBytes.Length);
+            System.Buffer.BlockCopy(typeBytes, 0, packetBytes, offset, typeBytes.Length);
             offset += typeBytes.Length;
 
             // TransmissionData
@@ -254,12 +254,12 @@ namespace WFAAgent.Framework.Net.Sockets
 
             // Length
             byte[] dataLengthBytes = BitConverter.GetBytes(data.Length);
-            Array.Copy(dataLengthBytes, 0, packetBytes, offset, dataLengthBytes.Length);
+            System.Buffer.BlockCopy(dataLengthBytes, 0, packetBytes, offset, dataLengthBytes.Length);
             offset += dataLengthBytes.Length;
 
             // Data 
             _Buffer = data;
-            Array.Copy(_Buffer, 0, packetBytes, DataContext.DefaultDataPacketHeaderLength, _Buffer.Length);
+            System.Buffer.BlockCopy(_Buffer, 0, packetBytes, DataContext.DefaultDataPacketHeaderLength, _Buffer.Length);
 
             dataLength = _Buffer.Length;
             Header.DataLength = dataLength;

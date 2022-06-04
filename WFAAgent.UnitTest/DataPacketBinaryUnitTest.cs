@@ -20,13 +20,13 @@ namespace WFAAgent.UnitTest
 
             string inputAppId = Guid.NewGuid().ToString();
             int inputProcessId = new Random().Next(ushort.MinValue, ushort.MaxValue);
-            uint inputType = DataContext.Max;
+            ushort inputType = DataContext.Max;
             TransmissionData inputTransmissionData = TransmissionData.Binary;
             byte[] inputData = Encoding.UTF8.GetBytes(typeof(DataPacketTextUnitTest).Name);
             int inputDataLength = inputData.Length;
 
 
-            DataPacket dataHeader = new DataPacket(DataContext.Max, inputAppId, inputProcessId);
+            DataPacket dataHeader = new DataPacket(inputType, inputAppId, inputProcessId);
             byte[] packetBytes = dataHeader.ToPacketBytes(inputData);
             DataPacket dp = DataPacket.ToPacket(packetBytes);
 

@@ -60,7 +60,27 @@ namespace WFAAgent.Server
                                 argObj.Add(Constant.AppID, sessionID);
                                 argObj.Add(Constant.AgentTcpServerPort, agentTcpServerPort);
                                 string arguments = ConvertUtility.Base64Encode(argObj.ToString());
+
+                                ProcessStartInfo psi = new ProcessStartInfo(fileName, arguments);
                                 process = Process.Start(fileName, arguments);
+
+                                /*
+                                process.StartInfo.FileName = fileName;
+                                process.StartInfo.Arguments = arguments;
+                                process.StartInfo.UseShellExecute = true;
+                                process.StartInfo.Verb = "runas";
+
+                                process.StartInfo.RedirectStandardOutput = true;
+                                process.OutputDataReceived += Process_OutputDataReceived;
+
+                                process.StartInfo.RedirectStandardError = true;
+                                process.ErrorDataReceived += Process_ErrorDataReceived;
+
+                                process.EnableRaisingEvents = true;
+
+                                process.BeginErrorReadLine();
+                                process.BeginOutputReadLine();
+                                */
                             }
                             else
                             {

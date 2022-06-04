@@ -54,6 +54,7 @@ namespace WFAAgent.Framework.Net.Sockets
         public void Start()
         {
             ServerSocket.Initialize();
+            ServerSocket.Socket.NoDelay = true;
             if (ServerSocket.Bind())
             {
                 ServerSocket.AcceptClient += ServerSocket_AcceptClient;
@@ -68,6 +69,7 @@ namespace WFAAgent.Framework.Net.Sockets
         public void Start(int backlog)
         {
             ServerSocket.Initialize();
+            ServerSocket.Socket.NoDelay = true;
             if (ServerSocket.Bind())
             {
                 ServerSocket.AcceptClient += ServerSocket_AcceptClient;
