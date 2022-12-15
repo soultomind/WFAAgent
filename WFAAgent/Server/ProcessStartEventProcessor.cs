@@ -51,58 +51,62 @@ namespace WFAAgent.Server
 
 
                             Process process = null;
+                            string arguments = null;
                             if (useCallbackData)
                             {
                                 string sessionID = eventData.AppId;
                                 int agentTcpServerPort = AgentTcpServerPort;
 
+                                Process newProcess = new Process();
+
                                 JObject argObj = new JObject();
                                 argObj.Add(Constant.AppID, sessionID);
                                 argObj.Add(Constant.AgentTcpServerPort, agentTcpServerPort);
-                                string arguments = ConvertUtility.Base64Encode(argObj.ToString());
+                                //argObj.Add(Constant.ProcessId, newProcess.Id);
 
-                                ProcessStartInfo psi = new ProcessStartInfo(fileName, arguments);
-                                process = Process.Start(fileName, arguments);
+                                arguments = ConvertUtility.Base64Encode(argObj.ToString());
+                                newProcess.StartInfo = new ProcessStartInfo(fileName, arguments);
+                                newProcess.StartInfo.UseShellExecute = false;
+                                newProcess.StartInfo.Verb = "runas";
 
-                                /*
-                                process.StartInfo.FileName = fileName;
-                                process.StartInfo.Arguments = arguments;
-                                process.StartInfo.UseShellExecute = true;
-                                process.StartInfo.Verb = "runas";
+                                newProcess.StartInfo.RedirectStandardError = true;
+                                newProcess.ErrorDataReceived += Process_ErrorDataReceived;
 
-                                process.StartInfo.RedirectStandardOutput = true;
-                                process.OutputDataReceived += Process_OutputDataReceived;
-
-                                process.StartInfo.RedirectStandardError = true;
-                                process.ErrorDataReceived += Process_ErrorDataReceived;
-
-                                process.EnableRaisingEvents = true;
-
-                                process.BeginErrorReadLine();
-                                process.BeginOutputReadLine();
-                                */
+                                newProcess.StartInfo.RedirectStandardOutput = true;
+                                newProcess.OutputDataReceived += Process_OutputDataReceived;
+                                if (newProcess.Start())
+                                {
+                                    process = newProcess;
+                                }
                             }
                             else
                             {
                                 process = Process.Start(fileName);
                             }
 
-                            ProcessInfo = new ProcessInfo()
+                            if (process != null)
                             {
-                                FileName = fileName,
-                                Process = process,
-                                SessionId = eventData.AppId
-                            };
+                                process.BeginErrorReadLine();
+                                process.BeginOutputReadLine();
 
-                            // Exited Event Enabled
-                            ProcessInfo.Process.EnableRaisingEvents = true;
-                            ProcessInfo.Process.Exited += Process_Exited;
+                                process.EnableRaisingEvents = true;
+                                ProcessInfo = new ProcessInfo()
+                                {
+                                    FileName = fileName,
+                                    Process = process,
+                                    SessionId = eventData.AppId
+                                };
 
-                            Started?.Invoke(ProcessInfo, EventArgs.Empty);
+                                // Exited Event Enabled
+                                ProcessInfo.Process.EnableRaisingEvents = true;
+                                ProcessInfo.Process.Exited += Process_Exited;
+
+                                Started?.Invoke(ProcessInfo, EventArgs.Empty);
+                            }
                         }
                         catch (Exception ex)
                         {
-
+                            
                         }
                     }
                     else
@@ -111,6 +115,16 @@ namespace WFAAgent.Server
                     }
                 }
             }
+        }
+
+        private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            Toolkit.TraceWriteLine("Process_ErrorDataReceived=" + e.Data);
+        }
+
+        private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            Toolkit.TraceWriteLine("Process_OutputDataReceived=" + e.Data);
         }
 
         private void Process_Exited(object sender, EventArgs e)
