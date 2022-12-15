@@ -60,6 +60,16 @@ namespace TestClient
 
         #endregion
 
+        public static void AgentErrorDataSend(string data)
+        {
+            Console.Error.WriteLine(data);
+        }
+
+        public static void AgentOutputDataSend(string data)
+        {
+            Console.Out.WriteLine(data);
+        }
+
         public static bool OpenForm(string text)
         {
             if (Application.OpenForms.Count == 1)

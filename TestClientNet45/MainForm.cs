@@ -42,8 +42,14 @@ namespace TestClient
                     arg0 = Encoding.UTF8.GetString(bArg0);
                     Toolkit.TraceWriteLine("Base64Decode=" + arg0);
                     JObject data = JObject.Parse(arg0);
-                    CallbackDataProcess = CallbackDataProcess.Parse(data, Process.GetCurrentProcess());
+                    Process currentProcess = Process.GetCurrentProcess();
+                    CallbackDataProcess = CallbackDataProcess.Parse(data, currentProcess);
+
+                    
                     Toolkit.TraceWriteLine("CallbackDataProcess=" + CallbackDataProcess.ToString());
+
+                    Main.AgentErrorDataSend("테스트 AgentErrorDataSend");
+                    Main.AgentOutputDataSend("테스트 AgentOutputDataSend");
                 }
                 catch (Exception ex)
                 {

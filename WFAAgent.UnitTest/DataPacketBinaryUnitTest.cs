@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WFAAgent.Framework.Net;
 using WFAAgent.Framework.Net.Sockets;
 
 namespace WFAAgent.UnitTest

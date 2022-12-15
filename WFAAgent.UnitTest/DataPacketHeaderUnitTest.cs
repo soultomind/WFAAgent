@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Text;
 using WFAAgent.Framework;
+using WFAAgent.Framework.Net;
 using WFAAgent.Framework.Net.Sockets;
 
 namespace WFAAgent.UnitTest

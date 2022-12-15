@@ -3,6 +3,7 @@
 - Packet 객체로 작업 
   * 직렬화 처리
   * 객체로도 전달, 기존 방식(Text,Binary)도 지원
+  * 사용자가 Packet 객체를 상속하여 구현한 객체 사용 가능하게 (Serialzable 애트리뷰트 사용 & Packet 객체 서브클래스 여부로 판단)
 
 테스트
 - 클라이언트 프로그램에서 Console.WriteLine 사용되는 메시지 OutputDataReceived 이벤트 등록해서 받아보기

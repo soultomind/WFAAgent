@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WFAAgent", "WFAAgent\WFAAgent.csproj", "{8993DE8E-D975-4B09-BF3E-877DC9949B59}"
 EndProject
@@ -33,7 +33,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "css", "css", "{F4354B3B-B10
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "js", "js", "{3BC38C1C-0B97-4BA3-968C-EEDAC785BCA6}"
 	ProjectSection(SolutionItems) = preProject
-		WebContent\js\WFAAgent.js = WebContent\js\WFAAgent.js
+		WebContent\js\main.js = WebContent\js\main.js
 	EndProjectSection
 EndProject
 Global
