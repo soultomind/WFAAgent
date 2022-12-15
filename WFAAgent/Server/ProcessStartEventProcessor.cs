@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -70,10 +71,17 @@ namespace WFAAgent.Server
                                 newProcess.StartInfo.Verb = "runas";
 
                                 newProcess.StartInfo.RedirectStandardError = true;
-                                newProcess.ErrorDataReceived += Process_ErrorDataReceived;
+                                if (newProcess.StartInfo.RedirectStandardError)
+                                {
+                                    newProcess.ErrorDataReceived += Process_ErrorDataReceived;
+                                }
 
                                 newProcess.StartInfo.RedirectStandardOutput = true;
-                                newProcess.OutputDataReceived += Process_OutputDataReceived;
+                                if (newProcess.StartInfo.RedirectStandardOutput)
+                                {
+                                    newProcess.OutputDataReceived += Process_OutputDataReceived;
+                                }
+
                                 if (newProcess.Start())
                                 {
                                     process = newProcess;
@@ -86,8 +94,15 @@ namespace WFAAgent.Server
 
                             if (process != null)
                             {
-                                process.BeginErrorReadLine();
-                                process.BeginOutputReadLine();
+                                if (process.StartInfo.RedirectStandardError)
+                                {
+                                    process.BeginErrorReadLine();
+                                }
+                                
+                                if (process.StartInfo.RedirectStandardOutput)
+                                {
+                                    process.BeginOutputReadLine();
+                                }
 
                                 process.EnableRaisingEvents = true;
                                 ProcessInfo = new ProcessInfo()
@@ -119,12 +134,14 @@ namespace WFAAgent.Server
 
         private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            Toolkit.TraceWriteLine("Process_ErrorDataReceived=" + e.Data);
+            AgentErrorData o = JsonConvert.DeserializeObject<AgentErrorData>(e.Data);
+            Toolkit.TraceWriteLine(String.Format("Pid={0}, Data={1}", o.ProcessId, o.Data));
         }
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            Toolkit.TraceWriteLine("Process_OutputDataReceived=" + e.Data);
+            AgentOutputData o = JsonConvert.DeserializeObject<AgentOutputData>(e.Data);
+            Toolkit.TraceWriteLine(String.Format("Pid={0}, Data={1}", o.ProcessId, o.Data));
         }
 
         private void Process_Exited(object sender, EventArgs e)

@@ -1,10 +1,14 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WFAAgent.Framework.Application;
 
 namespace TestClient
 {
@@ -60,14 +64,27 @@ namespace TestClient
 
         #endregion
 
+        public static int ProcessId
+        {
+            get { return Process.GetCurrentProcess().Id; }
+        }
+
         public static void AgentErrorDataSend(string data)
         {
-            Console.Error.WriteLine(data);
+            if (Console.IsErrorRedirected)
+            {
+                string text = JsonConvert.SerializeObject(new AgentErrorData() { ProcessId = ProcessId, Data = data });
+                Console.Error.WriteLine(text);
+            }
         }
 
         public static void AgentOutputDataSend(string data)
         {
-            Console.Out.WriteLine(data);
+            if (Console.IsOutputRedirected)
+            {
+                string text = JsonConvert.SerializeObject(new AgentOutputData() { ProcessId = ProcessId, Data = data });
+                Console.Out.WriteLine(text);
+            }
         }
 
         public static bool OpenForm(string text)
