@@ -83,6 +83,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MonitoringForm.Core.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ServerForm.Core.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Server\AgentManager.cs" />
     <Compile Include="MonitoringForm.cs">
       <SubType>Form</SubType>

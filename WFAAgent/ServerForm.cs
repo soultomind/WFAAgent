@@ -75,7 +75,7 @@ namespace WFAAgent
             }
         }
 
-        public static void ServerForm_SendMonitoringOutputData(string data)
+        internal void ServerForm_SendMonitoringOutputData(string data)
         {
             if (Console.IsOutputRedirected)
             {
@@ -83,7 +83,7 @@ namespace WFAAgent
             }
         }
 
-        public static void ServerForm_SendMonitoringErrorData(string data)
+        internal void ServerForm_SendMonitoringErrorData(string data)
         {
             if (Console.IsErrorRedirected)
             {
