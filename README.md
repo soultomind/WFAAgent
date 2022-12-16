@@ -3,7 +3,7 @@ WFA(Windows Form Application) Agent
 
 ### 개발환경   
 + .NET Framework 4.5
-+ Visual Studio 2015 Professional
++ Visual Studio 2019 Professional
 
 # 프로그램 설명
 웹 브라우저에서 웹 소켓을 통하여 .NET Framework C# WinForm 으로 개발된 프로그램을 실행시켜주는 프로그램
