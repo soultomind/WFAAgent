@@ -82,11 +82,14 @@ namespace WFAAgent
                 {
                     if (Main.ExecuteContext.Execute == Execute.Monitoring)
                     {
-                        Process process = CreateExecuteAsAdmin(Application.ExecutablePath, ExecuteContext.ExecuteMonitoringArgs.ToString());
+                        // 최초 관리자 권한 모니터링 실행
+                        // 처음 실행이기때문에 Redirect Output, Error 이벤트 등록 하지 않음
+                        Process process = CreateExecuteAsAdmin(Application.ExecutablePath, ExecuteContext.ExecuteMonitoringArgs.ToString(), true);
                         if (process != null)
                         {
                             process.Start();
                         }
+
                         _isCurrentProcessExecuteAdministrator = false;
                     }
                 }
@@ -110,6 +113,20 @@ namespace WFAAgent
                     try
                     {
                         process.Start();
+
+                        if (!process.StartInfo.UseShellExecute)
+                        {
+                            if (process.StartInfo.RedirectStandardError)
+                            {
+                                process.BeginErrorReadLine();
+                            }
+
+                            if (process.StartInfo.RedirectStandardOutput)
+                            {
+                                process.BeginOutputReadLine();
+                            }
+                        }
+
                         _serverProcess = process;
 
                         string text = String.Format("({0}={1}) 프로세스가 시작 되었습니다.", process.ProcessName, process.Id);
@@ -157,7 +174,6 @@ namespace WFAAgent
             Toolkit.TraceWrite(text);
 
             _isProcessAgentServerExited = true;
-
         }
 
         private void ServerProcess_Started(object argument)
@@ -178,15 +194,28 @@ namespace WFAAgent
             }
         }
 
-        private void StartServerExecuteAsAdmin(string fileName, string arguments)
+        private void StartServerExecuteAsAdmin(string fileName, string arguments, bool useShellExecute = false)
         {
-            Process process = CreateExecuteAsAdmin(fileName, arguments);
+            Process process = CreateExecuteAsAdmin(fileName, arguments, useShellExecute);
             if (process != null)
             {
                 process.Exited += ServerProcess_Exited;
                 try
                 {
                     process.Start();
+                    if (!process.StartInfo.UseShellExecute)
+                    {
+                        if (process.StartInfo.RedirectStandardError)
+                        {
+                            process.BeginErrorReadLine();
+                        }
+
+                        if (process.StartInfo.RedirectStandardOutput)
+                        {
+                            process.BeginOutputReadLine();
+                        }
+                    }
+                    
                     _serverProcess = process;
 
                     string text = String.Format("({0}={1}) 프로세스가 시작 되었습니다.", process.ProcessName, process.Id);
@@ -206,24 +235,33 @@ namespace WFAAgent
         }
     
 
-        public Process CreateExecuteAsAdmin(string fileName, string arguments)
+        public Process CreateExecuteAsAdmin(string fileName, string arguments, bool useShellExecute = false)
         {
             try
             {
                 Process process = new Process();
                 process.StartInfo.FileName = fileName;
                 process.StartInfo.Arguments = arguments;
-                process.StartInfo.UseShellExecute = true;
+                process.StartInfo.UseShellExecute = useShellExecute;
                 process.StartInfo.Verb = "runas";
 
-                process.StartInfo.RedirectStandardError = true;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.OutputDataReceived += Process_OutputDataReceived;
-                process.ErrorDataReceived += Process_ErrorDataReceived;
-                process.EnableRaisingEvents = true;
+                if (!process.StartInfo.UseShellExecute)
+                {
+                    process.StartInfo.RedirectStandardError = true;
+                    process.StartInfo.RedirectStandardOutput = true;
 
-                process.BeginErrorReadLine();
-                process.BeginOutputReadLine();
+                    if (process.StartInfo.RedirectStandardError)
+                    {
+                        process.ErrorDataReceived += Process_ErrorDataReceived;
+                    }
+
+                    if (process.StartInfo.RedirectStandardOutput)
+                    {
+                        process.OutputDataReceived += Process_OutputDataReceived;
+                    }
+                }
+
+                process.EnableRaisingEvents = true;
                 return process;
             }
             catch (Exception ex)
@@ -236,12 +274,12 @@ namespace WFAAgent
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-               
+            Toolkit.TraceWriteLine("Process_OutputDataReceived=" + e.Data);
         }
 
         private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            
+            Toolkit.TraceWriteLine("Process_ErrorDataReceived=" + e.Data);
         }
 
         private void TrayNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)

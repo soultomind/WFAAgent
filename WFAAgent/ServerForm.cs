@@ -59,17 +59,35 @@ namespace WFAAgent
             try
             {
                 _AgentManager.StartServer();
+                ServerForm_SendMonitoringOutputData("ServerForm 서버 시작");
                 _IsAgentStart = true;
             }
             catch (Exception ex)
             {
                 _IsAgentStart = false;
                 _AgentStartException = ex;
+                ServerForm_SendMonitoringErrorData("ServerForm 서버 시작 실패\n" + ex.ToString());
             }
 
             if (!_IsAgentStart)
             {
                 // TODO: 에외 출력
+            }
+        }
+
+        public static void ServerForm_SendMonitoringOutputData(string data)
+        {
+            if (Console.IsOutputRedirected)
+            {
+                Console.Out.WriteLine(data);
+            }
+        }
+
+        public static void ServerForm_SendMonitoringErrorData(string data)
+        {
+            if (Console.IsErrorRedirected)
+            {
+                Console.Error.WriteLine(data);
             }
         }
 
