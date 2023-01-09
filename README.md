@@ -15,9 +15,10 @@ WFA(Windows Form Application) Agent
 + 모니터링(Monitoring)   
 모니터링(Monitoring)은 윈도우즈 서비스로 동작하는 프로그램은 아니지만 서버(Server) 프로세스를 감지하여 서버(Server) 프로세스가 종료 되었을때 다시 실행해줍니다.
 + 서버(Server)   
-실제 웹 브라우저와 웹 소켓을 통하여 통신을 담당하고, WFA 프로그램을 실행시켜주며 그 이후에는 웹 브라우저와 클라이언트(WFA 프로그램)간에 데이터 송수신을 담당합니다. WebSocket 서버, TcpSocket 서버 내장을 하고 있습니다.
-WebSocket 서버 : 브라우저와 통신을 담당.   
-TcpSocket 서버 : 클라이언트 프로그램과 통신을 담당.
+실제 웹 브라우저와 웹 소켓을 통하여 통신을 담당하고, WFA 프로그램을 실행시켜주며 그 이후에는 웹 브라우저와 클라이언트(WFA 프로그램)간에 데이터 송수신을 담당합니다. WebSocket 서버, TcpSocket 서버 내장을 하고 있습니다.   
+   
+   WebSocket 서버 : 브라우저와 통신을 담당.   
+   TcpSocket 서버 : 클라이언트 프로그램과 통신을 담당.
 
 #### 패킷 헤더 구조
 <p align="center"><img src="패킷 헤더 구조.png"/>
