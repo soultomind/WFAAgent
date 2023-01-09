@@ -33,7 +33,7 @@ namespace WFAAgent
             // 윈도우즈 서비스를 활용하여 프로세스가 죽었을때 다시 서비스에서 프로그램을 실행하는 구조 대신에 아래와 같이 
             // 관리자권한(모니터링), 관리자권한,일반(서버) 로 구성하여 개발해보고자 한다.
 
-            // 실제 테스트를 하려면 샐힝 파일 더블클릭 실행 (VS에서 Ctrl + F5 ) X
+            // 실제 테스트를 하려면 실행 파일 더블클릭하여 실행 (VS에서 Ctrl + F5 ) X
             bool isCurrentProcessExecuteAdministrator = Toolkit.IsCurrentProcessAdministrator();
             _isCurrentProcessExecuteAdministrator = isCurrentProcessExecuteAdministrator;
 

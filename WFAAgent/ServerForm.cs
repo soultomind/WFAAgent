@@ -75,20 +75,51 @@ namespace WFAAgent
             }
         }
 
-        internal void ServerForm_SendMonitoringOutputData(string data)
+        private void TrayNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (Console.IsOutputRedirected)
+            if (InfoDialog == null)
             {
-                Console.Out.WriteLine(data);
+                InfoDialog = new InfoDialog();
+                InfoDialog.Text = String.Format("{0}.{1}", Application.ProductName, Execute.Server.ToString());
             }
+
+            if (Main.HasOpenForm(InfoDialog.Text))
+            {
+                InfoDialog.Visible = true;
+            }
+            else
+            {
+                InfoDialog.Show();
+            }
+            InfoDialog.Activate();
         }
 
-        internal void ServerForm_SendMonitoringErrorData(string data)
+        private void ShowTerminalDialogToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (Console.IsErrorRedirected)
+            if (TerminalDialog == null)
             {
-                Console.Error.WriteLine(data);
+                TerminalDialog = new TerminalDialog();
+                TerminalDialog.Shown += TerminalDialog_Shown;
+                TerminalDialog.FormClosed += TerminalDlg_FormClosed;
             }
+
+            TerminalDialog.Show();
+        }
+
+
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (TerminalDialog != null && !TerminalDialog.IsDisposed)
+            {
+                TerminalDialog.Close();
+            }
+
+            if (_MessageItemQueueAppendWorker.IsStart)
+            {
+                _MessageItemQueueAppendWorker.Stop();
+            }
+
+            Application.Exit();
         }
 
         private void AgentManager_MessageObjectReceived(object messageObject)
@@ -126,37 +157,6 @@ namespace WFAAgent
             }
         }
 
-        private void TrayNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            if (InfoDialog == null)
-            {
-                InfoDialog = new InfoDialog();
-                InfoDialog.Text = String.Format("{0}.{1}", Application.ProductName, Execute.Server.ToString());
-            }
-
-            if (Main.HasOpenForm(InfoDialog.Text))
-            {
-                InfoDialog.Visible = true;
-            }
-            else
-            {
-                InfoDialog.Show();
-            }
-            InfoDialog.Activate();
-        }
-
-        private void ShowTerminalDialogToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (TerminalDialog == null)
-            {
-                TerminalDialog = new TerminalDialog();
-                TerminalDialog.Shown += TerminalDialog_Shown;
-                TerminalDialog.FormClosed += TerminalDlg_FormClosed;
-            }
-
-            TerminalDialog.Show();
-        }
-
         #region TerminalDialog
         private void TerminalDialog_Shown(object sender, EventArgs e)
         {
@@ -168,20 +168,5 @@ namespace WFAAgent
             TerminalDialog = null;
         }
         #endregion
-
-        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (TerminalDialog != null && !TerminalDialog.IsDisposed)
-            {
-                TerminalDialog.Close();
-            }
-
-            if (_MessageItemQueueAppendWorker.IsStart)
-            {
-                _MessageItemQueueAppendWorker.Stop();
-            }
-
-            Application.Exit();
-        }
     }
 }
