@@ -1,3 +1,17 @@
-body {
-    font-family:Verdana, Geneva, Tahoma, sans-serif;
+body, div, input, textarea {
+    font-family:'Malgun Gothic';
+    font-size:15px;
+}
+
+div {
+    margin:10px;
+}
+
+.process {
+    background-color:lightgray;
+    padding:15px;
+}
+
+.client {
+    background-color:lightgray;
 }

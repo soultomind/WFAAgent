@@ -252,7 +252,7 @@ WFAAgent.prototype.wsSend = function (message) {
     }
 }
 
-WFAAgent.prototype.wsExecute = function (fileName, data) {
+WFAAgent.prototype.wsProcessStart = function (fileName, data) {
     if (this._bWsConnect) {
         var sendData = {
             eventName: "ProcessStart",
@@ -271,6 +271,20 @@ WFAAgent.prototype.wsExecute = function (fileName, data) {
                 useCallbackData: false
             }
         }
+
+        this.wsSend(JSON.stringify(sendData));
+    }
+}
+
+WFAAgent.prototype.wsProcessEventData = function (eventDataName, eventData) {
+    if (this._bWsConnect) {
+        var sendData = {
+            eventName: "ProcessEventData",
+            data: {
+                eventDataName: eventDataName,
+                eventData: eventData
+            }
+        };
 
         this.wsSend(JSON.stringify(sendData));
     }
