@@ -12,6 +12,8 @@ namespace WFAAgent.Server
 {
     public delegate void StartedEventHandler(object sender, EventArgs e);
     public delegate void ExitedEventHandler(object sender, EventArgs e);
+    public delegate void StartSendDataEventHandler(object sender, StartSendDataEventArgs e);
+
     public class ProcessStartEventProcessor : EventProcessor
     {
         public readonly string DataFileName = "fileName";
@@ -25,10 +27,11 @@ namespace WFAAgent.Server
 
         public event StartedEventHandler Started;
         public event ExitedEventHandler Exited;
+        public event StartSendDataEventHandler StartSendData;
 
         private static object _Lock = new object();
 
-        public override void DoProcess(EventData eventData)
+        public override void DoProcess(ClientEventData clientEventData)
         {
             if (IsMultiProcess)
             {
@@ -44,10 +47,10 @@ namespace WFAAgent.Server
                         bool useCallbackData = false;
                         try
                         {
-                            fileName = eventData.Data[DataFileName].ToObject<string>();
-                            if (eventData.Data.ContainsKey(DataUseCallbackData))
+                            fileName = clientEventData.Data[DataFileName].ToObject<string>();
+                            if (clientEventData.Data.ContainsKey(DataUseCallbackData))
                             {
-                                useCallbackData = eventData.Data[DataUseCallbackData].ToObject<bool>();
+                                useCallbackData = clientEventData.Data[DataUseCallbackData].ToObject<bool>();
                             }
 
 
@@ -55,7 +58,7 @@ namespace WFAAgent.Server
                             string arguments = null;
                             if (useCallbackData)
                             {
-                                string sessionID = eventData.AppId;
+                                string sessionID = clientEventData.AppId;
                                 int agentTcpServerPort = AgentTcpServerPort;
 
                                 Process newProcess = new Process();
@@ -109,7 +112,7 @@ namespace WFAAgent.Server
                                 {
                                     FileName = fileName,
                                     Process = process,
-                                    SessionId = eventData.AppId
+                                    SessionId = clientEventData.AppId
                                 };
 
                                 // Exited Event Enabled
@@ -134,14 +137,20 @@ namespace WFAAgent.Server
 
         private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
         {
-            AgentErrorData o = JsonConvert.DeserializeObject<AgentErrorData>(e.Data);
-            Toolkit.TraceWriteLine(String.Format("Pid={0}, Data={1}", o.ProcessId, o.Data));
+            if (e != null && !String.IsNullOrEmpty(e.Data))
+            {
+                AgentErrorData o = JsonConvert.DeserializeObject<AgentErrorData>(e.Data);
+                Toolkit.TraceWriteLine(String.Format("Pid={0}, Data={1}", o.ProcessId, o.Data));
+            }
         }
 
         private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            AgentOutputData o = JsonConvert.DeserializeObject<AgentOutputData>(e.Data);
-            Toolkit.TraceWriteLine(String.Format("Pid={0}, Data={1}", o.ProcessId, o.Data));
+            if (e != null && !String.IsNullOrEmpty(e.Data))
+            {
+                AgentOutputData o = JsonConvert.DeserializeObject<AgentOutputData>(e.Data);
+                Toolkit.TraceWriteLine(String.Format("Pid={0}, Data={1}", o.ProcessId, o.Data));
+            }
         }
 
         private void Process_Exited(object sender, EventArgs e)

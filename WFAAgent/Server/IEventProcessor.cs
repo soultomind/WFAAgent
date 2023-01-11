@@ -4,6 +4,6 @@ namespace WFAAgent.Server
 {
     public interface IEventProcessor
     {
-        void DoProcess(EventData eventData);
+        void DoProcess(ClientEventData eventData);
     }
 }

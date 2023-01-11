@@ -320,5 +320,10 @@ namespace WFAAgent.Server
         {
 
         }
+
+        public override void OnClientSendData(DataSendEventArgs e)
+        {
+
+        }
     }
 }

@@ -160,9 +160,6 @@ namespace WFAAgent
                 {
                     Toolkit.TraceWriteLine(ex.Message);
                     Toolkit.TraceWriteLine(ex.StackTrace);
-
-                    // TODO: Process.Start() 계속적으로 예외 발생시 예외처리 필요
-                    _isProcessAgentServerExited = true;
                 }
             }
         }

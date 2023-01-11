@@ -4,6 +4,6 @@ namespace WFAAgent.Server
 {
     public abstract class EventProcessor : IEventProcessor
     {
-        public abstract void DoProcess(EventData eventData);
+        public abstract void DoProcess(ClientEventData eventData);
     }
 }

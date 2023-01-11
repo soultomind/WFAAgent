@@ -101,6 +101,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Server\ProcessEventDataEventProcessor.cs" />
+    <Compile Include="Server\StartSendDataEventArgs.cs" />
     <Compile Include="Toolkit.cs" />
     <Compile Include="Core\LogLevel.cs" />
     <Compile Include="Server\DefaultServerSocketException.cs" />
@@ -108,7 +110,7 @@
     <Compile Include="Server\EventProcessState.cs" />
     <Compile Include="Server\IDefaultSocketServer.cs" />
     <Compile Include="Server\AgentTcpServerSocket.cs" />
-    <Compile Include="Server\EventData.cs" />
+    <Compile Include="Server\ClientEventData.cs" />
     <Compile Include="Server\EventProcessor.cs" />
     <Compile Include="Server\EventProcessorManager.cs" />
     <Compile Include="Server\IEventProcessor.cs" />

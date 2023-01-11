@@ -21,7 +21,7 @@ namespace WFAAgent.Server
         public abstract void OnProcessExited(ProcessInfo processInfo);
         public abstract void OnProcessStarted(ProcessInfo processInfo);
         
-        public virtual void OnDataReceived(DataReceivedEventArgs e)
+        public virtual void OnClientReceivedData(DataReceivedEventArgs e)
         {
             switch (e.Header.Type)
             {
@@ -34,5 +34,7 @@ namespace WFAAgent.Server
 
         public abstract void OnAcceptClientDataReceived(AcceptClientEventArgs e);
         public abstract void OnAgentDataReceived(DataReceivedEventArgs e);
+
+        public abstract void OnClientSendData(DataSendEventArgs e);
     }
 }

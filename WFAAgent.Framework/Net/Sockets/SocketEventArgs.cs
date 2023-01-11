@@ -87,7 +87,13 @@ namespace WFAAgent.Framework.Net.Sockets
         public int SendBytes { get; internal set; }
     }
 
-    public class DataReceivedEventArgs
+    public class DataSendEventArgs : EventArgs
+    {
+        public byte[] RawData { get; private set; }
+        public string Data { get; private set; }
+    }
+
+    public class DataReceivedEventArgs : EventArgs
     {
         public Header Header { get; set; }
         public Exception Exception { get; set; }

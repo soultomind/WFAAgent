@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using TestClient.UI;
 using TestClientNet45;
 using WFAAgent.Framework.Application;
+using WFAAgent.Framework.Net.Sockets;
 using WFAAgent.Framework.Win32;
 
 namespace TestClient
@@ -16,6 +17,8 @@ namespace TestClient
         private Exception ArgException { get; set; }
 
         private MainWnd _MainWnd;
+        private AgentTcpClient TcpClient;
+
         public MainForm()
         {
             InitializeComponent();
@@ -44,9 +47,14 @@ namespace TestClient
                     JObject data = JObject.Parse(arg0);
                     Process currentProcess = Process.GetCurrentProcess();
                     CallbackDataProcess = CallbackDataProcess.Parse(data, currentProcess);
-
-                    
                     Toolkit.TraceWriteLine("CallbackDataProcess=" + CallbackDataProcess.ToString());
+                    if (CallbackDataProcess != null)
+                    {
+                        TcpClient = new AgentTcpClient();
+                        TcpClient.Connected += TcpClient_Connected;
+                        TcpClient.Disconnected += TcpClient_Disconnected;
+                        TcpClient.DataReceived += TcpClient_DataReceived;
+                    }
 
                     Main.AgentErrorDataSend("테스트 AgentErrorDataSend");
                     Main.AgentOutputDataSend("테스트 AgentOutputDataSend");
@@ -58,6 +66,21 @@ namespace TestClient
             }
         }
 
+        private void TcpClient_Connected(object sender, ConnectedEventArgs e)
+        {
+            Toolkit.TraceWriteLine("TcpClient_Connected");
+        }
+
+        private void TcpClient_Disconnected(object sender, DisconnectEventArgs e)
+        {
+            Toolkit.TraceWriteLine("TcpClient_Disconnected");
+        }
+
+        private void TcpClient_DataReceived(object sender, WFAAgent.Framework.Net.Sockets.DataReceivedEventArgs e)
+        {
+            Toolkit.TraceWriteLine("TcpClient_DataReceived");
+        }
+
         private void MainForm_Shown(object sender, EventArgs e)
         {
             Taskbar.RefreshTrayArea();
@@ -65,6 +88,12 @@ namespace TestClient
             if (ArgException != null)
             {
                 MessageBox.Show(this, ArgException.Message, "[ 에러 발생 ]");
+                return;
+            }
+
+            if (TcpClient.Connect(CallbackDataProcess))
+            {
+                
             }
         }
 
@@ -88,7 +117,6 @@ namespace TestClient
         public InfoDialog InfoDialog { get; set; }
         private void ToolStripMenuItemExecuteMainWnd_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show("실행");
             if (_MainWnd == null)
             {
                 _ToolStripMenuItemExecuteMainWnd.Enabled = false;

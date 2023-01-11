@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace WFAAgent.Server
 {
-    public class EventData
+    public class ClientEventData
     {
         public JObject Data { get; set; }
         public string AppId { get; set; }
 
-        public EventData()
+        public ClientEventData()
         {
 
         }

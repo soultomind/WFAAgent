@@ -131,7 +131,7 @@ namespace WFAAgent.Server
             {
                 OnMessageObjectReceived("============ TcpServer_DataReceivedClient");
                 OnMessageObjectReceived(e.ToString());
-                DefaultServerSocket.OnDataReceived(e);
+                DefaultServerSocket.OnClientReceivedData(e);
                 OnMessageObjectReceived("TcpServer_DataReceivedClient ============");
             }
             else
@@ -206,8 +206,18 @@ namespace WFAAgent.Server
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====\n");
         }
 
+
+        private void AgentWebSocketServer_ProcessStartSendData(object sender, StartSendDataEventArgs e)
+        {
+            OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====");
+
+            DefaultServerSocket.OnClientSendData(new DataSendEventArgs());
+
+            OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====");
+        }
+
         #endregion
-        
+
         public void OnRequestClientDataReceived(JObject messageObj)
         {
             string eventName = messageObj[EventConstant.EventName].ToObject<string>();
@@ -220,7 +230,12 @@ namespace WFAAgent.Server
                 {
                     ((ProcessStartEventProcessor)eventProcessor).Started += AgentWebSocketServer_ProcessStarted;
                     ((ProcessStartEventProcessor)eventProcessor).Exited += AgentWebSocketServer_ProcessExited;
+                    ((ProcessStartEventProcessor)eventProcessor).StartSendData += AgentWebSocketServer_ProcessStartSendData;
                     ((ProcessStartEventProcessor)eventProcessor).AgentTcpServerPort = TcpServer.Port;
+                }
+                else if (eventProcessor is ProcessEventDataEventProcessor)
+                {
+                    
                 }
             }
             else
@@ -231,7 +246,7 @@ namespace WFAAgent.Server
             
             JObject data = messageObj[EventConstant.Data] as JObject;
 
-            EventData eventData = new EventData() { Data = data };
+            ClientEventData eventData = new ClientEventData() { Data = data };
             switch (AgentServerSocket)
             {
                 case AgentServerSocket.Web:
