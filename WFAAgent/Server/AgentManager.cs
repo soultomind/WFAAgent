@@ -211,7 +211,7 @@ namespace WFAAgent.Server
         {
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====");
 
-            DefaultServerSocket.OnClientSendData(new DataSendEventArgs());
+            DefaultServerSocket.OnClientSendData(new DataSendEventArgs() { Data = e.Data });
 
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====");
         }
