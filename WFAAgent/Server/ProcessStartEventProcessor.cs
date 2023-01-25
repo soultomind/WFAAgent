@@ -48,11 +48,12 @@ namespace WFAAgent.Server
                         try
                         {
                             fileName = clientEventData.Data[DataFileName].ToObject<string>();
-                            if (clientEventData.Data.ContainsKey(DataUseCallbackData))
+                            
+                            if (clientEventData.Data[DataUseCallbackData] != null)
                             {
                                 useCallbackData = clientEventData.Data[DataUseCallbackData].ToObject<bool>();
                             }
-
+                            
 
                             Process process = null;
                             string arguments = null;

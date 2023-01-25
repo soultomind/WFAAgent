@@ -89,15 +89,20 @@ namespace WFAAgent.Framework.Net.Sockets
 
     public class DataSendEventArgs : EventArgs
     {
-        public byte[] RawData { get; private set; }
-        public string Data { get; private set; }
+        public byte[] RawData { get; set; }
+        public string Data { get; set; }
+
+        public DataSendEventArgs()
+        {
+
+        }
 
         public DataSendEventArgs(byte[] rawData)
         {
             RawData = rawData;
         }
 
-        public DataSend
+        
     }
 
     public class DataReceivedEventArgs : EventArgs
