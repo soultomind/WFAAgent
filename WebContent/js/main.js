@@ -252,24 +252,21 @@ WFAAgent.prototype.wsSend = function (message) {
     }
 }
 
-WFAAgent.prototype.wsProcessStart = function (fileName, data) {
+WFAAgent.prototype.wsProcessStartData = function (startInfo, executeData) {
     if (this._bWsConnect) {
         var sendData = {
-            eventName: "ProcessStart",
+            eventName: "ProcessStartData",
             data: {
-                fileName : fileName
+
             }
         };
 
-        if (typeof data !== "undefined") {
-            for (var prop in data) {
-                sendData.data[prop] = data[prop];
-            }
+        if (typeof startInfo !== "undefined") {
+            sendData.data.startInfo = startInfo;
+        }
 
-        } else {
-            sendData.data = {
-                useCallbackData: false
-            }
+        if (typeof executeData !== "undefined") {
+            sendData.data.executeData = executeData;
         }
 
         this.wsSend(JSON.stringify(sendData));

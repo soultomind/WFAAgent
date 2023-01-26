@@ -145,10 +145,10 @@ namespace WFAAgent.Server
             string text = o.ToString();
             CallbackMessage(text);
 
-            WebSocketSession session = WSServer.GetSessionByID(processInfo.SessionId);
+            WebSocketSession session = WSServer.GetSessionByID(processInfo.AppId);
             if (session != null)
             {
-                CallbackMessage("SessionID=" + processInfo.SessionId);
+                CallbackMessage("SessionID=" + processInfo.AppId);
                 // TODO: processInfo 데이터 정의
                 if (session.TrySend(text))
                 {
@@ -171,10 +171,10 @@ namespace WFAAgent.Server
             string text = o.ToString();
             CallbackMessage(text);
 
-            WebSocketSession session = WSServer.GetSessionByID(processInfo.SessionId);
+            WebSocketSession session = WSServer.GetSessionByID(processInfo.AppId);
             if (session != null)
             {
-                CallbackMessage("SessionID=" + processInfo.SessionId);
+                CallbackMessage("SessionID=" + processInfo.AppId);
                 // TODO: processInfo 데이터 정의
                 if (session.TrySend(text))
                 {
@@ -187,7 +187,7 @@ namespace WFAAgent.Server
             }
             else
             {
-                CallbackMessage(processInfo.SessionId + " 세션을 찾을 수 없습니다.");
+                CallbackMessage(processInfo.AppId + " 세션을 찾을 수 없습니다.");
             }
         }
 

@@ -53,6 +53,7 @@
     <Compile Include="Extension.cs" />
     <Compile Include="Net\AcceptClient.cs" />
     <Compile Include="Net\AgentBinaryData.cs" />
+    <Compile Include="Net\ClientProcessData.cs" />
     <Compile Include="Net\DefaultData.cs" />
     <Compile Include="Net\Packets\BinaryPacket.cs" />
     <Compile Include="Net\Packets\ClientPacket.cs" />
@@ -60,6 +61,8 @@
     <Compile Include="Net\Packets\PacketLength.cs" />
     <Compile Include="Net\Packets\TextPacket.cs" />
     <Compile Include="Net\Packets\WebClientPacket.cs" />
+    <Compile Include="Net\ProcessEventData.cs" />
+    <Compile Include="Net\ProcessStartData.cs" />
     <Compile Include="Net\Sockets\AgentTcpClient.cs" />
     <Compile Include="Net\Sockets\AgentTcpServer.cs" />
     <Compile Include="Net\Sockets\AgentTcpSocketException.cs" />

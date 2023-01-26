@@ -15,12 +15,13 @@ namespace WFAAgent.Server
         
         public string FileName { get; set; }
         public Process Process { get; set; }
-        public string SessionId { get; set; }
+        public string AppId { get; set; }
+        public IntPtr SocketHandle { get; internal set; }
 
         public ProcessInfo()
         {
             Process = null;
-            SessionId = String.Empty;
+            AppId = String.Empty;
         }
 
         public void Close()
@@ -30,7 +31,7 @@ namespace WFAAgent.Server
                 Process.Close();
                 Process = null;
 
-                SessionId = null;
+                AppId = null;
             }
         }
 

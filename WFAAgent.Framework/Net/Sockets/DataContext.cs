@@ -14,9 +14,11 @@ namespace WFAAgent.Framework.Net.Sockets
         public const int DefaultDataPacketHeaderLength = byte.MaxValue;
         public const int FirstHeaderLength = 8;
 
-        public const ushort AcceptClient = 1;
-        public const ushort AgentStringData = 10;
-        public const ushort AgentBinaryData = 11;
+        public const ushort ProcessStartData = 1;
+        public const ushort ProcessEventData = 2;
+        public const ushort AcceptClient = 10;
+        public const ushort AgentStringData = 11;
+        public const ushort AgentBinaryData = 12;
         public const ushort UnknownData = ushort.MaxValue;
 
         public const int TempReceiveBufferSize = 8192;

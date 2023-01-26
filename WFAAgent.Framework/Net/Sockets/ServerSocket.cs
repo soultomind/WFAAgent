@@ -178,13 +178,16 @@ namespace WFAAgent.Framework.Net.Sockets
             StopAcceptClient();
         }
 
-        public int Send(IntPtr handle, string strData)
+        public int Send(IntPtr handle, DataPacket dataPacket, string data)
         {
             try
             {
                 Socket clientSocket = _ClientSockets[handle].Socket;
-                byte[] bytes = Encoding.UTF8.GetBytes(strData);
-                return clientSocket.Send(bytes, bytes.Length, SocketFlags.None);
+                if (clientSocket != null && clientSocket.Connected)
+                {
+                    return ClientSocket.SendSyncClientSocket(clientSocket, dataPacket, data);
+                }
+                return -1;
             }
             catch (KeyNotFoundException)
             {
@@ -192,12 +195,16 @@ namespace WFAAgent.Framework.Net.Sockets
             }
         }
 
-        public int Send(IntPtr handle, byte[] binaryData)
+        public int Send(IntPtr handle, DataPacket dataPacket, byte[] data)
         {
             try
             {
                 Socket clientSocket = _ClientSockets[handle].Socket;
-                return clientSocket.Send(binaryData, binaryData.Length, SocketFlags.None);
+                if (clientSocket != null && clientSocket.Connected)
+                {
+                    return ClientSocket.SendSyncClientSocket(clientSocket, dataPacket, data);
+                }
+                return -1;
             }
             catch (KeyNotFoundException)
             {

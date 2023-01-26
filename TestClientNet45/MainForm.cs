@@ -48,9 +48,9 @@ namespace TestClient
                     Process currentProcess = Process.GetCurrentProcess();
                     CallbackDataProcess = CallbackDataProcess.Parse(data, currentProcess);
                     Toolkit.TraceWriteLine("CallbackDataProcess=" + CallbackDataProcess.ToString());
-                    if (CallbackDataProcess != null)
+                    if (CallbackDataProcess != null && CallbackDataProcess.UseCallBackData)
                     {
-                        TcpClient = new AgentTcpClient();
+                        TcpClient = new AgentTcpClient("127.0.0.1", CallbackDataProcess.AgentTcpServerPort);
                         TcpClient.Connected += TcpClient_Connected;
                         TcpClient.Disconnected += TcpClient_Disconnected;
                         TcpClient.DataReceived += TcpClient_DataReceived;
@@ -79,6 +79,15 @@ namespace TestClient
         private void TcpClient_DataReceived(object sender, WFAAgent.Framework.Net.Sockets.DataReceivedEventArgs e)
         {
             Toolkit.TraceWriteLine("TcpClient_DataReceived");
+            switch (e.Header.Type)
+            {
+                case DataContext.ProcessStartData:
+                    Toolkit.TraceWriteLine("ProcessStartData=" + e.Data);
+                    break;
+                case DataContext.ProcessEventData:
+                    Toolkit.TraceWriteLine("ProcessEventData=" + e.Data);
+                    break;
+            }
         }
 
         private void MainForm_Shown(object sender, EventArgs e)

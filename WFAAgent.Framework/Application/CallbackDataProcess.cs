@@ -24,6 +24,11 @@ namespace WFAAgent.Framework.Application
         public int AgentTcpServerPort { get; set; }
 
         /// <summary>
+        /// 콜백 데이터 여부
+        /// </summary>
+        public bool UseCallBackData { get; set; }
+
+        /// <summary>
         /// 현재 프로세스 Id
         /// </summary>
         public int ProcessId { get; private set; }
@@ -41,7 +46,7 @@ namespace WFAAgent.Framework.Application
         public override string ToString()
         {
             return new StringBuilder()
-                .AppendFormat("AppId={0}, AgentTcpServerPort={1}", AppId, AgentTcpServerPort)
+                .AppendFormat("AppId={0}, AgentTcpServerPort={1}, UseCallBackData={2}", AppId, AgentTcpServerPort, UseCallBackData)
                 .ToString();
         }
 

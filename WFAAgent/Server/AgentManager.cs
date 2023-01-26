@@ -1,10 +1,12 @@
 ﻿using log4net;
 using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Concurrent;
 using System.Net;
 using System.Threading;
 using WFAAgent.Core;
 using WFAAgent.Framework;
+using WFAAgent.Framework.Net;
 using WFAAgent.Framework.Net.Sockets;
 using WFAAgent.Message;
 
@@ -21,6 +23,12 @@ namespace WFAAgent.Server
         public EventProcessorManager EventProcessorManager { get; private set; }
 
         public AgentTcpServer TcpServer { get; private set; }
+
+        private ManualResetEvent SingleProcessEvent = 
+            new ManualResetEvent(false);
+
+        private ConcurrentDictionary<string, ManualResetEvent> MultiProcessEvent = 
+            new ConcurrentDictionary<string, ManualResetEvent>();
 
         public AgentManager()
             : this(AgentServerSocket.Web)
@@ -68,7 +76,7 @@ namespace WFAAgent.Server
             
             try
             {
-                StartTcpServer();
+                // StartTcpServer();
             }
             catch (Exception ex)
             {
@@ -95,7 +103,16 @@ namespace WFAAgent.Server
 
             DefaultServerSocket = null;
 
-            StopTcpServer();
+            try
+            {
+                StopTcpServer();
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex.Message);
+                Log.Error(ex.StackTrace);
+                throw new AgentTcpServerException("Stop Failed AgentTcpServer", ex);
+            }
         }
 
         private void TcpServer_Listen(object sender, ListenEventArgs e)
@@ -121,6 +138,18 @@ namespace WFAAgent.Server
             if (AgentServerSocket == AgentServerSocket.Web)
             {
                 DefaultServerSocket.OnAcceptClientDataReceived(e);
+
+                if (EventProcessorManager.ProcessStartDataEventProcessor.IsMultiProcess)
+                {
+
+                }
+                else
+                {
+                    IntPtr handle = e.ClientSocket.Handle;
+                    EventProcessorManager.ProcessStartDataEventProcessor.SingleProcessInfo.SocketHandle = handle;
+                    SingleProcessEvent.Set();
+                    OnMessageObjectReceived("SingleProcess Set()");
+                }
             }
             OnMessageObjectReceived("TcpServer_AcceptClient ============");
         }
@@ -161,11 +190,11 @@ namespace WFAAgent.Server
             OnMessageObjectReceived("TcpServer_Listen TcpServer_DisconnectedClient");
         }
 
-        private void StartTcpServer()
+        private void StartTcpServer(int port)
         {
             if (TcpServer == null)
             {
-                TcpServer = new AgentTcpServer();
+                TcpServer = new AgentTcpServer("127.0.0.1", port);
                 TcpServer.Listen += new ListenEventHandler(TcpServer_Listen);
                 TcpServer.AcceptClient += new AcceptClientEventHandler(TcpServer_AcceptClient);
                 TcpServer.ClientDataReceived += new WFAAgent.Framework.Net.Sockets.DataReceivedEventhandler(TcpServer_DataReceivedClient);
@@ -188,32 +217,84 @@ namespace WFAAgent.Server
         }
 
         #region Process Event
-        private void AgentWebSocketServer_ProcessStarted(object sender, EventArgs e)
+
+
+        private void AgentManager_StartAgentTcpServer(object sender, StartAgentTcpServerEventArgs e)
+        {
+            try
+            {
+                StartTcpServer(e.Port);
+            }
+            catch (Exception ex)
+            {
+                OnMessageObjectReceived(ex.ToString());
+            }
+        }
+
+        private void AgentManager_ProcessStarted(object sender, ProcessStartedEventArgs e)
         {
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessStarted =====");
 
-            DefaultServerSocket.OnProcessStarted(sender as ProcessInfo);
+            DefaultServerSocket.OnProcessStarted(e.ProcessInfo);
 
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessStarted =====\n");
         }
 
-        private void AgentWebSocketServer_ProcessExited(object sender, EventArgs e)
+        private void AgentManager_ProcessExited(object sender, ProcessExitedEventArgs e)
         {
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====");
 
-            DefaultServerSocket.OnProcessExited(sender as ProcessInfo);
+            DefaultServerSocket.OnProcessExited(e.ProcessInfo);
 
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====\n");
         }
 
 
-        private void AgentWebSocketServer_ProcessStartSendData(object sender, StartSendDataEventArgs e)
+        private void AgentTcpServer_ProcessStartSendData(object sender, ProcessStartedSendDataEventArgs e)
         {
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====");
 
-            DefaultServerSocket.OnClientSendData(new DataSendEventArgs() { Data = e.Data });
+            if (EventProcessorManager.ProcessStartDataEventProcessor.IsMultiProcess)
+            {
+
+            }
+            else
+            {
+                SingleProcessEvent.WaitOne();
+                OnMessageObjectReceived("SingleProcess WaitOne()");
+                TcpServer.SendProcessStartData(new ProcessStartData()
+                {
+                    AppId = e.ProcessInfo.AppId,
+                    Data = e.Data,
+                    ProcessId = e.ProcessInfo.Process.Id,
+                    SocketHandle = e.ProcessInfo.SocketHandle
+                });
+            }
 
             OnMessageObjectReceived("===== AgentWebSocketServer_ProcessExited =====");
+        }
+
+        private void AgentManager_ProcessEventSendData(object sender, ProcessEventSendDataEventArgs e)
+        {
+            OnMessageObjectReceived("===== AgentManager_ProcessEventSendData =====");
+
+            if (EventProcessorManager.ProcessStartDataEventProcessor.IsMultiProcess)
+            {
+
+            }
+            else
+            {
+                ProcessInfo singleProcessInfo = EventProcessorManager.ProcessStartDataEventProcessor.SingleProcessInfo;
+                TcpServer.SendProcessEventData(new ProcessEventData()
+                {
+                    AppId = singleProcessInfo.AppId,
+                    Data = e.Data,
+                    ProcessId = singleProcessInfo.Process.Id,
+                    SocketHandle = singleProcessInfo.SocketHandle
+                });
+            }
+
+            OnMessageObjectReceived("===== AgentManager_ProcessEventSendData =====");
         }
 
         #endregion
@@ -226,16 +307,16 @@ namespace WFAAgent.Server
             if (!EventProcessorManager.EventProcessors.ContainsKey(eventName))
             {
                 eventProcessor = EventProcessorManager.AddStartsWithByEventName(eventName);
-                if (eventProcessor is ProcessStartEventProcessor)
+                if (eventProcessor is ProcessStartDataEventProcessor)
                 {
-                    ((ProcessStartEventProcessor)eventProcessor).Started += AgentWebSocketServer_ProcessStarted;
-                    ((ProcessStartEventProcessor)eventProcessor).Exited += AgentWebSocketServer_ProcessExited;
-                    ((ProcessStartEventProcessor)eventProcessor).StartSendData += AgentWebSocketServer_ProcessStartSendData;
-                    ((ProcessStartEventProcessor)eventProcessor).AgentTcpServerPort = TcpServer.Port;
+                    ((ProcessStartDataEventProcessor)eventProcessor).ProcessStarted += AgentManager_ProcessStarted;
+                    ((ProcessStartDataEventProcessor)eventProcessor).ProcessExited += AgentManager_ProcessExited;
+                    ((ProcessStartDataEventProcessor)eventProcessor).ProcessStartedSendData += AgentTcpServer_ProcessStartSendData;
+                    ((ProcessStartDataEventProcessor)eventProcessor).StartAgentTcpServer += AgentManager_StartAgentTcpServer;
                 }
                 else if (eventProcessor is ProcessEventDataEventProcessor)
                 {
-                    
+                    ((ProcessEventDataEventProcessor)eventProcessor).ProcessEventSendData += AgentManager_ProcessEventSendData;
                 }
             }
             else

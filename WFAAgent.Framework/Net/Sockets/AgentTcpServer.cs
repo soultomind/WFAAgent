@@ -85,5 +85,22 @@ namespace WFAAgent.Framework.Net.Sockets
         {
             ServerSocket.Stop();
         }
+
+        public void SendProcessStartData(ProcessStartData data)
+        {
+            DataPacket dataPakcet = new DataPacket(DataContext.ProcessStartData, data.AppId, data.ProcessId);
+            ServerSocket.Send(data.SocketHandle, dataPakcet, data.Data);
+        }
+
+        public void SendProcessEventData(ProcessEventData data)
+        {
+            DataPacket dataPakcet = new DataPacket(DataContext.ProcessEventData, data.AppId, data.ProcessId);
+            ServerSocket.Send(data.SocketHandle, dataPakcet, data.Data);
+        }
+
+        public void Send(DataPacket dataPacket, string data)
+        {
+            
+        }
     }
 }

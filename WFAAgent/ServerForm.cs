@@ -98,6 +98,7 @@ namespace WFAAgent
         {
             if (TerminalDialog == null)
             {
+                // TODO: 미리 켜놓고 숨긴상태로 미리 메시지 추가해놓기
                 TerminalDialog = new TerminalDialog();
                 TerminalDialog.Shown += TerminalDialog_Shown;
                 TerminalDialog.FormClosed += TerminalDlg_FormClosed;

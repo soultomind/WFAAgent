@@ -94,6 +94,11 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Server\ProcessEventDataEventProcessor.cs" />
+    <Compile Include="Server\ProcessEventSendDataEventArgs.cs" />
+    <Compile Include="Server\ProcessExitedEventArgs.cs" />
+    <Compile Include="Server\ProcessStartedEventArgs.cs" />
+    <Compile Include="Server\ProcessStartedSendDataEventArgs.cs" />
+    <Compile Include="Server\StartAgentTcpServerEventArgs.cs" />
     <Compile Include="Server\StartSendDataEventArgs.cs" />
     <Compile Include="Toolkit.cs" />
     <Compile Include="Core\LogLevel.cs" />
@@ -106,7 +111,7 @@
     <Compile Include="Server\EventProcessor.cs" />
     <Compile Include="Server\EventProcessorManager.cs" />
     <Compile Include="Server\IEventProcessor.cs" />
-    <Compile Include="Server\ProcessStartEventProcessor.cs" />
+    <Compile Include="Server\ProcessStartDataEventProcessor.cs" />
     <Compile Include="Server\ProcessInfo.cs" />
     <Compile Include="Message\DetailMessageItem.cs" />
     <Compile Include="Core\ItemQueue.cs" />

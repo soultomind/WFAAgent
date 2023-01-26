@@ -30,7 +30,7 @@
             </div>
             <textarea id="wsExecuteFileName" cols="100" rows="10">C:\\Workspace\\GitProject\\WFAAgent\\TestClientNet45\\bin\\Debug\\TestClientNet45.exe</textarea>
             <div>
-                <button type="button" onclick="wsProcessStart()">
+                <button type="button" onclick="wsProcessStartData()">
                     프로세스 실행
                 </button>
             </div>
@@ -122,12 +122,20 @@
             agent.wsConnect();
         }
 
-        function wsProcessStart() {
+        function wsProcessStartData() {
             var fileName = document.getElementById("wsExecuteFileName").value;
-            var data = {
-                useCallbackData: true
+
+            var startInfo = {
+                fileName : fileName,
+                useCallbackData : true,
             };
-            agent.wsProcessStart(fileName, data);
+
+            var executeData = {
+                nos7:"son7",
+                port:33005
+            };
+
+            agent.wsProcessStartData(startInfo, executeData);
         }
 
         function wsProcessEventData() {

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using log4net;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -10,24 +11,26 @@ using WFAAgent.Server;
 
 namespace WFAAgent.Server
 {
-    public delegate void StartedEventHandler(object sender, EventArgs e);
-    public delegate void ExitedEventHandler(object sender, EventArgs e);
-    public delegate void StartSendDataEventHandler(object sender, StartSendDataEventArgs e);
-
-    public class ProcessStartEventProcessor : EventProcessor
+    public class ProcessStartDataEventProcessor : EventProcessor
     {
-        public readonly string DataFileName = "fileName";
-        public readonly string DataUseCallbackData = "useCallbackData";
+        public readonly string StartInfoObj = "startInfo";
+        public readonly string StartInfoObj_FileNameProp = "fileName";
+        public readonly string StartInfoObj_UseCallbackData = "useCallbackData";
+        
+        public readonly string ExecuteDataObj = "executeData";
+        public readonly string ExecuteDataObj_Port = "port";
+
+        private static ILog Log = LogManager.GetLogger(typeof(AgentManager));
 
         public bool IsMultiProcess { get; set; }
-        public int AgentTcpServerPort { get; set; }
         public List<ProcessInfo> ProcessList { get; set; }
-        public ProcessInfo ProcessInfo { get; private set; }
+        public ProcessInfo SingleProcessInfo { get; private set; }
 
 
-        public event StartedEventHandler Started;
-        public event ExitedEventHandler Exited;
-        public event StartSendDataEventHandler StartSendData;
+        public event EventHandler<StartAgentTcpServerEventArgs> StartAgentTcpServer;
+        public event EventHandler<ProcessStartedEventArgs> ProcessStarted;
+        public event EventHandler<ProcessExitedEventArgs> ProcessExited;
+        public event EventHandler<ProcessStartedSendDataEventArgs> ProcessStartedSendData;
 
         private static object _Lock = new object();
 
@@ -36,55 +39,53 @@ namespace WFAAgent.Server
             if (IsMultiProcess)
             {
                 // TODO: 추후에는 다중 프로세스 처리 필요함!
+                
+                // AppId 가 키가 되어 프로세스정보저장
             }
             else
             {
                 lock (_Lock)
                 {
-                    if (ProcessInfo == null)
+                    if (SingleProcessInfo == null)
                     {
-                        string fileName = String.Empty;
-                        bool useCallbackData = false;
                         try
                         {
-                            fileName = clientEventData.Data[DataFileName].ToObject<string>();
+                            JObject startInfoObj = null, executeDataObj = null;
                             
-                            if (clientEventData.Data[DataUseCallbackData] != null)
-                            {
-                                useCallbackData = clientEventData.Data[DataUseCallbackData].ToObject<bool>();
-                            }
-                            
+                            startInfoObj = clientEventData.Data[StartInfoObj] as JObject;
+
+                            bool useCallbackData = (startInfoObj[StartInfoObj_UseCallbackData] != null) ?
+                                startInfoObj[StartInfoObj_UseCallbackData].ToObject<bool>() : false;
 
                             Process process = null;
-                            string arguments = null;
+                            string fileName = startInfoObj[StartInfoObj_FileNameProp].ToObject<string>();
                             if (useCallbackData)
                             {
                                 string sessionID = clientEventData.AppId;
-                                int agentTcpServerPort = AgentTcpServerPort;
+
+                                executeDataObj = clientEventData.Data[ExecuteDataObj] as JObject;
+                                int agentTcpServerPort = executeDataObj[ExecuteDataObj_Port].ToObject<int>();
+
+                                // TODO: 클라이언트와 통신하는 서버소켓 시작 AgentTcpServerPort 정보로 (웹 클라이언트)
+                                StartAgentTcpServer?.Invoke(this, new StartAgentTcpServerEventArgs(agentTcpServerPort));
 
                                 Process newProcess = new Process();
 
                                 JObject argObj = new JObject();
                                 argObj.Add(Constant.AppID, sessionID);
                                 argObj.Add(Constant.AgentTcpServerPort, agentTcpServerPort);
+                                argObj.Add(Constant.UseCallBackData, true);
                                 //argObj.Add(Constant.ProcessId, newProcess.Id);
 
-                                arguments = ConvertUtility.Base64Encode(argObj.ToString());
+                                string arguments = ConvertUtility.Base64Encode(argObj.ToString());
                                 newProcess.StartInfo = new ProcessStartInfo(fileName, arguments);
                                 newProcess.StartInfo.UseShellExecute = false;
                                 newProcess.StartInfo.Verb = "runas";
 
                                 newProcess.StartInfo.RedirectStandardError = true;
-                                if (newProcess.StartInfo.RedirectStandardError)
-                                {
-                                    newProcess.ErrorDataReceived += Process_ErrorDataReceived;
-                                }
-
+                                newProcess.ErrorDataReceived += Process_ErrorDataReceived;
                                 newProcess.StartInfo.RedirectStandardOutput = true;
-                                if (newProcess.StartInfo.RedirectStandardOutput)
-                                {
-                                    newProcess.OutputDataReceived += Process_OutputDataReceived;
-                                }
+                                newProcess.OutputDataReceived += Process_OutputDataReceived;
 
                                 if (newProcess.Start())
                                 {
@@ -98,34 +99,30 @@ namespace WFAAgent.Server
 
                             if (process != null)
                             {
-                                if (process.StartInfo.RedirectStandardError)
-                                {
-                                    process.BeginErrorReadLine();
-                                }
-                                
-                                if (process.StartInfo.RedirectStandardOutput)
-                                {
-                                    process.BeginOutputReadLine();
-                                }
+                                SetProcessEvent(process);
 
-                                process.EnableRaisingEvents = true;
-                                ProcessInfo = new ProcessInfo()
+                                SingleProcessInfo = new ProcessInfo()
                                 {
                                     FileName = fileName,
                                     Process = process,
-                                    SessionId = clientEventData.AppId
+                                    AppId = clientEventData.AppId
                                 };
 
-                                // Exited Event Enabled
-                                ProcessInfo.Process.EnableRaisingEvents = true;
-                                ProcessInfo.Process.Exited += Process_Exited;
+                                ProcessStarted?.Invoke(this, new ProcessStartedEventArgs(SingleProcessInfo));
 
-                                Started?.Invoke(ProcessInfo, EventArgs.Empty);
+                                if (useCallbackData && clientEventData.Data[ExecuteDataObj] != null)
+                                {
+                                    string data = clientEventData.Data[ExecuteDataObj].ToString();
+                                    ProcessStartedSendData?.Invoke(this, new ProcessStartedSendDataEventArgs(data)
+                                    {
+                                        ProcessInfo = SingleProcessInfo
+                                    });
+                                }
                             }
                         }
                         catch (Exception ex)
                         {
-                            
+                            Log.Error(ex);
                         }
                     }
                     else
@@ -134,6 +131,22 @@ namespace WFAAgent.Server
                     }
                 }
             }
+        }
+
+        private void SetProcessEvent(Process process)
+        {
+            if (process.StartInfo.RedirectStandardError)
+            {
+                process.BeginErrorReadLine();
+            }
+
+            if (process.StartInfo.RedirectStandardOutput)
+            {
+                process.BeginOutputReadLine();
+            }
+
+            process.EnableRaisingEvents = true;
+            process.Exited += Process_Exited;
         }
 
         private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
@@ -163,7 +176,7 @@ namespace WFAAgent.Server
                 {
                     if (item.Process.Id == id)
                     {
-                        Exited?.Invoke(item, e);
+                        ProcessExited?.Invoke(this, new ProcessExitedEventArgs(item));
 
                         item.Close();
                         ProcessList.Remove(item);
@@ -175,9 +188,9 @@ namespace WFAAgent.Server
             {
                 lock (_Lock)
                 {
-                    Exited?.Invoke(ProcessInfo, e);
-                    ProcessInfo.Close();
-                    ProcessInfo = null;
+                    ProcessExited?.Invoke(this, new ProcessExitedEventArgs(SingleProcessInfo));
+                    SingleProcessInfo.Close();
+                    SingleProcessInfo = null;
                 }
             }
         }

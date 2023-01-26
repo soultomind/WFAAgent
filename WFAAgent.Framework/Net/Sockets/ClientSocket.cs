@@ -108,15 +108,26 @@ namespace WFAAgent.Framework.Net.Sockets
         }
 
         #region Sync
-        private int Socket_Send(DataPacket packet, string data)
+
+        public static int SendSyncClientSocket(Socket clientSocket, DataPacket dataPacket, string data)
         {
-            byte[] sendData = packet.ToPacketBytes(data);
-            return Socket.Send(sendData, 0, sendData.Length, SocketFlags.None);
+            byte[] sendData = dataPacket.ToPacketBytes(data);
+            return clientSocket.Send(sendData, 0, sendData.Length, SocketFlags.None);
         }
-        private int Socket_Send(DataPacket packet, byte[] data)
+
+        public static int SendSyncClientSocket(Socket clientSocket, DataPacket dataPacket, byte[] data)
         {
-            byte[] sendData = packet.ToPacketBytes(data);
-            return Socket.Send(sendData, 0, sendData.Length, SocketFlags.None);
+            byte[] sendData = dataPacket.ToPacketBytes(data);
+            return clientSocket.Send(sendData, 0, sendData.Length, SocketFlags.None);
+        }
+
+        protected int Socket_Send(DataPacket dataPacket, string data)
+        {
+            return SendSyncClientSocket(Socket, dataPacket, data);
+        }
+        protected int Socket_Send(DataPacket dataPacket, byte[] data)
+        {
+            return SendSyncClientSocket(Socket, dataPacket, data);
         }
         public int Send(DataPacket packet, string data)
         {
@@ -140,8 +151,16 @@ namespace WFAAgent.Framework.Net.Sockets
         {
             if (CanUseSocket)
             {
-                int sendBytes = Socket_Send(packet, data);
-                return sendBytes;
+                try
+                {
+                    int sendBytes = Socket_Send(packet, data);
+                    return sendBytes;
+                }
+                catch (Exception ex)
+                {
+                    Error(ex);
+                    throw;
+                }
             }
             return -1;
         }

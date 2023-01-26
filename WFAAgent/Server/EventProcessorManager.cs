@@ -21,6 +21,8 @@ namespace WFAAgent.Server
         }
         private ConcurrentDictionary<string, IEventProcessor> _EventProcessors;
 
+        public ProcessStartDataEventProcessor ProcessStartDataEventProcessor { get; private set; }
+
         public EventProcessorManager()
         {
             _EventProcessors = new ConcurrentDictionary<string, IEventProcessor>();
@@ -67,6 +69,12 @@ namespace WFAAgent.Server
                     }
                 }
             }
+
+            if (eventProcessor.GetType() == typeof(ProcessStartDataEventProcessor))
+            {
+                ProcessStartDataEventProcessor = eventProcessor as ProcessStartDataEventProcessor;
+            }
+
             return eventProcessor;
         }
     }
