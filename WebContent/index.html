@@ -13,11 +13,11 @@
     </div>
     <div>
         <div>
-            <span id="wsStatus">연결상태 : </span>
+            <span id="spanWsStatus">연결상태 : </span>
         </div>
         
         <div>
-            <button type="button" class="btn btn-primary" onclick="wsConnect()">
+            <button id="btnWsConnectAndDisconnect" type="button" class="btn btn-primary" onclick="wsConnectAndDisconnect()">
                 웹 소켓 연결
             </button>                
         </div>
@@ -35,10 +35,7 @@
                 </button>
             </div>
 
-            <textarea id="eventData" cols="100" rows="10"></textarea>
-
             <div>
-                <label>이벤트 데이터 이름 : <input type="text" id="eventDataName"/></label>
                 <button type="button" onclick="wsProcessEventData()">
                     이벤트 데이터 전송
                 </button>
@@ -60,7 +57,13 @@
     <script>
         function wsStatus(value) {
             var innerText = "연결상태 : " + value;
-            document.getElementById("wsStatus").innerText = innerText;
+            document.getElementById("spanWsStatus").innerText = innerText;
+
+            if (value === "O") {
+                document.getElementById("btnWsConnectAndDisconnect").innerText = "웹 소켓 연결 해제";
+            } else {
+                document.getElementById("btnWsConnectAndDisconnect").innerText = "웹 소켓 연결";
+            }
         }
 
         var config = {
@@ -118,8 +121,13 @@
             window.console.log(JSON.stringify(e));
         });
 
-        function wsConnect() {
-            agent.wsConnect();
+        function wsConnectAndDisconnect() {
+            if (agent.isWsConnect()) {
+                agent.wsDisconnect();
+            } else {
+                agent.wsConnect();
+            }
+            
         }
 
         function wsProcessStartData() {
@@ -131,7 +139,7 @@
             };
 
             var executeData = {
-                nos7:"son7",
+                data: { testData : "testData" },
                 port:33005
             };
 
@@ -139,9 +147,7 @@
         }
 
         function wsProcessEventData() {
-            var eventDataName = document.getElementById("eventDataName").value;
-            var data = document.getElementById("eventData").value;
-            agent.wsProcessEventData(eventDataName, data);
+            agent.wsProcessEventData("UserEvent", { userEventData : "userEventData" });
         }
     </script>
 </body>

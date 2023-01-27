@@ -202,6 +202,10 @@ WFAAgent.prototype.OnClientEventCallbackHandler = function (e) {
     }
 };
 
+WFAAgent.prototype.isWsConnect = function () {
+    return this._bWsConnect;
+};
+
 WFAAgent.prototype.wsConnect = function () {
     try {
         var url = "";
@@ -234,6 +238,7 @@ WFAAgent.prototype.wsConnect = function () {
         }
 
         this._WebSocket.onclose = function (e) {
+            parent._bWsConnect = false;
             if (parent._evtWsOnCloseEventHandler != null) {
                 parent._evtWsOnCloseEventHandler(e);
             }
@@ -243,6 +248,12 @@ WFAAgent.prototype.wsConnect = function () {
     } catch (e) {
         error("Create failed WebSocket");
         error(e.stack);
+    }
+};
+
+WFAAgent.prototype.wsDisconnect = function () {
+    if (this._bWsConnect) {
+        this._WebSocket.close();
     }
 };
 
