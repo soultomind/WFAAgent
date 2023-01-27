@@ -18,9 +18,12 @@ namespace WFAAgent.Server
         public override void DoProcess(ClientEventData clientEventData)
         {
             JObject data = clientEventData.Data;
-            Toolkit.TraceWriteLine(data.ToString());
 
-            
+            ProcessEventSendData?.Invoke(this, new ProcessEventSendDataEventArgs()
+            {
+                AppId = clientEventData.AppId,
+                Data = data.ToString()
+            });
         }
     }
 }

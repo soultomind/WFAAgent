@@ -8,7 +8,7 @@ namespace WFAAgent.Server
 {
     public class ProcessEventSendDataEventArgs : EventArgs
     {
-        public string Data { get; private set; }
+        public string Data { get; internal set; }
         public string AppId { get; internal set; }
     }
 }
