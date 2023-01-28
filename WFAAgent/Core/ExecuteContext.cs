@@ -4,8 +4,9 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WFAAgent.Framework.Application;
 
-namespace WFAAgent
+namespace WFAAgent.Core
 {
     public class ExecuteContext
     {
@@ -34,28 +35,23 @@ namespace WFAAgent
             ArgsDictionary = new Dictionary<string, string>();
         }
 
-        public Execute Execute
+        internal Execute Execute
         {
             get; set;
         }
 
-        public Dictionary<string, string> ArgsDictionary
+        internal Dictionary<string, string> ArgsDictionary
         {
             get; set;
         }
 
-        public Dictionary<string, string> CopyArgsDirectory
+        internal Dictionary<string, string> CopyArgsDirectory
         {
             get
             {
                 Dictionary<string, string> copyArgsDictionary = new Dictionary<string, string>(ArgsDictionary);
                 return copyArgsDictionary;
             }
-        }
-
-        public string[] UserCommandLineArgs
-        {
-            get; set;
         }
 
         private static ExecuteContext Create(Execute execute)
@@ -76,7 +72,12 @@ namespace WFAAgent
             return context;
         }
 
-        public static string ExecuteMonitoringArgs
+        internal static string[] ExecCommandLineArgs
+        {
+            get; set;
+        }
+
+        internal static string ExecuteMonitoringArgs
         {
             get
             {
@@ -84,7 +85,7 @@ namespace WFAAgent
             }
         }
 
-        public static string ExecuteServerArgs
+        internal static string ExecuteServerArgs
         {
             get
             {
@@ -92,12 +93,12 @@ namespace WFAAgent
             }
         }
 
-        public static string[] ExecCommandLineArgs
+        internal string[] UserCommandLineArgs
         {
             get; set;
         }
 
-        public static ExecuteContext Parse(string[] args)
+        internal static ExecuteContext Parse(string[] args)
         {
             ExecuteContext o = new ExecuteContext();
             o.UserCommandLineArgs = args;
@@ -118,7 +119,7 @@ namespace WFAAgent
             return o;
         }
 
-        public static string MakeStringArgs(Dictionary<string, string> args)
+        internal static string MakeStringArgs(Dictionary<string, string> args)
         {
             StringBuilder builder = new StringBuilder();
             for (int index = 0; index < args.Count; index++)
@@ -133,6 +134,14 @@ namespace WFAAgent
                 }
             }
             return builder.ToString();
+        }
+
+        internal static Dictionary<string, string> MakeServerDictionaryArgs()
+        {
+            // 모니터링 Pid 같이 실행인자로 추가하여 넘겨주기
+            Dictionary<string, string> dictionary = ExecuteContext.Server.CopyArgsDirectory;
+            dictionary.Add(Constant.ParentProcessId, Process.GetCurrentProcess().Id.ToString());
+            return dictionary;
         }
     }
     

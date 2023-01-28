@@ -2,7 +2,7 @@
 using System.Globalization;
 using WFAAgent.Core;
 
-namespace WFAAgent.Message
+namespace WFAAgent.Server
 {
     public class MessageItem
     {
@@ -17,7 +17,7 @@ namespace WFAAgent.Message
 
         public MessageItem()
         {
-            LogLevel = LogLevel.Info;
+            LogLevel = LogLevel.Debug;
             Message = String.Empty;
             NowDateTime = NowToString();
         }

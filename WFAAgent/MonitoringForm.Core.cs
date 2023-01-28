@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WFAAgent.Core;
 using WFAAgent.Framework.Application;
 
 namespace WFAAgent
@@ -34,15 +35,17 @@ namespace WFAAgent
             // 관리자권한(모니터링), 관리자권한,일반(서버) 로 구성하여 개발해보고자 한다.
 
             // 실제 테스트를 하려면 실행 파일 더블클릭하여 실행 (VS에서 Ctrl + F5 ) X
-            bool isCurrentProcessExecuteAdministrator = Toolkit.IsCurrentProcessAdministrator();
-            _isCurrentProcessExecuteAdministrator = isCurrentProcessExecuteAdministrator;
+            _isCurrentProcessExecuteAdministrator = Toolkit.IsCurrentProcessExecuteAdministrator();
+
+#if MONITORING_DEBUG
+            Process currentProcess = Process.GetCurrentProcess();
+            bool useShellExecute = currentProcess.StartInfo.UseShellExecute;
+            MessageBox.Show(String.Format("Monitoring IsCurrentProcessExecuteAdministrator={0}, UseShellExecute={1}",
+                _isCurrentProcessExecuteAdministrator,
+                useShellExecute), "MONITORING_DEBUG CONDITION COMPILE");
+#endif
 
             string[] cmdLineArgs = null;
-            if (Debugger.IsAttached && isCurrentProcessExecuteAdministrator && ExecuteContext.ExecCommandLineArgs.Length == 0)
-            {
-                isCurrentProcessExecuteAdministrator = false;
-            }
-
             if (ExecuteContext.ExecCommandLineArgs.Length == 0)
             {
                 // 최초 처음 실행 사용자 인자
@@ -54,11 +57,7 @@ namespace WFAAgent
                 cmdLineArgs = ExecuteContext.ExecCommandLineArgs;
             }
 
-            if (isCurrentProcessExecuteAdministrator)
-            {
-                // Do nothing
-            }
-            else
+            if (_isCurrentProcessExecuteAdministrator == false)
             {
                 // 최초 처음 실행 사용자 인자
                 if ((cmdLineArgs != null && cmdLineArgs.Length == 1))

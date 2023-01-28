@@ -178,7 +178,7 @@ namespace WFAAgent
             }
         }
 
-        internal static bool IsCurrentProcessAdministrator()
+        internal static bool IsCurrentProcessExecuteAdministrator()
         {
             bool flag;
 

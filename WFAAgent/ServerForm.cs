@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using WFAAgent.Core;
 using WFAAgent.Framework.Win32;
-using WFAAgent.Message;
 using WFAAgent.Server;
 
 namespace WFAAgent
@@ -27,7 +26,7 @@ namespace WFAAgent
             _MessageItemQueueAppendWorker = new MessageItemQueueAppendWorker<MessageItem>();
             _MessageItemQueueAppendWorker.MessageItemReceived += MessageItemQueueAppendWorker_MessageItemReceived;
 
-            Text = String.Format("WFAAgent.ServerForm Administrator={0}", Toolkit.IsCurrentProcessAdministrator());
+            Text = String.Format("WFAAgent.ServerForm Administrator={0}", Toolkit.IsCurrentProcessExecuteAdministrator());
         }
 
         #region Properties

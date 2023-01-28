@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using WFAAgent.Core;
 using WFAAgent.Framework.Application;
 using WFAAgent.Framework.Win32;
 
@@ -23,7 +24,7 @@ namespace WFAAgent
 
             InitializeTaskbarTray();
 
-            Text = String.Format("WFAAgent.MonitoringForm Administrator={0}", Toolkit.IsCurrentProcessAdministrator());
+            Text = String.Format("WFAAgent.MonitoringForm Administrator={0}", Toolkit.IsCurrentProcessExecuteAdministrator());
         }
 
         #region Properties
@@ -42,7 +43,7 @@ namespace WFAAgent
 
         private void MonitoringForm_Load(object sender, EventArgs e)
         {
-            Text = String.Format("WFAAgent.MonitoringForm Administrator={0}", Toolkit.IsCurrentProcessAdministrator());
+            Text = String.Format("WFAAgent.MonitoringForm Administrator={0}", Toolkit.IsCurrentProcessExecuteAdministrator());
 
             LoadProcess();
         }

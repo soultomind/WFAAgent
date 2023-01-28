@@ -8,7 +8,6 @@ using WFAAgent.Core;
 using WFAAgent.Framework;
 using WFAAgent.Framework.Net;
 using WFAAgent.Framework.Net.Sockets;
-using WFAAgent.Message;
 
 namespace WFAAgent.Server
 {
@@ -46,6 +45,35 @@ namespace WFAAgent.Server
         {
             // TODO: MessageItem 작업
             MessageObjectReceived?.Invoke(messageObject);
+        }
+
+        internal void OnDebugMessageItem(string message)
+        {
+            MessageItem messageItem = new MessageItem() { LogLevel = LogLevel.Debug, Message = message };
+            OnMessageItem(messageItem);
+        }
+
+        internal void OnInfoMessageItem(string message)
+        {
+            MessageItem messageItem = new MessageItem() { LogLevel = LogLevel.Info, Message = message };
+            OnMessageItem(messageItem);
+        }
+
+        internal void OnWarnMessageItem(string message)
+        {
+            MessageItem messageItem = new MessageItem() { LogLevel = LogLevel.Warn, Message = message };
+            OnMessageItem(messageItem);
+        }
+
+        internal void OnErrorMessageItem(string message)
+        {
+            MessageItem messageItem = new MessageItem() { LogLevel = LogLevel.Error, Message = message };
+            OnMessageItem(messageItem);
+        }
+
+        private void OnMessageItem(MessageItem messageItem)
+        {
+            MessageObjectReceived?.Invoke(messageItem);
         }
 
         public void StartServer()

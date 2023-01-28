@@ -4,7 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WFAAgent.Message
+namespace WFAAgent
 {
-    public delegate void MessageObjectReceivedEventHandler(object messageObject);
+    public enum LogLevel
+    {
+        Debug, Info, Warn, Error
+    }
 }

@@ -23,7 +23,8 @@ namespace WFAAgent.Server
         private static ILog Log = LogManager.GetLogger(typeof(AgentManager));
 
         public bool IsMultiProcess { get; set; }
-        public List<ProcessInfo> ProcessList { get; set; }
+
+        public IDictionary<string, ProcessInfo> MultiProcessInfos;
         public ProcessInfo SingleProcessInfo { get; private set; }
 
 
@@ -41,6 +42,20 @@ namespace WFAAgent.Server
                 // TODO: 추후에는 다중 프로세스 처리 필요함!
                 
                 // AppId 가 키가 되어 프로세스정보저장
+
+                if (MultiProcessInfos == null)
+                {
+                    lock (_Lock)
+                    {
+                        if (MultiProcessInfos == null)
+                        {
+                            MultiProcessInfos = new Dictionary<string, ProcessInfo>();
+                        }
+                    }
+                }
+
+
+                
             }
             else
             {
@@ -172,14 +187,15 @@ namespace WFAAgent.Server
             if (IsMultiProcess)
             {
                 int id = (sender as Process).Id;
-                foreach (ProcessInfo item in ProcessList)
+                foreach (ProcessInfo item in MultiProcessInfos.Values)
                 {
                     if (item.Process.Id == id)
                     {
                         ProcessExited?.Invoke(this, new ProcessExitedEventArgs(item));
 
+                        string appId = item.AppId;
                         item.Close();
-                        ProcessList.Remove(item);
+                        MultiProcessInfos.Remove(appId);
                         break;
                     }
                 }

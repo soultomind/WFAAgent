@@ -30,8 +30,6 @@ namespace WFAAgent.Server
             {
                 Process.Close();
                 Process = null;
-
-                AppId = null;
             }
         }
 

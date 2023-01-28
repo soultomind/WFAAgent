@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
+using WFAAgent.Core;
 
 namespace WFAAgent
 {
@@ -41,8 +42,9 @@ namespace WFAAgent
             else
             {
 #if DEBUG
-                bool isCurrentProcessAdministrator = Toolkit.IsCurrentProcessAdministrator();
-                MessageBox.Show("DEBUG IsCurrentProcessAdministrator=" + isCurrentProcessAdministrator);
+                bool isCurrentProcessExecuteAdministrator = Toolkit.IsCurrentProcessExecuteAdministrator();
+                MessageBox.Show(String.Format("IsCurrentProcessExecuteAdministrator={0}, Args.Length={1}, Args[0]={2}",
+                    isCurrentProcessExecuteAdministrator, args.Length, args[0]), "DEBUG CONDITION COMPILE");
 #endif
             }
             new Main().Run(args);

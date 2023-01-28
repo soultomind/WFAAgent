@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;MONITORING_DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -78,6 +78,7 @@
     <Compile Include="MonitoringForm.Core.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="Monitoring\ServerProcessWatcher.cs" />
     <Compile Include="ServerForm.Core.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -101,7 +102,7 @@
     <Compile Include="Server\StartAgentTcpServerEventArgs.cs" />
     <Compile Include="Server\StartSendDataEventArgs.cs" />
     <Compile Include="Toolkit.cs" />
-    <Compile Include="Core\LogLevel.cs" />
+    <Compile Include="LogLevel.cs" />
     <Compile Include="Server\DefaultServerSocketException.cs" />
     <Compile Include="Server\DefaultServerSocket.cs" />
     <Compile Include="Server\EventProcessState.cs" />
@@ -113,11 +114,11 @@
     <Compile Include="Server\IEventProcessor.cs" />
     <Compile Include="Server\ProcessStartDataEventProcessor.cs" />
     <Compile Include="Server\ProcessInfo.cs" />
-    <Compile Include="Message\DetailMessageItem.cs" />
+    <Compile Include="Server\DetailMessageItem.cs" />
     <Compile Include="Core\ItemQueue.cs" />
-    <Compile Include="Message\MessageItem.cs" />
+    <Compile Include="Server\MessageItem.cs" />
     <Compile Include="Core\MessageItemQueueAppendWorker.cs" />
-    <Compile Include="Message\MessageObjectReceivedEventHandler.cs" />
+    <Compile Include="Server\MessageObjectReceivedEventHandler.cs" />
     <Compile Include="InfoDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -130,7 +131,7 @@
     <Compile Include="TerminalDialog.Designer.cs">
       <DependentUpon>TerminalDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExecuteContext.cs" />
+    <Compile Include="Core\ExecuteContext.cs" />
     <Compile Include="Server\IAgentManager.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="ServerForm.cs">
@@ -192,7 +193,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Monitoring\" />
+    <Folder Include="Message\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions />
