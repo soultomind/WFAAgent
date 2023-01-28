@@ -23,8 +23,7 @@ WFA(Windows Form Application) Agent
 #### 패킷 헤더 구조
 <p align="center"><img src="패킷 헤더 구조.png"/>
 
-### 실행 방법
-VS 에서 Ctrl+F5 실행은 지원하지 않으며 2가지 방법으로 실행이 가능합니다.
+### 실행
 
 - F5 디버그 모드 실행 (바로 서버(ServerForm)만 단독)
 - 실제 실행파일 실행
