@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MONITORING_DEBUG</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
@@ -75,9 +75,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MonitoringForm.Core.cs">
-      <SubType>Form</SubType>
-    </Compile>
+    <Compile Include="Message\MessageItemEventArgs.cs" />
     <Compile Include="Monitoring\ServerProcessWatcher.cs" />
     <Compile Include="ServerForm.Core.cs">
       <SubType>Form</SubType>
@@ -114,11 +112,11 @@
     <Compile Include="Server\IEventProcessor.cs" />
     <Compile Include="Server\ProcessStartDataEventProcessor.cs" />
     <Compile Include="Server\ProcessInfo.cs" />
-    <Compile Include="Server\DetailMessageItem.cs" />
+    <Compile Include="Message\DetailMessageItem.cs" />
     <Compile Include="Core\ItemQueue.cs" />
-    <Compile Include="Server\MessageItem.cs" />
+    <Compile Include="Message\MessageItem.cs" />
     <Compile Include="Core\MessageItemQueueAppendWorker.cs" />
-    <Compile Include="Server\MessageObjectReceivedEventHandler.cs" />
+    <Compile Include="Message\MessageObjectReceivedEventHandler.cs" />
     <Compile Include="InfoDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -192,9 +190,7 @@
       <Name>WFAAgent.Framework</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Message\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <ProjectExtensions />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

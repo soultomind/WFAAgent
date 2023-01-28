@@ -8,6 +8,7 @@ using WFAAgent.Core;
 using WFAAgent.Framework;
 using WFAAgent.Framework.Net;
 using WFAAgent.Framework.Net.Sockets;
+using WFAAgent.Message;
 
 namespace WFAAgent.Server
 {

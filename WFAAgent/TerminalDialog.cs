@@ -30,17 +30,39 @@ namespace WFAAgent
 
         }
 
-        internal void AppendMessageLine(string message)
+        internal void InitializeMinimized()
+        {
+            this.WindowState = FormWindowState.Minimized;
+            this.Visible = false;
+        }
+
+        internal void InitializeNormal(Point location)
+        {
+            this.Location = location;
+            this.WindowState = FormWindowState.Normal;
+            this.Visible = true;
+        }
+
+        internal void AppendText(string message)
         {
             if (_RichTextBox.InvokeRequired)
             {
-                _RichTextBox.Invoke(new Action<string>(AppendMessageLine), new object[] { message });
+                _RichTextBox.Invoke(new Action<string>(AppendText), new object[] { message });
                 return;
             }
 
             _RichTextBox.AppendText(message);
             _RichTextBox.AppendText(Environment.NewLine);
             _RichTextBox.ScrollToCaret();
+        }
+
+        private void TerminalDialog_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing)
+            {
+                Visible = false;
+                e.Cancel = true;
+            }
         }
     }
 }

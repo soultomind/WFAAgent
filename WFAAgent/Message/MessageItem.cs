@@ -2,18 +2,14 @@
 using System.Globalization;
 using WFAAgent.Core;
 
-namespace WFAAgent.Server
+namespace WFAAgent.Message
 {
     public class MessageItem
     {
         public LogLevel LogLevel { get; set; }
         public string Message { get; set; }
+        public Exception Exception { get; set; }
         public string NowDateTime { get; private set; }
-
-        /*
-        string className = new StackFrame(1).GetMethod().ReflectedType.Name;
-        string methodName = new StackFrame(1, true).GetMethod().Name;
-        */
 
         public MessageItem()
         {
@@ -34,7 +30,15 @@ namespace WFAAgent.Server
 
         public string MakeMessage()
         {
-            return String.Format("{0} {1} : {2}", LogLevel.ToString().ToUpper(), NowDateTime, Message);
+            if (Exception != null)
+            {
+                Message = Message + "\n" + Exception.ToString();
+                return String.Format("{0} {1} : {2}", NowDateTime, LogLevel.ToString().ToUpper(), Message);
+            }
+            else
+            {
+                return String.Format("{0} {1} : {2}", NowDateTime, LogLevel.ToString().ToUpper(), Message);
+            }
         }
     }
 }

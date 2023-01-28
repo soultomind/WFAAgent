@@ -28,7 +28,7 @@
             <div>
                 <h3>클라이언트 요청</h3>
             </div>
-            <textarea id="wsExecuteFileName" cols="100" rows="10">C:\\Workspace\\GitProject\\WFAAgent\\TestClientNet45\\bin\\Debug\\TestClientNet45.exe</textarea>
+            <textarea id="textAreaWsExecuteFileName" cols="100" rows="10">C:\\Workspace\\GitProject\\WFAAgent\\TestClientNet45\\bin\\Debug\\TestClientNet45.exe</textarea>
             <div>
                 <button type="button" onclick="wsProcessStartData()">
                     프로세스 실행
@@ -47,7 +47,7 @@
                 <h3>클라이언트 수신</h3>
             </div>
             <div>
-                <img id="base64Image" />
+                <img id="imgBase64Image" />
             </div>
         </div>
     </div>
@@ -109,11 +109,23 @@
 
         agent.setTcpClientDataReceivedEventHandler(function (e) {
             if (e.appBinaryData != null) {
-                var img = document.getElementById("base64Image");
+                var img = document.getElementById("imgBase64Image");
                 var extension = e.extension;
                 img.src = "data:image/" + e.extension + ";base64," + e.appBinaryData;
             } else {
-                window.console.info("Text=" + e.appStringData);
+                var isText = false;
+                try {
+                    var data = JSON.parse(e.appStringData);
+                } catch (e) {
+                    isText = true;
+                }
+
+                if (isText) {
+                    window.console.info("Text=" + e.appStringData);
+                } else {
+                    window.console.info("JSON=" + e.appStringData);
+                }
+                
             }
         });
 
@@ -131,7 +143,7 @@
         }
 
         function wsProcessStartData() {
-            var fileName = document.getElementById("wsExecuteFileName").value;
+            var fileName = document.getElementById("textAreaWsExecuteFileName").value;
 
             var startInfo = {
                 fileName : fileName,

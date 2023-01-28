@@ -3,51 +3,126 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WFAAgent.Core;
 using WFAAgent.Framework.Application;
+using WFAAgent.Message;
 
 namespace WFAAgent.Monitoring
 {
     /// <summary>
     /// 서버 프로세스 감시자
     /// </summary>
-    internal static class ServerProcessWatcher
+    internal class ServerProcessWatcher
     {
-        public static bool IsCurrentServerProcessExecuteAdministrator { get; internal set; }
-        public static Process ServerProcess { get; internal set; }
+        public event EventHandler<MessageItemEventArgs> MessageItem;
 
-        public static bool IsServerProcessExited
+        public Process ServerProcess { get; internal set; }
+
+        public int ServerProcessWatcherInterval
+        {
+            get { return _serverProcessWatcherInterval; }
+            set
+            {
+                if (value > 0)
+                {
+                    _serverProcessWatcherInterval = value;
+                }
+            }
+        }
+        private int _serverProcessWatcherInterval = 3000;
+        public Thread ServerProcessStarter { get; private set; }
+
+        public bool IsServerProcessStarterAlive
+        {
+            get { return _serverProcessStarterAlive; }
+            private set { _serverProcessStarterAlive = value; }
+        }
+        private volatile bool _serverProcessStarterAlive;
+
+        public bool IsServerProcessExited
         {
             get { return _serverProcessExited; }
             private set { _serverProcessExited = value; }
         }
-        private static volatile bool _serverProcessExited;
+        private volatile bool _serverProcessExited;
 
-        internal static void FormLoadEventProcess()
+        private void OnMessageItem(MessageItemEventArgs e)
         {
-            bool isCurrentServerProcessExecuteAdministrator = Toolkit.IsCurrentProcessExecuteAdministrator();
-            IsCurrentServerProcessExecuteAdministrator = isCurrentServerProcessExecuteAdministrator;
+            MessageItem?.Invoke(this, e);
+        }
 
-            string[] commandLineArgs = null;
-            if (ExecuteContext.ExecCommandLineArgs.Length == 0)
-            {
-                // 최초 처음 실행 사용자 인자
-                commandLineArgs = Main.ExecuteContext.UserCommandLineArgs;
-            }
-            else
-            {
-                // 그 이후에 실행 인자
-                commandLineArgs = ExecuteContext.ExecCommandLineArgs;
-            }
+        private void OnDebugMessageItem(string message)
+        {
+            MessageItemEventArgs e = new MessageItemEventArgs();
+            e.MessageItem = new MessageItem() { LogLevel = LogLevel.Debug, Message = message };
+            OnMessageItem(e);
+        }
 
-            if (isCurrentServerProcessExecuteAdministrator)
+        private void OnInfoMessageItem(string message)
+        {
+            MessageItemEventArgs e = new MessageItemEventArgs();
+            e.MessageItem = new MessageItem() { LogLevel = LogLevel.Info, Message = message };
+            OnMessageItem(e);
+        }
+
+        private void OnWarnMessageItem(string message)
+        {
+            MessageItemEventArgs e = new MessageItemEventArgs();
+            e.MessageItem = new MessageItem() { LogLevel = LogLevel.Warn, Message = message };
+            OnMessageItem(e);
+        }
+
+        private void OnWarnMessageItem(string message, Exception exception)
+        {
+            MessageItemEventArgs e = new MessageItemEventArgs();
+            e.MessageItem = new MessageItem() { LogLevel = LogLevel.Warn, Message = message, Exception = exception };
+            OnMessageItem(e);
+        }
+
+        private void OnErrorMessageItem(string message)
+        {
+            MessageItemEventArgs e = new MessageItemEventArgs();
+            e.MessageItem = new MessageItem() { LogLevel = LogLevel.Error, Message = message };
+            OnMessageItem(e);
+        }
+
+        private void OnErrorMessageItem(string message, Exception exception)
+        {
+            MessageItemEventArgs e = new MessageItemEventArgs();
+            e.MessageItem = new MessageItem() { LogLevel = LogLevel.Error, Message = message, Exception = exception };
+            OnMessageItem(e);
+        }
+
+        internal void FormLoadEventProcess(bool isCurrentProcessExecuteAdministrator)
+        {
+            if (isCurrentProcessExecuteAdministrator == false)
             {
-                
-            }
-            else
-            {
+                Process currentProcess = Process.GetCurrentProcess();
+                bool useShellExecute = currentProcess.StartInfo.UseShellExecute;
+
+#if MONITORING_DEBUG
+            
+                MessageBox.Show(String.Format("Monitoring UseShellExecute={0}", useShellExecute), "MONITORING_DEBUG CONDITION COMPILE");
+#else
+
+                OnDebugMessageItem(String.Format("Monitoring UseShellExecute={0}", useShellExecute));
+#endif
+
+                string[] commandLineArgs = null;
+                if (ExecuteContext.ExecCommandLineArgs.Length == 0)
+                {
+                    // 최초 처음 실행 사용자 인자
+                    commandLineArgs = Main.ExecuteContext.UserCommandLineArgs;
+                }
+                else
+                {
+                    // 그 이후에 실행 인자
+                    commandLineArgs = ExecuteContext.ExecCommandLineArgs;
+                }
+
                 if (commandLineArgs != null && commandLineArgs.Length == 1)
                 {
                     if (Main.ExecuteContext.Execute == Execute.Monitoring)
@@ -65,14 +140,62 @@ namespace WFAAgent.Monitoring
                         {
                             process.Start();
                         }
-
-                        IsCurrentServerProcessExecuteAdministrator = false;
                     }
                 }
             }
         }
 
-        internal static Process CreateExecuteAsAdministrator(string fileName, string arguments, bool useShellExecute)
+        internal void FormShownEventProcess()
+        {
+            Dictionary<string, string> dictionary = ExecuteContext.MakeServerDictionaryArgs();
+
+            Process process = CreateExecuteAsAdministrator(Application.ExecutablePath, ExecuteContext.MakeStringArgs(dictionary), false);
+            if (process != null)
+            {
+                process.Exited += ServerProcess_Exited;
+                try
+                {
+                    StartAndIfFalseUseShellExecuteOutputErrorReadLine(process);
+
+                    ServerProcess = process;
+
+                    string text = String.Format("({0}={1}) 프로세스가 시작 되었습니다.", process.ProcessName, process.Id);
+                    OnDebugMessageItem(text);
+
+                    IsServerProcessExited = false;
+
+                    StartServerProcessStarter();
+                }
+                catch (Exception ex)
+                {
+                    OnErrorMessageItem("프로세스 실행에 실패하였습니다.", ex);
+
+                    IsServerProcessExited = true;
+                }
+            }
+        }
+
+        internal void StartServerProcessStarter()
+        {
+            IsServerProcessStarterAlive = true;
+
+            ServerProcessStarter = new Thread(ServerProcess_Started);
+            ServerProcessStarter.IsBackground = true;
+            ServerProcessStarter.Start(ServerProcessWatcherInterval);
+        }
+
+        internal void StopServerProcessStarter()
+        {
+            IsServerProcessStarterAlive = false;
+            if (ServerProcessStarter != null)
+            {
+                ServerProcessStarter.Join();
+            }
+
+            ServerProcessStarter = null;
+        }
+
+        private Process CreateExecuteAsAdministrator(string fileName, string arguments, bool useShellExecute)
         {
             try
             {
@@ -96,27 +219,92 @@ namespace WFAAgent.Monitoring
             }
             catch (Exception ex)
             {
-                Toolkit.TraceWriteLine(ex);
+                OnErrorMessageItem("프로세스 생성중 오류가 발생하였습니다.", ex);
                 return null;
             }
         }
 
-        internal static void FormShownEventProcess()
-        {
-            if (IsCurrentServerProcessExecuteAdministrator)
-            {
 
+        private void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            OnDebugMessageItem("Process_OutputDataReceived=" + e.Data);
+        }
+
+        private void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        {
+            OnDebugMessageItem("Process_ErrorDataReceived=" + e.Data);
+        }
+
+        private void ServerProcess_Started(object argument)
+        {
+            int watcherInterval = (int)argument;
+
+            Dictionary<string, string> dictionary = ExecuteContext.MakeServerDictionaryArgs();
+
+            while (IsServerProcessStarterAlive)
+            {
+                Thread.Sleep(watcherInterval);
+                if (IsServerProcessExited)
+                {
+                    OnDebugMessageItem("서버 프로세스가 종료되어 다시 시작합니다.");
+                    StartServerExecuteAsAdministrator(Application.ExecutablePath, ExecuteContext.MakeStringArgs(dictionary));
+                    OnDebugMessageItem("성공적으로 서버 프로세스가 시작 되었습니다.");
+                }
             }
         }
 
-        private static void Process_OutputDataReceived(object sender, DataReceivedEventArgs e)
+        private void StartServerExecuteAsAdministrator(string fileName, string arguments, bool useShellExecute = false)
         {
-            Toolkit.TraceWriteLine("Process_OutputDataReceived=" + e.Data);
+            Process process = CreateExecuteAsAdministrator(fileName, arguments, useShellExecute);
+            if (process != null)
+            {
+                process.Exited += ServerProcess_Exited;
+                try
+                {
+                    StartAndIfFalseUseShellExecuteOutputErrorReadLine(process);
+
+                    ServerProcess = process;
+
+                    string text = String.Format("({0}={1}) 서버프로세스가 시작 되었습니다.", process.ProcessName, process.Id);
+                    OnDebugMessageItem(text);
+
+                    IsServerProcessExited = false;
+                }
+                catch (Exception ex)
+                {
+                    OnErrorMessageItem(ex.Message, ex);
+                }
+            }
         }
 
-        private static void Process_ErrorDataReceived(object sender, DataReceivedEventArgs e)
+        private void ServerProcess_Exited(object sender, EventArgs e)
         {
-            Toolkit.TraceWriteLine("Process_ErrorDataReceived=" + e.Data);
+            // TODO: 해당 이벤트 발생시에
+            //       약 2-3초 후에 다시 실행 
+            //       스레드로 계속 감지 하여 플래그값 변경시 이벤트 발생시키기
+
+            Process process = sender as Process;
+            string text = String.Format("({0}={1}) 프로세스가 종료 되었습니다.", process.ProcessName, process.Id);
+            OnDebugMessageItem(text);
+
+            IsServerProcessExited = true;
+        }
+
+        private  void StartAndIfFalseUseShellExecuteOutputErrorReadLine(Process process)
+        {
+            process.Start();
+            if (!process.StartInfo.UseShellExecute)
+            {
+                if (process.StartInfo.RedirectStandardError)
+                {
+                    process.BeginErrorReadLine();
+                }
+
+                if (process.StartInfo.RedirectStandardOutput)
+                {
+                    process.BeginOutputReadLine();
+                }
+            }
         }
     }
 }

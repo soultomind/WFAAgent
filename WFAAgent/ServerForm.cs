@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using WFAAgent.Core;
 using WFAAgent.Framework.Win32;
+using WFAAgent.Message;
 using WFAAgent.Server;
 
 namespace WFAAgent
@@ -99,6 +100,7 @@ namespace WFAAgent
             {
                 // TODO: 미리 켜놓고 숨긴상태로 미리 메시지 추가해놓기
                 TerminalDialog = new TerminalDialog();
+                TerminalDialog.Text = "TermialDialog." + Execute.Server.ToString();
                 TerminalDialog.Shown += TerminalDialog_Shown;
                 TerminalDialog.FormClosed += TerminalDlg_FormClosed;
             }
@@ -152,7 +154,7 @@ namespace WFAAgent
                 }
                 else
                 {
-                    TerminalDialog.AppendMessageLine(item.MakeMessage());
+                    TerminalDialog.AppendText(item.MakeMessage());
                 }
             }
         }

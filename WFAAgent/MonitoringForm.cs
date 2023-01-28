@@ -12,27 +12,32 @@ using System.Windows.Forms;
 using WFAAgent.Core;
 using WFAAgent.Framework.Application;
 using WFAAgent.Framework.Win32;
+using WFAAgent.Monitoring;
 
 namespace WFAAgent
 {
     public partial class MonitoringForm : Form
     {
-        
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
+        internal InfoDialog InfoDialog { get; set; }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
+        internal TerminalDialog TerminalDialog { get; set; }
+
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+        [Browsable(false)]
+        internal bool IsCurrentProcessExecuteAdministrator { get; set; }
+
+        private ServerProcessWatcher _serverProcessWatcher;
+
         public MonitoringForm(string[] args)
         {
             InitializeComponent();
 
             InitializeTaskbarTray();
-
-            Text = String.Format("WFAAgent.MonitoringForm Administrator={0}", Toolkit.IsCurrentProcessExecuteAdministrator());
         }
-
-        #region Properties
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        [Browsable(false)]
-        internal InfoDialog InfoDialog { get; set; }
-
-        #endregion
 
         private void InitializeTaskbarTray()
         {
@@ -43,16 +48,44 @@ namespace WFAAgent
 
         private void MonitoringForm_Load(object sender, EventArgs e)
         {
-            Text = String.Format("WFAAgent.MonitoringForm Administrator={0}", Toolkit.IsCurrentProcessExecuteAdministrator());
+            IsCurrentProcessExecuteAdministrator = Toolkit.IsCurrentProcessExecuteAdministrator();
+            Text = String.Format("WFAAgent.MonitoringForm Administrator={0}", IsCurrentProcessExecuteAdministrator);
 
-            LoadProcess();
+            // 윈도우즈 서비스를 활용하여 프로세스가 죽었을때 다시 서비스에서 프로그램을 실행하는 구조 대신에 아래와 같이 
+            // 관리자권한(모니터링), 관리자권한,일반(서버) 로 구성하여 개발해보고자 한다.
+
+            if (IsCurrentProcessExecuteAdministrator)
+            {
+                TerminalDialog = new TerminalDialog();
+                TerminalDialog.Text = "TermialDialog." + Execute.Monitoring.ToString();
+                TerminalDialog.InitializeMinimized();
+            }
+
+            _serverProcessWatcher = new ServerProcessWatcher();
+            _serverProcessWatcher.MessageItem += ServerProcessWatcher_MessageItem;
+            _serverProcessWatcher.FormLoadEventProcess(IsCurrentProcessExecuteAdministrator);
+        }
+
+        private void ServerProcessWatcher_MessageItem(object sender, Message.MessageItemEventArgs e)
+        {
+            if (TerminalDialog != null && !TerminalDialog.IsDisposed)
+            {
+                TerminalDialog.AppendText(e.MessageItem.MakeMessage());
+            }
         }
 
         private void MonitoringForm_Shown(object sender, EventArgs e)
         {
             Taskbar.RefreshTrayArea();
 
-            ShownProcess();
+            if (IsCurrentProcessExecuteAdministrator)
+            {
+                _serverProcessWatcher.FormShownEventProcess();
+            }
+            else
+            {
+                Close();
+            }
         }
 
         private void TrayNotifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -75,12 +108,21 @@ namespace WFAAgent
             InfoDialog.Activate();
         }
 
-        private void ShowConfigDlgToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ToolStripMenuItemShowConfigDlg_Click(object sender, EventArgs e)
         {
 
         }
 
-        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+        private void ToolStripMenuItemMonitoring_Click(object sender, EventArgs e)
+        {
+            if (TerminalDialog != null && !TerminalDialog.IsDisposed)
+            {
+                TerminalDialog.InitializeNormal(Screen.PrimaryScreen.Bounds.Location);
+                TerminalDialog.Activate();
+            }
+        }
+
+        private void ToolStripMenuItemExit_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }

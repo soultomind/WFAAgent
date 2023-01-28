@@ -31,8 +31,9 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MonitoringForm));
             this.TrayContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.ShowConfigDlgToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ExitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToolStripMenuItemShowConfigDlg = new System.Windows.Forms.ToolStripMenuItem();
+            this._ToolStripMenuItemMonitoring = new System.Windows.Forms.ToolStripMenuItem();
+            this.ToolStripMenuItemExit = new System.Windows.Forms.ToolStripMenuItem();
             this.TrayNotifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.TrayContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -40,24 +41,32 @@
             // TrayContextMenuStrip
             // 
             this.TrayContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ShowConfigDlgToolStripMenuItem,
-            this.ExitToolStripMenuItem});
+            this.ToolStripMenuItemShowConfigDlg,
+            this._ToolStripMenuItemMonitoring,
+            this.ToolStripMenuItemExit});
             this.TrayContextMenuStrip.Name = "TrayContextMenuStrip";
-            this.TrayContextMenuStrip.Size = new System.Drawing.Size(123, 48);
+            this.TrayContextMenuStrip.Size = new System.Drawing.Size(123, 70);
             // 
-            // ShowConfigDlgToolStripMenuItem
+            // ToolStripMenuItemShowConfigDlg
             // 
-            this.ShowConfigDlgToolStripMenuItem.Name = "ShowConfigDlgToolStripMenuItem";
-            this.ShowConfigDlgToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
-            this.ShowConfigDlgToolStripMenuItem.Text = "환경설정";
-            this.ShowConfigDlgToolStripMenuItem.Click += new System.EventHandler(this.ShowConfigDlgToolStripMenuItem_Click);
+            this.ToolStripMenuItemShowConfigDlg.Name = "ToolStripMenuItemShowConfigDlg";
+            this.ToolStripMenuItemShowConfigDlg.Size = new System.Drawing.Size(122, 22);
+            this.ToolStripMenuItemShowConfigDlg.Text = "환경설정";
+            this.ToolStripMenuItemShowConfigDlg.Click += new System.EventHandler(this.ToolStripMenuItemShowConfigDlg_Click);
             // 
-            // ExitToolStripMenuItem
+            // _ToolStripMenuItemMonitoring
             // 
-            this.ExitToolStripMenuItem.Name = "ExitToolStripMenuItem";
-            this.ExitToolStripMenuItem.Size = new System.Drawing.Size(122, 22);
-            this.ExitToolStripMenuItem.Text = "종료";
-            this.ExitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItem_Click);
+            this._ToolStripMenuItemMonitoring.Name = "_ToolStripMenuItemMonitoring";
+            this._ToolStripMenuItemMonitoring.Size = new System.Drawing.Size(122, 22);
+            this._ToolStripMenuItemMonitoring.Text = "모니터링";
+            this._ToolStripMenuItemMonitoring.Click += new System.EventHandler(this.ToolStripMenuItemMonitoring_Click);
+            // 
+            // ToolStripMenuItemExit
+            // 
+            this.ToolStripMenuItemExit.Name = "ToolStripMenuItemExit";
+            this.ToolStripMenuItemExit.Size = new System.Drawing.Size(122, 22);
+            this.ToolStripMenuItemExit.Text = "종료";
+            this.ToolStripMenuItemExit.Click += new System.EventHandler(this.ToolStripMenuItemExit_Click);
             // 
             // TrayNotifyIcon
             // 
@@ -87,8 +96,9 @@
         #endregion
 
         private System.Windows.Forms.ContextMenuStrip TrayContextMenuStrip;
-        private System.Windows.Forms.ToolStripMenuItem ShowConfigDlgToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem ExitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItemShowConfigDlg;
+        private System.Windows.Forms.ToolStripMenuItem ToolStripMenuItemExit;
         private System.Windows.Forms.NotifyIcon TrayNotifyIcon;
+        private System.Windows.Forms.ToolStripMenuItem _ToolStripMenuItemMonitoring;
     }
 }
