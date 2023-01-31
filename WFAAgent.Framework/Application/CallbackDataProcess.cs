@@ -31,6 +31,7 @@ namespace WFAAgent.Framework.Application
         /// <summary>
         /// 현재 프로세스 Id
         /// </summary>
+        [JsonIgnoreAttribute]
         public int ProcessId { get; private set; }
         
         public CallbackDataProcess()
@@ -52,12 +53,6 @@ namespace WFAAgent.Framework.Application
 
         public static CallbackDataProcess Parse(JObject argObj, Process currentProcess)
         {
-            /*
-            CallbackDataProcess o = new CallbackDataProcess(currentProcess);
-            o.AppId = argObj[Constant.AppID].ToObject<string>();
-            o.AgentTcpServerPort = argObj[Constant.AgentTcpServerPort].ToObject<int>();
-            */
-
             // JsonConvert.DeserializeObject 사용시 디폴트 생성자 선언이 되어 있어야함
             CallbackDataProcess o = JsonConvert.DeserializeObject<CallbackDataProcess>(argObj.ToString());
             o.ProcessId = currentProcess.Id;

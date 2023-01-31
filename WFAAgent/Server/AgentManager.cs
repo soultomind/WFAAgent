@@ -335,7 +335,7 @@ namespace WFAAgent.Server
             IEventProcessor eventProcessor = null;
             if (!EventProcessorManager.EventProcessors.ContainsKey(eventName))
             {
-                eventProcessor = EventProcessorManager.AddStartsWithByEventName(eventName);
+                eventProcessor = EventProcessorManager.CreateInstanceStartsWithByEventName(eventName);
                 if (eventProcessor is ProcessStartDataEventProcessor)
                 {
                     ((ProcessStartDataEventProcessor)eventProcessor).ProcessStarted += AgentManager_ProcessStarted;

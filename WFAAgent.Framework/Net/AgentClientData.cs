@@ -8,29 +8,32 @@ using WFAAgent.Framework.Application;
 
 namespace WFAAgent.Framework.Net
 {
-    public class AcceptClient : DefaultData
+    public class AgentClientData : DefaultData
     {
         public string AppId { get; set; }
         public int ProcessId { get; set; }
 
-        public AcceptClient()
+        public AgentClientData()
         {
             Type = GetType().Name;
         }
 
-        public AcceptClient(CallbackDataProcess callbackDataProcess)
+        public AgentClientData(CallbackDataProcess callbackDataProcess)
             : this()
         {
             AppId = callbackDataProcess.AppId;
             ProcessId = callbackDataProcess.ProcessId;
         }
 
-        public override JObject ToJson()
+        public override JObject ToJson(bool addProperty)
         {
-            JObject retObj = base.ToJson();
-            // 패킷 헤더로 보내므로 주석처리
-            // retObj.Add(Constant.AppID, AppId);
-            // retObj.Add(Constant.ProcessId, ProcessId);
+            JObject retObj = base.ToJson(addProperty);
+            if (addProperty)
+            {
+                retObj.Add(Constant.AppID, AppId);
+                retObj.Add(Constant.ProcessId, ProcessId);
+            }
+            
             return retObj;
         }
     }

@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace WFAAgent.Framework.Application
 {
-    public class AgentData
+    public class AgentErrorData : AgentData
     {
-        public int ProcessId { get; set; }
-        public string Data { get; set; }
+
     }
 }

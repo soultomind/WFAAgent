@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace WFAAgent.Framework.Net.Sockets
 {
-    public class AgentTcpSocketException : Exception
+    public class AgentTcpClientException : AgentTcpSocketException
     {
-        public AgentTcpSocketException(string message)
+        public AgentTcpClientException(string message)
             : base(message)
         {
 
         }
 
-        public AgentTcpSocketException(string message, Exception innerException)
+        public AgentTcpClientException(string message, Exception innerException)
             : base(message, innerException)
         {
 

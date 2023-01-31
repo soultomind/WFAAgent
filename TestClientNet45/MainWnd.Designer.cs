@@ -36,14 +36,15 @@
             this._RichTextBoxSendDataAgentTcpServer = new System.Windows.Forms.RichTextBox();
             this._ButtonSendDataAgentTcpServer = new System.Windows.Forms.Button();
             this._ButtonImageFileBinary = new System.Windows.Forms.Button();
+            this._TextBoxAgentTcpServerPort = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // _ButtonConnectAgentTcpServer
             // 
-            this._ButtonConnectAgentTcpServer.Location = new System.Drawing.Point(12, 15);
+            this._ButtonConnectAgentTcpServer.Location = new System.Drawing.Point(121, 11);
             this._ButtonConnectAgentTcpServer.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this._ButtonConnectAgentTcpServer.Name = "_ButtonConnectAgentTcpServer";
-            this._ButtonConnectAgentTcpServer.Size = new System.Drawing.Size(158, 32);
+            this._ButtonConnectAgentTcpServer.Size = new System.Drawing.Size(158, 26);
             this._ButtonConnectAgentTcpServer.TabIndex = 0;
             this._ButtonConnectAgentTcpServer.Text = "AgentTcpServer 에 연결";
             this._ButtonConnectAgentTcpServer.UseVisualStyleBackColor = true;
@@ -101,13 +102,22 @@
             this._ButtonImageFileBinary.TabIndex = 6;
             this._ButtonImageFileBinary.Text = "이미지 파일 바이너리 데이터 추가";
             this._ButtonImageFileBinary.UseVisualStyleBackColor = true;
-            this._ButtonImageFileBinary.Click += new System.EventHandler(this. ButtonImageFileBinary_Click);
+            this._ButtonImageFileBinary.Click += new System.EventHandler(this.ButtonImageFileBinary_Click);
+            // 
+            // _TextBoxAgentTcpServerPort
+            // 
+            this._TextBoxAgentTcpServerPort.Location = new System.Drawing.Point(15, 13);
+            this._TextBoxAgentTcpServerPort.Name = "_TextBoxAgentTcpServerPort";
+            this._TextBoxAgentTcpServerPort.Size = new System.Drawing.Size(100, 23);
+            this._TextBoxAgentTcpServerPort.TabIndex = 7;
+            this._TextBoxAgentTcpServerPort.Text = "127.0.0.1";
             // 
             // MainWnd
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(484, 442);
+            this.Controls.Add(this._TextBoxAgentTcpServerPort);
             this.Controls.Add(this._ButtonImageFileBinary);
             this.Controls.Add(this._ButtonSendDataAgentTcpServer);
             this.Controls.Add(this._LabelSendDataAgentTcpServer);
@@ -137,5 +147,6 @@
         private System.Windows.Forms.RichTextBox _RichTextBoxSendDataAgentTcpServer;
         private System.Windows.Forms.Button _ButtonSendDataAgentTcpServer;
         private System.Windows.Forms.Button _ButtonImageFileBinary;
+        private System.Windows.Forms.TextBox _TextBoxAgentTcpServerPort;
     }
 }

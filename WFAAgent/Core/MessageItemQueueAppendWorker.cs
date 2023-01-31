@@ -68,11 +68,8 @@ namespace WFAAgent.Core
             {
                 if (_ItemQueue.Messages.Count > 0)
                 {
-                    while (_ItemQueue.Messages.Count != 0)
-                    {
-                        T message = _ItemQueue.Messages.Dequeue();
-                        MessageItemReceived?.Invoke(message);
-                    }
+                    T message = _ItemQueue.Messages.Dequeue();
+                    MessageItemReceived?.Invoke(message);
                 }
             }
         }

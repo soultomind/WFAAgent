@@ -19,10 +19,14 @@ namespace WFAAgent.Framework.Net
             EventName = "TcpClientDataReceived";
         }
 
-        public virtual JObject ToJson()
+        public virtual JObject ToJson(bool addProperty)
         {
             JObject retObj = new JObject();
-            //retObj.Add(Constant.DataTypeString, GetType().Name);
+            if (addProperty)
+            {
+                retObj.Add(Constant.DataTypeString, GetType().Name);
+            }
+            
             return retObj;
         }
 

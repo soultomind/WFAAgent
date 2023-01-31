@@ -11,7 +11,7 @@ namespace WFAAgent.Framework.Net
     /// <summary>
     /// WFAAgent 데이터
     /// </summary>
-    public class AgentStringData : AcceptClient
+    public class AgentStringData : AgentClientData
     {
         #region String
         /// <summary>
@@ -87,9 +87,10 @@ namespace WFAAgent.Framework.Net
             AppBinaryData = data;
         }
 
-        public override JObject ToJson()
+        public override JObject ToJson(bool addProperty)
         {
-            JObject retObj = base.ToJson();
+            JObject retObj = base.ToJson(addProperty);
+
             if (String.IsNullOrEmpty(AppStringData))
             {
                 if (AppBinaryData != null && AppBinaryData.Length > 0)

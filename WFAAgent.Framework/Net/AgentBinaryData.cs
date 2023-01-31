@@ -7,7 +7,7 @@ using WFAAgent.Framework.Application;
 
 namespace WFAAgent.Framework.Net
 {
-    public class AgentBinaryData : AcceptClient
+    public class AgentBinaryData : AgentClientData
     {
         public byte[] AppBinaryData { get; set; } = null;
         public bool IsFile { get; set; }

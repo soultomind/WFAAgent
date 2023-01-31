@@ -22,11 +22,6 @@ namespace TestClientNet45
         public MainWnd()
         {
             InitializeComponent();
-
-            TcpClient = new AgentTcpClient();
-            TcpClient.Connected += TcpClient_Connected;
-            TcpClient.Disconnected += TcpClient_Disconnected;
-            TcpClient.DataReceived += TcpClient_DataReceived;
         }
 
         private void MainWnd_Load(object sender, EventArgs e)
@@ -41,6 +36,11 @@ namespace TestClientNet45
 
         private void MainWnd_FormClosed(object sender, FormClosedEventArgs e)
         {
+            if (TcpClient == null)
+            {
+                return;
+            }
+
             TcpClient.Disconnect();
         }
 
@@ -79,6 +79,11 @@ namespace TestClientNet45
 
         private void ButtonImageFileBinary_Click(object sender, EventArgs e)
         {
+            if (TcpClient == null)
+            {
+                return;
+            }
+
             string path = String.Empty;
             using (OpenFileDialog dlg = new OpenFileDialog())
             {
@@ -89,7 +94,6 @@ namespace TestClientNet45
                 }
             }
 
-            //MessageBox.Show("Path=" + path);
             byte[] data = null;
             using (Image image = Image.FromFile(path))
             {
@@ -99,14 +103,11 @@ namespace TestClientNet45
                     data = ms.ToArray();
                 }
             }
-            //MessageBox.Show("Data=" + data.Length);
 
             _RichTextBoxSendDataAgentTcpServer.Text = Encoding.UTF8.GetString(data);
             // TODO: 데이터 구성에 실제 Binary 데이터 및, 저장할 파일 이름, 파일 크기정보를 포함하여 
             //       웹 클라이언트로 전송하여 웹 클라이언트에서는 다시
             //       서버로 전송하여 서버에서 해당 데이터를 저장하는 플로우를 그려보자
-
-            
             
             TcpClient.Send(DataPacket.AgentStringData,
                 new AgentStringData(CallbackDataProcess, data)
@@ -116,7 +117,6 @@ namespace TestClientNet45
                     Extension = new FileInfo(path).Extension
                 }
             );
-            
 
             /*
             TcpClient.Send(DataPacket.AgentBinaryData,
@@ -127,21 +127,32 @@ namespace TestClientNet45
 
         private void _ButtonSendDataAgentTcpServer_Click(object sender, EventArgs e)
         {
-            // TODO: 패킷 값을 통하여 객체를 생성해야 함
-            string text = _RichTextBoxSendDataAgentTcpServer.Text;
-            TcpClient.Send(DataPacket.AgentStringData, 
-                new AgentStringData(CallbackDataProcess, text)
-                {
-                    IsBase64 = false,
-                    BinaryData = false
-                }
-            );
+            if (TcpClient != null)
+            {
+                string text = _RichTextBoxSendDataAgentTcpServer.Text;
+                TcpClient.Send(DataPacket.AgentStringData,
+                    new AgentStringData(CallbackDataProcess, text)
+                    {
+                        IsBase64 = false,
+                        BinaryData = false
+                    }
+                );
 
-            _RichTextBoxSendDataAgentTcpServer.Text = "";
+                _RichTextBoxSendDataAgentTcpServer.Text = "";
+            }
         }
 
         private void _ButtonConnectAgentTcpServer_Click(object sender, EventArgs e)
         {
+            if (CallbackDataProcess == null)
+            {
+                throw new InvalidOperationException();
+            }
+
+            TcpClient = new AgentTcpClient(_TextBoxAgentTcpServerPort.Text, CallbackDataProcess.AgentTcpServerPort);
+            TcpClient.Connected += TcpClient_Connected;
+            TcpClient.Disconnected += TcpClient_Disconnected;
+            TcpClient.DataReceived += TcpClient_DataReceived;
             TcpClient.Connect(CallbackDataProcess);
         }
     }

@@ -61,7 +61,7 @@ namespace WFAAgent.Framework.Net.Sockets
                 if (!_IsAcceptClientForSendServer)
                 {
                     int sendBytes = Send(DataPacket.AcceptClient, 
-                        new AcceptClient(CallbackDataProcess));
+                        new AgentClientData(CallbackDataProcess));
                     _IsAcceptClientForSendServer = true;
                 }
                 return true;
@@ -93,7 +93,7 @@ namespace WFAAgent.Framework.Net.Sockets
             return ClientSocket.Send(dataPacket, data);
         }
 
-        public int Send(DataPacket dataPacket, AcceptClient data)
+        public int Send(DataPacket dataPacket, AgentClientData data)
         {
             if (String.IsNullOrEmpty(dataPacket.Header.AppId))
             {
@@ -105,7 +105,15 @@ namespace WFAAgent.Framework.Net.Sockets
                 dataPacket.Header.ProcessId = data.ProcessId;
             }
 
-            if (Object.ReferenceEquals(dataPacket, DataPacket.AgentBinaryData))
+            if (Object.ReferenceEquals(dataPacket, DataPacket.AcceptClient))
+            {
+                return Send(dataPacket, "== AcceptClient ==");
+            }
+            else if (Object.ReferenceEquals(dataPacket, DataPacket.AgentStringData))
+            {
+                return Send(dataPacket, data.ToJson(false).ToString());
+            }
+            else if (Object.ReferenceEquals(dataPacket, DataPacket.AgentBinaryData))
             {
                 if (!(data is AgentBinaryData))
                 {
@@ -113,17 +121,13 @@ namespace WFAAgent.Framework.Net.Sockets
                 }
                 // TOOD: 실제 RawData 및 앞에 CallbackDataProcess 정보 추가 필요
                 AgentBinaryData binaryData = (data as AgentBinaryData);
-                
+
                 byte[] buffer = binaryData.AppBinaryData;
                 return Send(dataPacket, buffer);
             }
-            else if (Object.ReferenceEquals(dataPacket, DataPacket.AcceptClient))
+            else
             {
-                return Send(dataPacket, "==AcceptClient==");
-            }
-            else 
-            {
-                return Send(dataPacket, data.ToJson().ToString());
+                throw new ArgumentException();
             }
         }
     }

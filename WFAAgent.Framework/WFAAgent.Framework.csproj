@@ -47,11 +47,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Application\AgentData.cs" />
+    <Compile Include="Application\AgentErrorData.cs" />
+    <Compile Include="Application\AgentOutputData.cs" />
     <Compile Include="Application\Constant.cs" />
     <Compile Include="Application\Context.cs" />
     <Compile Include="Application\CallbackDataProcess.cs" />
     <Compile Include="Extension.cs" />
-    <Compile Include="Net\AcceptClient.cs" />
+    <Compile Include="Net\AgentClientData.cs" />
     <Compile Include="Net\AgentBinaryData.cs" />
     <Compile Include="Net\ClientProcessData.cs" />
     <Compile Include="Net\DefaultData.cs" />
@@ -64,16 +66,16 @@
     <Compile Include="Net\ProcessEventData.cs" />
     <Compile Include="Net\ProcessStartData.cs" />
     <Compile Include="Net\Sockets\AgentTcpClient.cs" />
+    <Compile Include="Net\Sockets\AgentTcpClientException.cs" />
     <Compile Include="Net\Sockets\AgentTcpServer.cs" />
+    <Compile Include="Net\Sockets\AgentTcpServerException.cs" />
     <Compile Include="Net\Sockets\AgentTcpSocketException.cs" />
     <Compile Include="Net\Sockets\DataContext.cs" />
     <Compile Include="Net\Sockets\DataReceiver.cs" />
-    <Compile Include="Net\Sockets\DataType.cs" />
     <Compile Include="Net\Sockets\AsyncSendSocketState.cs" />
     <Compile Include="Net\Sockets\ClientSocket.cs" />
     <Compile Include="Net\Sockets\DataPacket.cs" />
     <Compile Include="Net\Sockets\DefaultSocket.cs" />
-    <Compile Include="Net\Sockets\EventHandler.cs" />
     <Compile Include="Net\Sockets\Header.cs" />
     <Compile Include="Net\Sockets\ServerSocket.cs" />
     <Compile Include="Net\Sockets\SocketDataReceiver.cs" />

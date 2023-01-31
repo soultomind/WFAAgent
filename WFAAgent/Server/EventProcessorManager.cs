@@ -22,39 +22,14 @@ namespace WFAAgent.Server
         private ConcurrentDictionary<string, IEventProcessor> _EventProcessors;
 
         public ProcessStartDataEventProcessor ProcessStartDataEventProcessor { get; private set; }
+        public ProcessEventDataEventProcessor ProcessEventDataEventProcessor { get; private set; }
 
         public EventProcessorManager()
         {
             _EventProcessors = new ConcurrentDictionary<string, IEventProcessor>();
         }
 
-        public bool TryCreate(string assemblyFile, Type abstractClassType, out object instance)
-        {
-            Assembly assembly = Assembly.LoadFrom(assemblyFile);
-
-            Type findType = null;
-            foreach (Type type in assembly.GetTypes())
-            {
-                if (type.IsClass && type.IsSubclassOf(abstractClassType))
-                {
-                    findType = type;
-                    break;
-                }
-            }
-
-            if (findType != null)
-            {
-                instance = Activator.CreateInstance(findType);
-                return true;
-            }
-            else
-            {
-                instance = null;
-                return false;
-            }
-        }
-
-        internal IEventProcessor AddStartsWithByEventName(string eventName)
+        internal IEventProcessor CreateInstanceStartsWithByEventName(string eventName)
         {
             IEventProcessor eventProcessor = null;
             foreach (Type type in _sTypes)
@@ -73,6 +48,11 @@ namespace WFAAgent.Server
             if (eventProcessor.GetType() == typeof(ProcessStartDataEventProcessor))
             {
                 ProcessStartDataEventProcessor = eventProcessor as ProcessStartDataEventProcessor;
+            }
+
+            else if (eventProcessor.GetType() == typeof(ProcessEventDataEventProcessor))
+            {
+                ProcessEventDataEventProcessor = eventProcessor as ProcessEventDataEventProcessor;
             }
 
             return eventProcessor;

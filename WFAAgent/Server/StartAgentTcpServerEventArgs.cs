@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WFAAgent.Server
 {
-    public class StartAgentTcpServerEventArgs
+    public class StartAgentTcpServerEventArgs : EventArgs
     {
         public int Port { get; private set; }
         

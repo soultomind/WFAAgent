@@ -5,7 +5,7 @@ using WFAAgent.Server;
 
 namespace WFAAgent.Server
 {
-    public class ProcessInfo
+    public class ProcessInfo : IDisposable
     {
         private readonly string PropProcessId = "processId";
         private readonly string PropProcessName = "processName";
@@ -18,19 +18,34 @@ namespace WFAAgent.Server
         public string AppId { get; set; }
         public IntPtr SocketHandle { get; internal set; }
 
+
+        private bool _disposed;
+
         public ProcessInfo()
         {
             Process = null;
             AppId = String.Empty;
         }
 
-        public void Close()
+        private void Dispose(bool disposing)
         {
-            if (Process != null)
+            if (disposing)
             {
-                Process.Close();
-                Process = null;
+                if (!_disposed)
+                {
+                    if (Process != null)
+                    {
+                        Process.Dispose();
+                        Process = null;
+                    }
+                    _disposed = true;
+                }
             }
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
         }
 
         private JObject ToCommonJson(JObject o)

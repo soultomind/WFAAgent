@@ -8,11 +8,12 @@ namespace WFAAgent.Server
 {
     public class ProcessStartedSendDataEventArgs
     {
+        public ProcessInfo ProcessInfo { get; private set; }
         public string Data { get; private set; }
-        public ProcessInfo ProcessInfo { get; internal set; }
 
-        public ProcessStartedSendDataEventArgs(string data)
+        public ProcessStartedSendDataEventArgs(ProcessInfo processInfo, string data)
         {
+            ProcessInfo = processInfo;
             Data = data;
         }
     }

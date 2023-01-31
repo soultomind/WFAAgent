@@ -24,7 +24,7 @@ namespace WFAAgent.Server
 
         public bool IsMultiProcess { get; set; }
 
-        public IDictionary<string, ProcessInfo> MultiProcessInfos;
+        public IDictionary<string, ProcessInfo> MultiProcessInfos { get; private set; }
         public ProcessInfo SingleProcessInfo { get; private set; }
 
 
@@ -50,102 +50,114 @@ namespace WFAAgent.Server
                         if (MultiProcessInfos == null)
                         {
                             MultiProcessInfos = new Dictionary<string, ProcessInfo>();
+
+
                         }
                     }
                 }
+                else
+                {
 
-
-                
+                }
             }
             else
             {
-                lock (_Lock)
+                if (SingleProcessInfo == null)
                 {
-                    if (SingleProcessInfo == null)
+                    lock (_Lock)
                     {
-                        try
+                        if (SingleProcessInfo == null)
                         {
-                            JObject startInfoObj = null, executeDataObj = null;
-                            
-                            startInfoObj = clientEventData.Data[StartInfoObj] as JObject;
-
-                            bool useCallbackData = (startInfoObj[StartInfoObj_UseCallbackData] != null) ?
-                                startInfoObj[StartInfoObj_UseCallbackData].ToObject<bool>() : false;
-
-                            Process process = null;
-                            string fileName = startInfoObj[StartInfoObj_FileNameProp].ToObject<string>();
-                            if (useCallbackData)
-                            {
-                                string sessionID = clientEventData.AppId;
-
-                                executeDataObj = clientEventData.Data[ExecuteDataObj] as JObject;
-                                int agentTcpServerPort = executeDataObj[ExecuteDataObj_Port].ToObject<int>();
-
-                                // TODO: 클라이언트와 통신하는 서버소켓 시작 AgentTcpServerPort 정보로 (웹 클라이언트)
-                                StartAgentTcpServer?.Invoke(this, new StartAgentTcpServerEventArgs(agentTcpServerPort));
-
-                                Process newProcess = new Process();
-
-                                JObject argObj = new JObject();
-                                argObj.Add(Constant.AppID, sessionID);
-                                argObj.Add(Constant.AgentTcpServerPort, agentTcpServerPort);
-                                argObj.Add(Constant.UseCallBackData, true);
-                                //argObj.Add(Constant.ProcessId, newProcess.Id);
-
-                                string arguments = ConvertUtility.Base64Encode(argObj.ToString());
-                                newProcess.StartInfo = new ProcessStartInfo(fileName, arguments);
-                                newProcess.StartInfo.UseShellExecute = false;
-                                newProcess.StartInfo.Verb = "runas";
-
-                                newProcess.StartInfo.RedirectStandardError = true;
-                                newProcess.ErrorDataReceived += Process_ErrorDataReceived;
-                                newProcess.StartInfo.RedirectStandardOutput = true;
-                                newProcess.OutputDataReceived += Process_OutputDataReceived;
-
-                                if (newProcess.Start())
-                                {
-                                    process = newProcess;
-                                }
-                            }
-                            else
-                            {
-                                process = Process.Start(fileName);
-                            }
-
-                            if (process != null)
-                            {
-                                SetProcessEvent(process);
-
-                                SingleProcessInfo = new ProcessInfo()
-                                {
-                                    FileName = fileName,
-                                    Process = process,
-                                    AppId = clientEventData.AppId
-                                };
-
-                                ProcessStarted?.Invoke(this, new ProcessStartedEventArgs(SingleProcessInfo));
-
-                                if (useCallbackData && clientEventData.Data[ExecuteDataObj] != null)
-                                {
-                                    string data = clientEventData.Data[ExecuteDataObj].ToString();
-                                    ProcessStartedSendData?.Invoke(this, new ProcessStartedSendDataEventArgs(data)
-                                    {
-                                        ProcessInfo = SingleProcessInfo
-                                    });
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Error(ex);
+                            NewStartProcess(clientEventData);
                         }
                     }
-                    else
+                }
+                else
+                {
+                    ShowWindow(clientEventData);
+                }
+            }
+        }
+
+        private void NewStartProcess(ClientEventData clientEventData)
+        {
+            try
+            {
+                JObject startInfoObj = null, executeDataObj = null;
+
+                startInfoObj = clientEventData.Data[StartInfoObj] as JObject;
+
+                bool useCallbackData = (startInfoObj[StartInfoObj_UseCallbackData] != null) ?
+                    startInfoObj[StartInfoObj_UseCallbackData].ToObject<bool>() : false;
+
+                Process process = null;
+                string fileName = startInfoObj[StartInfoObj_FileNameProp].ToObject<string>();
+                if (useCallbackData)
+                {
+                    string sessionID = clientEventData.AppId;
+
+                    executeDataObj = clientEventData.Data[ExecuteDataObj] as JObject;
+                    int agentTcpServerPort = executeDataObj[ExecuteDataObj_Port].ToObject<int>();
+
+                    // TODO: 클라이언트와 통신하는 서버소켓 시작 AgentTcpServerPort 정보로 (웹 클라이언트)
+                    StartAgentTcpServer?.Invoke(this, new StartAgentTcpServerEventArgs(agentTcpServerPort));
+
+                    Process newProcess = new Process();
+
+                    JObject argObj = new JObject();
+                    argObj.Add(Constant.AppID, sessionID);
+                    argObj.Add(Constant.AgentTcpServerPort, agentTcpServerPort);
+                    argObj.Add(Constant.UseCallBackData, true);
+
+                    string arguments = ConvertUtility.Base64Encode(argObj.ToString());
+                    newProcess.StartInfo = new ProcessStartInfo(fileName, arguments);
+                    newProcess.StartInfo.UseShellExecute = false;
+                    newProcess.StartInfo.Verb = "runas";
+
+                    newProcess.StartInfo.RedirectStandardError = true;
+                    newProcess.ErrorDataReceived += Process_ErrorDataReceived;
+                    newProcess.StartInfo.RedirectStandardOutput = true;
+                    newProcess.OutputDataReceived += Process_OutputDataReceived;
+
+                    if (newProcess.Start())
                     {
-                        // TODO: 창만 User32.ShowWindow 처리
+                        process = newProcess;
+                    }
+                }
+                else
+                {
+                    process = Process.Start(fileName);
+                }
+
+                if (process != null)
+                {
+                    SetProcessEvent(process);
+
+                    SingleProcessInfo = new ProcessInfo()
+                    {
+                        FileName = fileName,
+                        Process = process,
+                        AppId = clientEventData.AppId
+                    };
+
+                    ProcessStarted?.Invoke(this, new ProcessStartedEventArgs(SingleProcessInfo));
+
+                    if (useCallbackData && clientEventData.Data[ExecuteDataObj] != null)
+                    {
+                        string data = clientEventData.Data[ExecuteDataObj].ToString();
+                        ProcessStartedSendData?.Invoke(this, new ProcessStartedSendDataEventArgs(SingleProcessInfo, data));
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                Log.Error(ex);
+            }
+        }
+
+        private void ShowWindow(ClientEventData clientEventData)
+        {
+            // TODO: 창만 User32.ShowWindow 처리
         }
 
         private void SetProcessEvent(Process process)
@@ -194,7 +206,7 @@ namespace WFAAgent.Server
                         ProcessExited?.Invoke(this, new ProcessExitedEventArgs(item));
 
                         string appId = item.AppId;
-                        item.Close();
+                        item.Dispose();
                         MultiProcessInfos.Remove(appId);
                         break;
                     }
@@ -204,9 +216,12 @@ namespace WFAAgent.Server
             {
                 lock (_Lock)
                 {
-                    ProcessExited?.Invoke(this, new ProcessExitedEventArgs(SingleProcessInfo));
-                    SingleProcessInfo.Close();
-                    SingleProcessInfo = null;
+                    if (SingleProcessInfo != null)
+                    {
+                        ProcessExited?.Invoke(this, new ProcessExitedEventArgs(SingleProcessInfo));
+                        SingleProcessInfo.Dispose();
+                        SingleProcessInfo = null;
+                    }
                 }
             }
         }

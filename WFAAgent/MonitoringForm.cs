@@ -57,7 +57,7 @@ namespace WFAAgent
             if (IsCurrentProcessExecuteAdministrator)
             {
                 TerminalDialog = new TerminalDialog();
-                TerminalDialog.Text = "TermialDialog." + Execute.Monitoring.ToString();
+                TerminalDialog.Text = typeof(TerminalDialog).Name + Execute.Monitoring.ToString();
                 TerminalDialog.InitializeMinimized();
             }
 
@@ -124,6 +124,11 @@ namespace WFAAgent
 
         private void ToolStripMenuItemExit_Click(object sender, EventArgs e)
         {
+            if (_serverProcessWatcher != null)
+            {
+                _serverProcessWatcher.StopServerProcessStarter();
+                _serverProcessWatcher = null;
+            }
             Application.Exit();
         }
     }

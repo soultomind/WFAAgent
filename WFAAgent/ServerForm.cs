@@ -72,6 +72,8 @@ namespace WFAAgent
             if (!_IsAgentStart)
             {
                 // TODO: 에외 출력
+                MessageBox.Show(this, _AgentStartException.StackTrace, "서버 시작에 실패하였습니다.");
+                return;
             }
         }
 

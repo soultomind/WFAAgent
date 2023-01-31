@@ -50,10 +50,12 @@ namespace TestClient
                     Toolkit.TraceWriteLine("CallbackDataProcess=" + CallbackDataProcess.ToString());
                     if (CallbackDataProcess != null && CallbackDataProcess.UseCallBackData)
                     {
+                        /*
                         TcpClient = new AgentTcpClient("127.0.0.1", CallbackDataProcess.AgentTcpServerPort);
                         TcpClient.Connected += TcpClient_Connected;
                         TcpClient.Disconnected += TcpClient_Disconnected;
                         TcpClient.DataReceived += TcpClient_DataReceived;
+                        */
                     }
 
                     Main.AgentErrorDataSend("테스트 AgentErrorDataSend");
@@ -100,9 +102,12 @@ namespace TestClient
                 return;
             }
 
-            if (TcpClient.Connect(CallbackDataProcess))
+            if (CallbackDataProcess != null && CallbackDataProcess.UseCallBackData)
             {
-                
+                if (TcpClient != null && TcpClient.Connect(CallbackDataProcess))
+                {
+
+                }
             }
         }
 
