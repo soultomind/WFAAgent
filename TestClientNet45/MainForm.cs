@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using TestClient.UI;
 using TestClientNet45;
 using WFAAgent.Framework.Application;
+using WFAAgent.Framework.Net;
 using WFAAgent.Framework.Net.Sockets;
 using WFAAgent.Framework.Win32;
 
@@ -50,12 +51,10 @@ namespace TestClient
                     Toolkit.TraceWriteLine("CallbackDataProcess=" + CallbackDataProcess.ToString());
                     if (CallbackDataProcess != null && CallbackDataProcess.UseCallBackData)
                     {
-                        /*
                         TcpClient = new AgentTcpClient("127.0.0.1", CallbackDataProcess.AgentTcpServerPort);
                         TcpClient.Connected += TcpClient_Connected;
                         TcpClient.Disconnected += TcpClient_Disconnected;
                         TcpClient.DataReceived += TcpClient_DataReceived;
-                        */
                     }
 
                     Main.AgentErrorDataSend("테스트 AgentErrorDataSend");
@@ -88,6 +87,7 @@ namespace TestClient
                     break;
                 case DataContext.ProcessEventData:
                     Toolkit.TraceWriteLine("ProcessEventData=" + e.Data);
+                    TcpClient.Send(DataPacket.AgentStringData, new AgentStringData(CallbackDataProcess, e.Data));
                     break;
             }
         }
