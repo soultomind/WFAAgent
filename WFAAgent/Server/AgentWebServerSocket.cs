@@ -284,6 +284,7 @@ namespace WFAAgent.Server
             else
             {
                 // Do nothing
+                OnAgentBinaryDataReceived(e);
             }
             
             CallbackMessage("============ OnAgentDataReceived");
@@ -318,7 +319,26 @@ namespace WFAAgent.Server
 
         private void OnAgentBinaryDataReceived(DataReceivedEventArgs e)
         {
+            byte[] data = e.RawData;
+            // CallbackMessage(data);
 
+            string appId = e.Header.AppId;
+            WebSocketSession session = WSServer.GetSessionByID(appId);
+            if (session != null)
+            {
+                if (session.TrySend(data, 0, data.Length))
+                {
+                    CallbackMessage("전송성공");
+                }
+                else
+                {
+                    CallbackMessage("전송실패");
+                }
+            }
+            else
+            {
+                CallbackMessage(appId + " 세션을 찾을 수 없습니다.");
+            }
         }
 
         public override void OnClientSendData(DataSendEventArgs e)

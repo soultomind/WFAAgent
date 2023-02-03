@@ -138,21 +138,19 @@ WFAAgent.prototype.OnClientEventCallbackHandler = function (e) {
         // AppBinaryData
         var blob = e.data;
 
-        // TODO: byte[] data 처리 필요
-        /*
-        switch (data.eventName) {
-            case "DataReceived":
-                this.OnDataReceived(data);
-                break;
-        }
-        */
-
         var fileReader = new FileReader();
+        var parent = this;
         fileReader.onload = function (event) {
             var arrayBuffer = event.target.result;
-            var dataview = new DataView(arrayBuffer);
-            var answer = dataview.getFloat64(0);
-            alert("Server > : " + answer);
+            window.console.log("ArrayBuffer.ByteLength=" + arrayBuffer.byteLength);
+            //var dataview = new DataView(arrayBuffer);
+            //var answer = dataview.getFloat64(0);
+
+            parent.OnTcpClientDataReceived({
+                type: "AgentBinaryData",
+                isBase64: false,
+                appBinaryData: arrayBuffer
+            });
         };
         fileReader.readAsArrayBuffer(blob);
     } else {
@@ -307,6 +305,11 @@ WFAAgent.prototype.OnTcpClientDataReceived = function (data) {
             break;
 
         case "AgentStringData":
+            if (this._evtTcpClientDataReceivedEventHandler != null) {
+                this._evtTcpClientDataReceivedEventHandler(data);
+            }
+
+        case "AgentBinaryData":
             if (this._evtTcpClientDataReceivedEventHandler != null) {
                 this._evtTcpClientDataReceivedEventHandler(data);
             }

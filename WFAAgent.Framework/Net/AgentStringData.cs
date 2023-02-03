@@ -97,8 +97,17 @@ namespace WFAAgent.Framework.Net
                 {
                     retObj.Add(Constant.BinaryData, BinaryData);
                     retObj.Add(Constant.IsBase64, IsBase64);
-                    string data = Convert.ToBase64String(AppBinaryData);
-                    retObj.Add(Constant.AppBinaryData, data);
+
+                    if (IsBase64)
+                    {
+                        string data = Convert.ToBase64String(AppBinaryData);
+                        retObj.Add(Constant.AppBinaryData, data);
+                    }
+                    else
+                    {
+                        string data = String.Join(",", AppBinaryData);
+                        retObj.Add(Constant.AppBinaryData, data);
+                    }
                     retObj.Add(Constant.Extension, Extension);
                 }
             }
