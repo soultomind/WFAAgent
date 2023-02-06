@@ -115,6 +115,8 @@
                     img.src = "data:image/" + e.extension + ";base64," + e.appBinaryData;
                 } else {
                     try {
+                        // e.appBinaryData byte[] 배열요소마다의 문자열일경우
+                        // FileReader 를 이용한 방법 찾아보기
                         window.console.log(e.appBinaryData);
                     } catch (e) {
                         window.console.error(e.stack);

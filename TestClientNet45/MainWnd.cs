@@ -109,22 +109,21 @@ namespace TestClientNet45
             //       웹 클라이언트로 전송하여 웹 클라이언트에서는 다시
             //       서버로 전송하여 서버에서 해당 데이터를 저장하는 플로우를 그려보자
             
-            /*
             TcpClient.Send(DataPacket.AgentStringData,
                 new AgentStringData(CallbackDataProcess, data)
                 {
-                    IsBase64 = true,
+                    IsBase64 = false,
                     BinaryData = true,
                     Extension = new FileInfo(path).Extension
                 }
             );
-            */
 
 
-            
+            /*
             TcpClient.Send(DataPacket.AgentBinaryData,
                 new AgentBinaryData(CallbackDataProcess, data)
             );
+            */
         }
 
         private void _ButtonSendDataAgentTcpServer_Click(object sender, EventArgs e)
