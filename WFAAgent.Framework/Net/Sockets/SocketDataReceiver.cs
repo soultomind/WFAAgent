@@ -21,61 +21,39 @@ namespace WFAAgent.Framework.Net.Sockets
             Data = data;
         }
 
-        internal bool TryReadData(Header header, out byte[] data, out Exception exception)
-        {
-            bool isRead = true;
-            byte[] buffer = ReadData(header, out isRead, out exception);
-            if (isRead)
-            {
-                data = buffer;
-            }
-            else
-            {
-                data = null;
-            }
-            return isRead;
-        }
-
-        private byte[] ReadData(Header header, out bool isRead, out Exception ex)
-        {
-            isRead = false;
-            ex = null;
-            return null;
-        }
-
         internal bool TryReadSocket(Header header, out byte[] data, out Exception exception)
         {
-            bool isReceive = true;
-            byte[] buffer = ReceiveSocketData(header, out isReceive, out exception);
-            if (isReceive)
+            byte[] buffer = null;
+            Exception ex = null;
+            if (TryReceiveSocketData(header, out buffer, out ex))
             {
                 data = buffer;
+                exception = null;
             }
             else
             {
                 data = null;
+                exception = ex;
             }
-            return isReceive;
+
+            return data != null;
         }
 
-        private byte[] ReceiveSocketData(Header header, out bool isReceive, out Exception exception)
+        private bool TryReceiveSocketData(Header header, out byte[] buffer, out Exception exception)
         {
             int size = header.DataLength;
-            byte[] dataBuffer = new byte[size];
+            buffer = new byte[size];
             int offset = 0;
 
             try
             {
-                isReceive = true;
                 int receiveBytes = 0;
                 while (offset < size)
                 {
-                    receiveBytes = Socket.Receive(dataBuffer, offset, size - offset, SocketFlags.None);
+                    receiveBytes = Socket.Receive(buffer, offset, size - offset, SocketFlags.None);
                     if (receiveBytes == 0)
                     {
-                        // TODO: 2. 데이터 읽는중 클라이언트 소켓 해제
-                        isReceive = false;
-                        break;
+                        throw new AgentTcpClientException("");
                     }
                     else
                     {
@@ -84,16 +62,14 @@ namespace WFAAgent.Framework.Net.Sockets
                 }
                 
                 exception = null;
+                return true;
             }
             catch (Exception ex)
             {
-                isReceive = false;
-
-                dataBuffer = null;
+                buffer = null;
                 exception = ex;
+                return false;
             }
-
-            return dataBuffer;
         }
     }
 }

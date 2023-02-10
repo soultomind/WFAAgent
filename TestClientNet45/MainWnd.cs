@@ -112,7 +112,7 @@ namespace TestClientNet45
             TcpClient.Send(DataPacket.AgentStringData,
                 new AgentStringData(CallbackDataProcess, data)
                 {
-                    IsBase64 = false,
+                    IsBase64 = true,
                     BinaryData = true,
                     Extension = new FileInfo(path).Extension
                 }

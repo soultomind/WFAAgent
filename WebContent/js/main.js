@@ -308,7 +308,7 @@ WFAAgent.prototype.OnTcpClientDataReceived = function (data) {
             if (this._evtTcpClientDataReceivedEventHandler != null) {
                 this._evtTcpClientDataReceivedEventHandler(data);
             }
-
+            break;
         case "AgentBinaryData":
             if (this._evtTcpClientDataReceivedEventHandler != null) {
                 this._evtTcpClientDataReceivedEventHandler(data);

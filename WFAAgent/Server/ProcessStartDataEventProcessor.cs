@@ -180,8 +180,16 @@ namespace WFAAgent.Server
         {
             if (e != null && !String.IsNullOrEmpty(e.Data))
             {
-                AgentErrorData o = JsonConvert.DeserializeObject<AgentErrorData>(e.Data);
-                Toolkit.TraceWriteLine(String.Format("Pid={0}, Data={1}", o.ProcessId, o.Data));
+                AgentErrorData o = null;
+                try
+                {
+                    o = JsonConvert.DeserializeObject<AgentErrorData>(e.Data);
+                    Toolkit.TraceWriteLine(String.Format("Process_ErrorDataReceived Pid={0}, Data={1}", o.ProcessId, o.Data));
+                }
+                catch (JsonException)
+                {
+                    Toolkit.TraceWriteLine(String.Format("Process_ErrorDataReceived Pid={0}, Data={1}", o.ProcessId, e.Data));
+                }
             }
         }
 
@@ -189,8 +197,16 @@ namespace WFAAgent.Server
         {
             if (e != null && !String.IsNullOrEmpty(e.Data))
             {
-                AgentOutputData o = JsonConvert.DeserializeObject<AgentOutputData>(e.Data);
-                Toolkit.TraceWriteLine(String.Format("Pid={0}, Data={1}", o.ProcessId, o.Data));
+                AgentOutputData o = null;
+                try
+                {
+                    o = JsonConvert.DeserializeObject<AgentOutputData>(e.Data);
+                    Toolkit.TraceWriteLine(String.Format("Process_OutputDataReceived Pid={0}, Data={1}", o.ProcessId, o.Data));
+                }
+                catch (JsonException)
+                {
+                    Toolkit.TraceWriteLine(String.Format("Process_OutputDataReceived Pid={0}, Data={1}", o.ProcessId, e.Data));
+                }
             }
         }
 

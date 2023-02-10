@@ -89,23 +89,16 @@ namespace WFAAgent.Framework.Net.Sockets
             byte[] dataPacketHeaderBuffer = DataContext.NewDefaultDataPacketHeaderBuffer();
             int receiveBytes = 0;
 
+            bool clientSocketClose = false;
             try
             {
-                while (true)
+                while (!clientSocketClose)
                 {
                     Array.Clear(dataPacketHeaderBuffer, 0, dataPacketHeaderBuffer.Length);
                     receiveBytes = clientSocket.Receive(dataPacketHeaderBuffer, dataPacketHeaderBuffer.Length, SocketFlags.None);
                     if (receiveBytes == 0)
                     {
-                        // 최초 AcceptClient 패킷 왔을 경우 등록
-                        AppClientSocket obj = null;
-                        if (_ClientSockets.TryRemove(clientSocket.Handle, out obj))
-                        {
-                            DisconnectEventArgs e = new DisconnectEventArgs(clientSocket) { AppId = obj.AppId };
-                            DisconnectedClient?.Invoke(this, e);
-                        }
-                        
-                        break;
+                        clientSocketClose = true;
                     }
                     else
                     {
@@ -124,8 +117,8 @@ namespace WFAAgent.Framework.Net.Sockets
                                 string appId = header.AppId;
                                 int processId = header.ProcessId;
 
-                                AppClientSocket obj = new AppClientSocket(clientSocket, appId);
-                                if (_ClientSockets.TryAdd(clientSocket.Handle, obj))
+                                AppClientSocket acceptClientSocket = new AppClientSocket(clientSocket, appId);
+                                if (_ClientSockets.TryAdd(clientSocket.Handle, acceptClientSocket))
                                 {
                                     AcceptClient?.Invoke(
                                         this,
@@ -148,6 +141,11 @@ namespace WFAAgent.Framework.Net.Sockets
                             DataReceivedEventArgs e = new DataReceivedEventArgs();
                             e.Exception = exception;
                             ClientDataReceived?.Invoke(this, e);
+
+                            if (e.Exception is AgentTcpClientException)
+                            {
+                                clientSocketClose = true;
+                            }
                         }
                     }
                 }
@@ -155,6 +153,14 @@ namespace WFAAgent.Framework.Net.Sockets
             catch (Exception ex)
             {
                 Error(ex);
+            }
+
+            // 최초 AcceptClient 패킷 왔을 경우 등록
+            AppClientSocket outValue = null;
+            if (_ClientSockets.TryRemove(clientSocket.Handle, out outValue))
+            {
+                DisconnectEventArgs e = new DisconnectEventArgs(clientSocket) { AppId = outValue.AppId };
+                DisconnectedClient?.Invoke(this, e);
             }
         }
 
