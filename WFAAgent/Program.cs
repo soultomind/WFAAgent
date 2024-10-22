@@ -15,6 +15,8 @@ namespace WFAAgent
         [STAThread]
         static void Main(string[] args)
         {
+            // 운영
+
             // Environment.GetCommandLineArgs() 메서드는 실행파일 위치까지 포함하여 넘어오므로 아래 코드 추가
             ExecuteContext.ExecCommandLineArgs = args;
 
